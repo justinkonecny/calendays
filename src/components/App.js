@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MainRoutes from '../main-routes.js';
+import { MainRoutes } from '../main-routes.js';
 import './css/App.css';
 
 class App extends Component {
