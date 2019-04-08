@@ -1,0 +1,121 @@
+.Login {
+    background-color: var(--slate);
+    height: 100vh;
+    display: flex;
+    margin: auto;
+    align-items: center;
+}
+
+.container {
+    height: 42vw;
+    display: flex;
+    margin: auto;
+    align-items: center;
+}
+
+.info-intro {
+    width: 30vw;
+    height: 100%;
+    background-color: var(--light-blue);
+    color: white;
+    border-radius: 10px 0 0 10px;
+    box-sizing: border-box;
+    padding: 90px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+}
+
+.intro-blurb {
+    font-size: 15px;
+    margin: 15px 0;
+}
+
+.bullets {
+    width: 100%;
+    text-align: left;
+    padding-left: 10%;
+}
+
+.user-login {
+    width: 30vw;
+    height: 100%;
+    background-color: var(--pale-gray);
+    color: var(--dull-blue);
+    border-radius: 0 10px 10px 0;
+    box-sizing: border-box;
+    padding: 100px 5vw;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+}
+
+.login-main {
+    width: 100%;
+    text-align: left;
+}
+
+.login-button {
+    width: calc(50% - 5px);
+    background: none;
+    border: none;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--dull-blue);
+    border-bottom: 2px solid;
+    margin: 10px 0
+}
+
+.login-button:hover {
+    cursor: pointer;
+    color: var(--blush);
+}
+
+.login-input {
+    background: none;
+    border: none;
+    color: var(--dull-blue);
+    font-size: 17px;
+    border-bottom: 1px solid;
+    margin: 8px 10px 8px 0;
+    width: 100%;
+    padding: 4px;
+}
+
+.login-input::placeholder {
+    color: var(--dull-blue);
+}
+
+.login-form {
+}
+
+.forgot:hover {
+    cursor: pointer;
+    color: var(--blush);
+}
+
+.login-submit {
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    background-color: var(--blush);
+    border-radius: 5px;
+    padding: 8px 30px;
+}
+
+.login-submit:hover {
+    cursor: pointer;
+}
+
+#greeting {
+    width: 100%;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+#calendays {
+    width: 100%;
+    font-size: 27px;
+    font-weight: 600;
+}

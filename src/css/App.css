@@ -1,0 +1,22 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+:root {
+  --slate: #4c6672;
+  --light-blue: #80d0db;
+  --pale-gray: #f7f7f8;
+  --dull-blue: #467c95;
+  --blush: #f48a84;
+}
