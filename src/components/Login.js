@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import'../css/Login.css';
+import { Redirect } from "react-router";
 
 class Login extends Component {
     render() {
@@ -17,7 +18,7 @@ class Login extends Component {
                     </div>
                     <div className='user-login'>
                         <h1 id='calendays'>calendays</h1>
-                        <LoginForm />
+                        <LoginForm firebase={this.props.firebase}/>
                     </div>
                 </div>
             </div>
@@ -28,15 +29,31 @@ class Login extends Component {
 class LoginForm extends Component {
     constructor(props) {
         super(props);
-        this.state = {isExistingUser: true,  fullname: '', username: '', email: '', password: ''};
+        this.state = {isExistingUser: true,  fullname: '', username: '', email: '', password: '', auth: false};
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.getCurrentForm = this.getCurrentForm.bind(this);
     }
 
-    handleSubmit() {
+    firebaseError(error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode);
+        console.log(errorMessage);
+    }
 
+    handleSubmit(event) {
+        if (event.target.id === 'submitLogin') {
+            this.props.firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).catch(this.firebaseError);
+
+            var user = this.props.firebase.auth().currentUser;
+            if (user) {
+                this.setState({auth: true});
+            }
+        } else {
+            this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).catch(this.firebaseError);
+        }
     }
 
     handleChange(event) {
@@ -56,7 +73,7 @@ class LoginForm extends Component {
     getCurrentForm() {
         if (this.state.isExistingUser) {
             return(
-                <form className='login-form' onSubmit={this.handleSubmit}>
+                <div className='login-form'>
                     <div>
                         <input className='login-input' type='email' name='email' placeholder='email' value={this.state.email} onChange={this.handleChange} />
                         <input className='login-input' type='password' name='password' placeholder='password' value={this.state.password} onChange={this.handleChange} />
@@ -65,28 +82,35 @@ class LoginForm extends Component {
                         <a className='forgot'>forgot password?</a>
                     </div>
                     <div style={{'textAlign': 'center'}}>
-                        <input className='login-submit' type="submit" value="login" />
+                        <button id={'submitLogin'} className='login-submit' onClick={this.handleSubmit}>login</button>
                     </div>
-                </form>
+                </div>
             );
         } else {
             return (
-                <form className='login-form' onSubmit={this.handleSubmit}>
+                <div className='login-form' onSubmit={this.handleSubmit}>
                     <div>
                         <input className='login-input' type='text' name='fullname' placeholder='fullname' value={this.state.fullname} onChange={this.handleChange} />
-                        <input className='login-input' type='text' name='username' placeholder='username' value={this.state.username} onChange={this.handleChange} />
+                        {/*<input className='login-input' type='text' name='username' placeholder='username' value={this.state.username} onChange={this.handleChange} />*/}
                         <input className='login-input' type='email' name='email' placeholder='email' value={this.state.email} onChange={this.handleChange} />
                         <input className='login-input' type='password' name='password' placeholder='password' value={this.state.password} onChange={this.handleChange} />
                     </div>
                     <div style={{'textAlign': 'center'}}>
-                        <input className='login-submit' type="submit" value="login" />
+                        <button id={'submitRegister'} className='login-submit' onClick={this.handleSubmit}>register</button>
                     </div>
-                </form>
+                </div>
             );
         }
     }
 
     render() {
+        if (this.state.auth) {
+            return (
+                <Redirect to={'/home'}/>
+            );
+        }
+
+
         let styleLogin = {'marginRight': '5px', 'color': '#467c95'};
         let styleSignUp = {'marginLeft': '5px', 'color': '#f48a84'};
 

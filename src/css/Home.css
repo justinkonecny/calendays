@@ -1,0 +1,56 @@
+h1 {
+    margin: 0;
+}
+
+h2 {
+    color: var(--dull-blue);
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.header {
+    background-color: var(--dull-blue);
+    color: white;
+    text-align: left;
+    height: 50px;
+    padding-left: 100px;
+}
+
+#title {
+    padding: 5px;
+}
+
+.page {
+    display: flex;
+}
+
+.contents {
+    width: 95vw;
+}
+
+.content-btns {
+    height: 50px;
+    text-align: left;
+    margin: 25px 0 10px 10%;
+}
+
+.navbar {
+    width: 5vw;
+    height: calc(100vh - 50px);
+    background-color: var(--pale-gray);
+}
+
+.btn-home {
+    background: none;
+    border: none;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--dull-blue);
+    border-bottom: 2px solid;
+    padding: 10px 20px 2px 20px;
+}
+
+.btn-home:hover {
+    cursor: pointer;
+    color: var(--blush);
+}

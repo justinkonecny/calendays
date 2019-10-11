@@ -1,0 +1,44 @@
+.calendar-container {
+    width: 100%;
+    height: calc(100vh - 100px);
+}
+
+.calendar {
+    display: flex;
+    height: 100%;
+    /* TODO: FIX HEIGHT */
+}
+
+.calendar-column {
+    width: 12.8%;
+    border-right: 2px var(--light-gray) solid;
+    border-top: 2px var(--light-gray) solid;
+}
+
+.column-time {
+    width: 8%;
+    border-top: none;
+}
+
+.column-header {
+    border-bottom: 2px var(--light-gray) solid;;
+}
+
+.left-header {
+    text-align: left;
+    margin-left: 15%;
+}
+
+.weekday {
+    font-size: 28px;
+    color: var(--light-blue);
+    text-align: left;
+    margin: 5px 35px;
+}
+
+.day {
+    font-size: 40px;
+    color: var(--dull-blue);
+    text-align: left;
+    margin: 5px 35px;
+}
