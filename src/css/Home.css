@@ -8,16 +8,52 @@ h2 {
     font-weight: 500;
 }
 
+button {
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 8px 12px;
+    border: none;
+    box-shadow: none;
+}
+
+button:hover {
+    filter: brightness(105%);
+}
+
+button:active {
+    filter: brightness(95%);
+}
+
+.btn-open {
+    border-radius: 0;
+}
+
+.btn-open:hover {
+    filter: none;
+}
+
 .header {
+    display: flex;
     background-color: var(--dull-blue);
     color: white;
     text-align: left;
     height: 50px;
-    padding-left: 100px;
 }
 
 #title {
     padding: 5px;
+    margin-left: 20px;
+}
+
+.container-logo {
+    background-color: var(--light-blue);
+    display: flex;
+    width: 75px;
+}
+
+.logo {
+    width: 35px;
+    margin: auto;
 }
 
 .page {
@@ -26,16 +62,19 @@ h2 {
 
 .contents {
     width: 95vw;
+    height: calc(100vh - 50px);
 }
 
 .content-btns {
     height: 50px;
     text-align: left;
-    margin: 25px 0 10px 10%;
+    margin: 25px 0 10px 8%;
 }
 
 .navbar {
-    width: 5vw;
+    display: flex;
+    flex-direction: column;
+    width: 75px;
     height: calc(100vh - 50px);
     background-color: var(--pale-gray);
 }
@@ -53,4 +92,41 @@ h2 {
 .btn-home:hover {
     cursor: pointer;
     color: var(--blush);
+}
+
+.nav-btn-container {
+    height: 80%;
+}
+
+.nav-today-container {
+    background-color: var(--light-blue);
+    height: 20%;
+}
+
+.nav-today-header {
+    background-color: var(--dull-blue);
+    height: 30px;
+    color: white;
+    display: flex;
+}
+
+.nav-month {
+    color: white;
+    font-size: 25px;
+    text-align: center;
+}
+
+.nav-day {
+    color: white;
+    font-size: 40px;
+    text-align: center;
+}
+
+.nav-date-container {
+    display: flex;
+    height: calc(100% - 30px);
+}
+
+.flex-centered {
+    margin: auto;
 }

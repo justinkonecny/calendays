@@ -5,19 +5,19 @@ import { Redirect } from "react-router";
 class Login extends Component {
     render() {
         return (
-            <div className='Login'>
-                <div className='container'>
-                    <div className='info-intro'>
-                        <h1 id='greeting'>hey! let's make plans!</h1>
-                        <p className='intro-blurb'>crazy busy and can’t remember your friends’ schedules? calendays is here to help!</p>
-                        <ul className='intro-blurb bullets'>
+            <div className={'Login'}>
+                <div className={'container'}>
+                    <div className={'info-intro'}>
+                        <h1 id={'greeting'}>hey! let's make plans!</h1>
+                        <p className={'intro-blurb'}>crazy busy and can’t remember your friends’ schedules? calendays is here to help!</p>
+                        <ul className={'intro-blurb bullets'}>
                             <li>easily see when friends are free</li>
                             <li>send invitations and polls</li>
                             <li>connect Google calendar</li>
                         </ul>
                     </div>
-                    <div className='user-login'>
-                        <h1 id='calendays'>calendays</h1>
+                    <div className={'user-login'}>
+                        <h1 id={'calendays'}>calendays</h1>
                         <LoginForm firebase={this.props.firebase}/>
                     </div>
                 </div>
@@ -73,30 +73,30 @@ class LoginForm extends Component {
     getCurrentForm() {
         if (this.state.isExistingUser) {
             return(
-                <div className='login-form'>
+                <div className={'login-form'}>
                     <div>
-                        <input className='login-input' type='email' name='email' placeholder='email' value={this.state.email} onChange={this.handleChange} />
-                        <input className='login-input' type='password' name='password' placeholder='password' value={this.state.password} onChange={this.handleChange} />
+                        <input className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange} />
+                        <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange} />
                     </div>
                     <div style={{'margin': '10px 0'}}>
                         <a className='forgot'>forgot password?</a>
                     </div>
                     <div style={{'textAlign': 'center'}}>
-                        <button id={'submitLogin'} className='login-submit' onClick={this.handleSubmit}>login</button>
+                        <button id={'submitLogin'} className={'login-submit btn-open'} onClick={this.handleSubmit}>login</button>
                     </div>
                 </div>
             );
         } else {
             return (
-                <div className='login-form' onSubmit={this.handleSubmit}>
+                <div className={'login-form'} onSubmit={this.handleSubmit}>
                     <div>
-                        <input className='login-input' type='text' name='fullname' placeholder='fullname' value={this.state.fullname} onChange={this.handleChange} />
+                        <input className={'login-input'} type={'text'} name={'fullname'} placeholder={'fullname'} value={this.state.fullname} onChange={this.handleChange} />
                         {/*<input className='login-input' type='text' name='username' placeholder='username' value={this.state.username} onChange={this.handleChange} />*/}
-                        <input className='login-input' type='email' name='email' placeholder='email' value={this.state.email} onChange={this.handleChange} />
-                        <input className='login-input' type='password' name='password' placeholder='password' value={this.state.password} onChange={this.handleChange} />
+                        <input className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange} />
+                        <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange} />
                     </div>
                     <div style={{'textAlign': 'center'}}>
-                        <button id={'submitRegister'} className='login-submit' onClick={this.handleSubmit}>register</button>
+                        <button id={'submitRegister'} className={'login-submit btn-open'} onClick={this.handleSubmit}>register</button>
                     </div>
                 </div>
             );
@@ -120,10 +120,10 @@ class LoginForm extends Component {
         }
 
         return (
-            <div className='login-main'>
+            <div className={'login-main'}>
                 <div>
-                    <button id='login' className='login-button' style={styleLogin} onClick={this.handleClick}>login</button>
-                    <button id='sign-up' className='login-button' style={styleSignUp} onClick={this.handleClick}>sign up</button>
+                    <button id={'login'} className={'login-button btn-open'} style={styleLogin} onClick={this.handleClick}>login</button>
+                    <button id={'sign-up'} className={'login-button btn-open'} style={styleSignUp} onClick={this.handleClick}>sign up</button>
                 </div>
                 <div>
                     {this.getCurrentForm()}

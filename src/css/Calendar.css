@@ -1,44 +1,116 @@
 .calendar-container {
     width: 100%;
-    height: calc(100vh - 100px);
+    height: calc(100% - 100px);
 }
 
 .calendar {
     display: flex;
-    height: 100%;
-    /* TODO: FIX HEIGHT */
+    height: calc(100% - 90px);
+}
+
+.calendar-header {
+    display: flex;
 }
 
 .calendar-column {
     width: 12.8%;
+    height: 100%;
     border-right: 2px var(--light-gray) solid;
     border-top: 2px var(--light-gray) solid;
+    border-bottom: 2px var(--light-gray) solid;
+}
+
+.calendar-column-left {
+    border-left: 2px var(--light-gray) solid;
+    border-radius: 5px 0 0 5px;
+}
+
+.calendar-column-right {
+    border-radius: 0 5px 5px 0;
+}
+
+.column-header {
+    padding-bottom: 2px;
+    height: 100px;
+}
+
+.column-header-today {
+    background-color: var(--dull-blue);
+    color: white;
 }
 
 .column-time {
     width: 8%;
-    border-top: none;
+    border: none;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
-.column-header {
-    border-bottom: 2px var(--light-gray) solid;;
+.column-time-header {
+    border-bottom: none;
+    padding-bottom: 2px;
 }
 
-.left-header {
+.calendar-header-left {
     text-align: left;
-    margin-left: 15%;
+    margin-left: 8%;
+    width: 50%;
+}
+
+.calendar-header-right {
+    display: flex;
+    width: 50%;
 }
 
 .weekday {
     font-size: 28px;
     color: var(--light-blue);
     text-align: left;
-    margin: 5px 35px;
+    margin-left: 30px;
+    padding-top: 5px;
 }
 
 .day {
     font-size: 40px;
     color: var(--dull-blue);
     text-align: left;
-    margin: 5px 35px;
+    margin-left: 30px;
+}
+
+.column-header-today {
+    background-color: var(--dull-blue);
+    color: white;
+}
+
+.container-times {
+    height: calc(100% - 100px);
+    color: var(--dull-blue);
+    font-weight: 400;
+}
+
+.container-events {
+    height: calc(100% - 100px);
+    color: var(--dull-blue);
+    font-weight: 400;
+}
+
+.row-grid {
+    border-top: 2px var(--light-gray) solid;
+}
+
+.row-time {
+    padding-top: 2px;
+    text-align: right;
+}
+
+.time {
+    margin-right: 25%;
+    position: relative;
+    top: -25%;
+}
+
+.btn-new-event {
+    margin: auto auto auto 0;
+    color: white;
+    background-color: var(--blush);
 }
