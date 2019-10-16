@@ -8,6 +8,17 @@ h2 {
     font-weight: 500;
 }
 
+input {
+    background: none;
+    border: none;
+    color: var(--dull-blue);
+    border-bottom: 1px solid;
+}
+
+input::placeholder {
+    color: var(--dull-blue);
+}
+
 button {
     border-radius: 5px;
     font-size: 16px;

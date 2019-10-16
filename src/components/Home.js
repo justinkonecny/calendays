@@ -48,10 +48,10 @@ class NavBar extends Component {
         return (
             <div className={'navbar'}>
                 <div className={'nav-btn-container'}>
-                    <div style={{'margin-top': '20px'}}>
+                    <div style={{'marginTop': '20px'}}>
                         <img className={'logo'} src={notification} alt={'notification'}/>
                     </div>
-                    <div style={{'margin-top': '20px'}}>
+                    <div style={{'marginTop': '20px'}}>
                         <img className={'logo'} src={profile} alt={'profile'}/>
                     </div>
                 </div>

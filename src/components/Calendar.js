@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import NewEvent from './NewEvent';
 import '../css/Calendar.css'
 
 const ColumnEnd = {
@@ -6,64 +7,15 @@ const ColumnEnd = {
     RIGHT: 'calendar-column-right'
 };
 
-class Day {
-
-    constructor(name, displayName, columnEnd) {
-        this.name = name;
-        this.displayName = displayName;
-        this.columnEnd = columnEnd;
-        this.dayMonth = -1;
-        this.isToday = false;
-    }
-
-    setDayMonth(num) {
-        this.dayMonth = num;
-        return this;
-    }
-
-    setTimesCount(count) {
-        this.timesCount = count;
-        return this;
-    }
-
-    setToday(bool) {
-        this.isToday = bool;
-        return this;
-    }
-
-    render() {
-        const columnGrid = [];
-        const rowHeight = {height: 'calc(' + (100 / +this.timesCount) + '% - 2px)'};
-        for (let i = 0; i < this.timesCount; i++) {
-            columnGrid.push(
-                <div className={'row-grid'} style={rowHeight}/>
-            );
-        }
-
-        const columnClass = this.columnEnd == null ? 'calendar-column' : 'calendar-column ' + this.columnEnd;
-
-        return (
-            <div className={columnClass} id={this.name}>
-                <div className={this.isToday ? 'column-header column-header-today' : 'column-header'}>
-                    <div className={this.isToday ? 'weekday column-header-today' : 'weekday'}>
-                        {this.displayName}
-                    </div>
-                    <div className={this.isToday ? 'day column-header-today' : 'day'}>
-                        {this.dayMonth}
-                    </div>
-                </div>
-                <div className={'container-events'}>
-                    {columnGrid}
-                </div>
-            </div>
-        );
-    }
-}
-
 class Calendar extends Component {
 
     constructor(props) {
         super(props);
+        this.createNewEvent = this.createNewEvent.bind(this);
+
+        this.state = {
+            showNewEvent: false
+        };
 
         this.dayClasses = [
             new Day('Sunday', 'sun', ColumnEnd.LEFT),
@@ -84,6 +36,11 @@ class Calendar extends Component {
             // TODO: Fix when out of range of month
         }
     }
+
+    createNewEvent() {
+        this.setState({showNewEvent: true});
+    }
+
 
     render() {
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -110,7 +67,7 @@ class Calendar extends Component {
         const rowHeight = {height: 'calc(' + (100 / +times.length) + '% - 2px)'};
         times = times.map(time => {
             return (
-                <div className={'row-time'} style={rowHeight}>
+                <div className={'row-time'} style={rowHeight} key={'rowTime' + time.replace(' ', '_')}>
                     <span className={'time'}>{time}</span>
                 </div>
             );
@@ -118,27 +75,94 @@ class Calendar extends Component {
 
         const columns = this.dayClasses.map(day => {
             day.setTimesCount(times.length);
-            return day.render();
+            return day.render(this.state);
         });
 
         return (
-            <div className={'calendar-container'}>
-                <div className={'calendar-header'}>
-                    <h2 className={'calendar-header-left'}>
-                        {monthNames[date.getMonth()]} {date.getFullYear()}
-                    </h2>
-                    <div className={'calendar-header-right'}>
-                        <button className={'btn-new-event'}>new event</button>
-                    </div>
-                </div>
-                <div className={'calendar'} id={'calendar'}>
-                    <div className={'calendar-column column-time'}>
-                        <div className={'column-header column-time-header'}/>
-                        <div className={'container-times'}>
-                            {times}
+            <div className={'calendar-container-outer'}>
+                <NewEvent display={this.state.showNewEvent}/>
+                <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
+                    <div className={'calendar-header'}>
+                        <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
+                            {monthNames[date.getMonth()]} {date.getFullYear()}
+                        </h2>
+                        <div className={'calendar-header-right'}>
+                            <button className={'btn-new-event'} onClick={this.createNewEvent}>new event</button>
                         </div>
                     </div>
-                    {columns}
+                    <div className={'calendar'} id={'calendar'}>
+                        <div className={'calendar-column column-time'}>
+                            <div className={'column-header column-time-header'}/>
+                            <div className={'container-times'}>
+                                {times}
+                            </div>
+                        </div>
+                        {columns}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
+class Day {
+
+    constructor(name, displayName, columnEnd) {
+        this.name = name;
+        this.displayName = displayName;
+        this.columnEnd = columnEnd;
+        this.dayMonth = -1;
+        this.isToday = false;
+    }
+
+    setDayMonth(num) {
+        this.dayMonth = num;
+        return this;
+    }
+
+    setTimesCount(count) {
+        this.timesCount = count;
+        return this;
+    }
+
+    setToday(bool) {
+        this.isToday = bool;
+        return this;
+    }
+
+    render(state) {
+        this.state = state;
+        const columnGrid = [];
+        const rowHeight = {height: 'calc(' + (100 / +this.timesCount) + '% - 2px)'};
+        for (let i = 0; i < this.timesCount; i++) {
+            columnGrid.push(
+                <div className={'row-grid'} style={rowHeight} key={'row' + i}/>
+            );
+        }
+
+        const columnClass = this.columnEnd == null ? 'calendar-column' : 'calendar-column ' + this.columnEnd;
+
+        let weekdayClass = this.isToday ? 'weekday column-header-today' : 'weekday';
+        weekdayClass = this.state.showNewEvent ? weekdayClass + ' weekday-half' : weekdayClass;
+
+        let dayClass = this.isToday ? 'day column-header-today' : 'day';
+        dayClass = this.state.showNewEvent ? dayClass + ' day-half' : dayClass;
+
+        let columnHeaderClass = this.isToday ? 'column-header column-header-today' : 'column-header';
+        columnHeaderClass = this.state.showNewEvent ? columnHeaderClass + ' column-header-half' : columnHeaderClass;
+
+        return (
+            <div className={columnClass} id={this.name} key={this.name}>
+                <div className={columnHeaderClass}>
+                    <div className={weekdayClass}>
+                        {this.displayName}
+                    </div>
+                    <div className={dayClass}>
+                        {this.dayMonth}
+                    </div>
+                </div>
+                <div className={'container-events'}>
+                    {columnGrid}
                 </div>
             </div>
         );
