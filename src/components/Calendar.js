@@ -11,10 +11,10 @@ class Calendar extends Component {
 
     constructor(props) {
         super(props);
-        this.createNewEvent = this.createNewEvent.bind(this);
+        this.toggleNewEvent = this.toggleNewEvent.bind(this);
 
         this.state = {
-            showNewEvent: false
+            showNewEvent: true // TODO: Change default to false
         };
 
         this.dayClasses = [
@@ -37,8 +37,9 @@ class Calendar extends Component {
         }
     }
 
-    createNewEvent() {
-        this.setState({showNewEvent: true});
+    toggleNewEvent() {
+        const isShowing = this.state.showNewEvent;
+        this.setState({showNewEvent: !isShowing});
     }
 
 
@@ -80,18 +81,18 @@ class Calendar extends Component {
 
         return (
             <div className={'calendar-container-outer'}>
-                <NewEvent display={this.state.showNewEvent}/>
+                {this.state.showNewEvent && <NewEvent/>}
                 <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
                     <div className={'calendar-header'}>
                         <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
                             {monthNames[date.getMonth()]} {date.getFullYear()}
                         </h2>
                         <div className={'calendar-header-right'}>
-                            <button className={'btn-new-event'} onClick={this.createNewEvent}>new event</button>
+                            <button className={'btn-new-event'} onClick={this.toggleNewEvent}>new event</button>
                         </div>
                     </div>
                     <div className={'calendar'} id={'calendar'}>
-                        <div className={'calendar-column column-time'}>
+                        <div className={this.state.showNewEvent ? 'calendar-column column-time column-time-half' : 'calendar-column column-time'}>
                             <div className={'column-header column-time-header'}/>
                             <div className={'container-times'}>
                                 {times}

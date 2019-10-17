@@ -56,10 +56,13 @@
 
 .column-time {
     width: 8%;
-    min-width: 75px;
     border: none;
     padding-top: 2px;
     padding-bottom: 2px;
+}
+
+.column-time-half {
+    width: 75px;
 }
 
 .column-time-header {
@@ -145,6 +148,3 @@
     background-color: var(--blush);
 }
 
-.create-new-event {
-    width: 30%;
-}
