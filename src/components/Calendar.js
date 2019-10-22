@@ -12,6 +12,8 @@ class Calendar extends Component {
     constructor(props) {
         super(props);
         this.toggleNewEvent = this.toggleNewEvent.bind(this);
+        this.handleSuccess = this.handleSuccess.bind(this);
+        this.handleFailure = this.handleFailure.bind(this);
 
         this.state = {
             showNewEvent: true // TODO: Change default to false
@@ -42,6 +44,14 @@ class Calendar extends Component {
         this.setState({showNewEvent: !isShowing});
     }
 
+    handleSuccess(docRef) {
+        this.setState({showNewEvent: false});
+    }
+
+    handleFailure(error) {
+        console.error('Error creating event');
+        console.error(error);
+    }
 
     render() {
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -81,14 +91,14 @@ class Calendar extends Component {
 
         return (
             <div className={'calendar-container-outer'}>
-                {this.state.showNewEvent && <NewEvent/>}
+                {this.state.showNewEvent && <NewEvent user={this.props.user} db={this.props.db} handleSuccess={this.handleSuccess} handleFailure={this.handleFailure}/>}
                 <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
                     <div className={'calendar-header'}>
                         <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
                             {monthNames[date.getMonth()]} {date.getFullYear()}
                         </h2>
                         <div className={'calendar-header-right'}>
-                            <button className={'btn-new-event'} onClick={this.toggleNewEvent}>new event</button>
+                            <button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>new event</button>
                         </div>
                     </div>
                     <div className={'calendar'} id={'calendar'}>

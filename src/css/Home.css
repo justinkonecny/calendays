@@ -37,7 +37,7 @@ button {
 }
 
 button:hover {
-    filter: brightness(105%);
+    filter: brightness(110%);
 }
 
 button:active {
@@ -53,6 +53,12 @@ textarea {
     font-size: 13px;
     padding: 10px;
     resize: none;
+}
+
+.btn-primary {
+    margin: auto;
+    color: white;
+    background-color: var(--blush);
 }
 
 .btn-open {

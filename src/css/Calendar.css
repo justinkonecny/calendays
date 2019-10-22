@@ -143,8 +143,6 @@
 }
 
 .btn-new-event {
-    margin: auto auto auto 0;
-    color: white;
-    background-color: var(--blush);
+    margin-left: 0;
 }
 

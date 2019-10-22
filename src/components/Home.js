@@ -8,8 +8,9 @@ import Calendar from './Calendar';
 
 class Home extends Component {
     render() {
-        let user = this.props.firebase.auth().currentUser;
-        if (!user && false) { // TODO: Temporary auth bypass for development, REMOVE !!
+        const user = this.props.firebase.auth().currentUser;
+        const db = this.props.firebase.firestore();
+        if (!user) { // TODO: Temporary auth bypass for development, REMOVE !!
             return (
                 <Redirect to={'/'}/>
             );
@@ -30,7 +31,7 @@ class Home extends Component {
                             <button id={'my-networks'} className={'btn-home btn-open'} onClick={this.handleClick}>my networks</button>
                             <button id={'my-profile'} className={'btn-home btn-open'} onClick={this.handleClick}>my profile</button>
                         </div>
-                        <Calendar/>
+                        <Calendar user={user} db={db}/>
                     </div>
                 </div>
             </div>

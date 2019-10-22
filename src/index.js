@@ -8,6 +8,7 @@ import { Config } from './config';
 
 const firebase = require('firebase/app');
 require('firebase/auth');
+require("firebase/firestore");
 firebase.initializeApp(Config);
 
 const routerApp = (

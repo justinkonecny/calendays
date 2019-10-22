@@ -1,6 +1,6 @@
 .create-new-event {
     width: 24%;
-    height: 96%;
+    height: 94%;
     margin: 2% 2% 2% 0;
     padding: 0 2%;
     display: flex;
@@ -28,4 +28,8 @@
 
 .new-event-message {
     min-height: 50px;
+}
+
+.btn-create-event {
+    margin: 25px auto;
 }
