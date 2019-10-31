@@ -1,0 +1,22 @@
+{
+  "users": {
+    "3COBqpX6LQS9jHlSnihdye4EYqy1": {
+      "events": {
+        "9LEwOx8yUvafr4c1CjcL": {
+          "date": {
+            "day": "23",
+            "month": "11",
+            "year": "2019"
+          },
+          "location": "Boston",
+          "message": "Hey, come to my tournament!",
+          "name": "Soccer Tournament",
+          "time": [
+            "05",
+            "45"
+          ]
+        }
+      }
+    }
+  }
+}

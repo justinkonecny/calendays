@@ -125,6 +125,15 @@
     height: calc(100% - 100px);
     color: var(--dull-blue);
     font-weight: 400;
+    position: relative;
+}
+
+.calendar-event {
+    background-color: var(--blush);
+    border-radius: 5px;
+    width: calc(100% - 4px);
+    position: absolute;
+    padding: 2px;
 }
 
 .row-grid {

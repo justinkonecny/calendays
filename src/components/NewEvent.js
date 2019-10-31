@@ -77,17 +77,21 @@ class NewEvent extends Component {
             return;
         }
 
+        if (tod.toLowerCase() === 'pm') {
+            time[0] = parseInt(time[0]) + 12;
+        }
+
         // TODO: Add date and time validation
 
         return {
             time: {
-              hour: time[0],
-              minute: time[1]
+              hour: parseInt(time[0]),
+              minute: parseInt(time[1])
             },
             date: {
-                year: date[2],
-                month: date[1],
-                day: date[0]
+                month: parseInt(date[0]),
+                day: parseInt(date[1]),
+                year: parseInt(date[2])
             }
         }
     }
