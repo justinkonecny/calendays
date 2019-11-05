@@ -5,6 +5,15 @@ import {Redirect} from "react-router";
 class Login extends Component {
 
     render() {
+        const user = this.props.firebase.auth().currentUser;
+        console.log("LOGIN");
+        console.log(user);
+        if (user) {
+            return (
+                <Redirect to={'/home'}/>
+            );
+        }
+
         return (
             <div className={'Login'}>
                 <div className={'container'}>
@@ -33,7 +42,8 @@ class LoginForm extends Component {
         super(props);
         this.state = {
             isExistingUser: true,
-            fullname: '',
+            firstName: '',
+            lastName: '',
             username: '',
             email: '',
             password: '',
@@ -55,11 +65,16 @@ class LoginForm extends Component {
 
     handleSubmit(event) {
         if (event.target.id === 'submitLogin') {
+            console.log('email ' + this.state.email);
+            console.log('pass ' + this.state.password);
             this.props.firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).catch(this.firebaseError);
 
-            var user = this.props.firebase.auth().currentUser;
-            if (user) {
-                this.setState({auth: true});
+            if (this.props.firebase.auth().currentUser) {
+                this.setState({
+                    auth: true,
+                    email: '',
+                    password: ''
+                });
             }
         } else {
             this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).catch(this.firebaseError);
@@ -92,7 +107,7 @@ class LoginForm extends Component {
                         <a className='forgot'>forgot password?</a>
                     </div>
                     <div style={{'textAlign': 'center'}}>
-                        <button id={'submitLogin'} className={'login-submit btn-open'} onClick={this.handleSubmit}>login</button>
+                        <button id={'submitLogin'} className={'login-submit'} onClick={this.handleSubmit}>login</button>
                     </div>
                 </div>
             );
@@ -100,10 +115,14 @@ class LoginForm extends Component {
             return (
                 <div className={'login-form'} onSubmit={this.handleSubmit}>
                     <div>
-                        <input className={'login-input'} type={'text'} name={'fullname'} placeholder={'fullname'} value={this.state.fullname} onChange={this.handleChange}/>
-                        {/*<input className='login-input' type='text' name='username' placeholder='username' value={this.state.username} onChange={this.handleChange} />*/}
-                        <input className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange}/>
-                        <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange}/>
+                        <div>
+                            <input className={'login-input'} type={'text'} name={'firstName'} placeholder={'first name'} value={this.state.firstName} onChange={this.handleChange}/>
+                            <input className={'login-input'} type={'text'} name={'lastName'} placeholder={'last name'} value={this.state.lastName} onChange={this.handleChange}/>
+                        </div>
+                        <div>
+                            <input className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange}/>
+                            <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange}/>
+                        </div>
                     </div>
                     <div style={{'textAlign': 'center'}}>
                         <button id={'submitRegister'} className={'login-submit btn-open'} onClick={this.handleSubmit}>register</button>

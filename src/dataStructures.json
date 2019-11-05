@@ -4,17 +4,21 @@
       "events": {
         "9LEwOx8yUvafr4c1CjcL": {
           "date": {
-            "day": "23",
-            "month": "11",
-            "year": "2019"
+            "day": 23,
+            "month": 11,
+            "year": 2019
+          },
+          "duration": {
+            "hours": 2,
+            "minutes": 30
           },
           "location": "Boston",
           "message": "Hey, come to my tournament!",
           "name": "Soccer Tournament",
-          "time": [
-            "05",
-            "45"
-          ]
+          "time": {
+            "hour": 5,
+            "minute": 45
+          }
         }
       }
     }

@@ -7,8 +7,11 @@ import profile from '../resources/profile.svg';
 import Calendar from './Calendar';
 
 class Home extends Component {
+
     render() {
         const user = this.props.firebase.auth().currentUser;
+        console.log("HOME");
+        console.log(user);
         const db = this.props.firebase.firestore();
         if (!user) { // TODO: Temporary auth bypass for development, REMOVE !!
             return (

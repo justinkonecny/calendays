@@ -1,0 +1,77 @@
+.create-new-event {
+  width: 24%;
+  height: 94%;
+  margin: 2% 2% 2% 0;
+  padding: 0 2%;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+}
+
+.input-event-name {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 8px 10px 8px 0;
+  width: 80%;
+  color: var(--light-blue);
+  border-color: var(--dull-blue);
+}
+
+.input-event-name::placeholder {
+  color: var(--light-blue);
+}
+
+.input-event-location {
+  text-align: left;
+  width: 70%;
+}
+
+.new-event-message {
+  min-height: 50px;
+}
+
+.btn-create-event {
+  margin: 25px auto;
+}
+
+$dropDownHeight: 150px;
+$spacingDateTB: 8px;
+$spacingDateLR: 12px;
+$widthDate: 225px;
+
+.date-time {
+  text-align: left;
+
+  .btn-date-time {
+    text-align: left;
+    background-color: var(--pale-gray);
+    color: var(--dull-blue);
+    border-radius: 0;
+    margin: 0;
+    padding: $spacingDateTB $spacingDateLR;
+    border-bottom: 1px solid var(--dark-gray);
+    width: $widthDate;
+  }
+}
+
+.date-picker {
+  height: $dropDownHeight;
+  width: $widthDate;
+  overflow: scroll;
+  background-color: var(--pale-gray);
+  border-radius: 0;
+  color: var(--dull-blue);
+  position: absolute;
+
+  .date-picker-inner {
+    display: block;
+    color: var(--dull-blue);
+    background-color: var(--pale-gray);
+    border-radius: 0;
+    text-align: left;
+    width: 100%;
+    padding: $spacingDateTB $spacingDateLR;
+    border-bottom: 1px solid var(--dark-gray);
+    margin: 0;
+  }
+}

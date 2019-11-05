@@ -51,6 +51,10 @@ button:active {
     filter: brightness(95%);
 }
 
+button:focus {
+    outline: none;
+}
+
 textarea {
     border-radius: 3px;
     border-color: var(--dull-blue);

@@ -23,7 +23,18 @@ class Calendar extends Component {
             events: []
         };
 
+        this.weekNames = [
+            ['Sunday', 'Sun'],
+            ['Monday', 'Mon'],
+            ['Tuesday', 'Tues'],
+            ['Wednesday', 'Wed'],
+            ['Thursday', 'Thurs'],
+            ['Friday', 'Fri'],
+            ['Saturday', 'Sat'],
+        ];
+
         this.dayClasses = [
+            // TODO: Fix this to use the list of weekDays
             new CalendarDay('Sunday', 'sun', ColumnEnd.LEFT),
             new CalendarDay('Monday', 'mon'),
             new CalendarDay('Tuesday', 'tues'),
@@ -48,6 +59,11 @@ class Calendar extends Component {
             }
         });
 
+        this.monthLengths = [];
+        for (let i = 1; i <= 12; i ++) {
+            const lastDate = new Date(this.date.getFullYear(), i, 0);
+            this.monthLengths.push(lastDate.getDate());
+        }
     }
 
     populateDates(currDate, currDayOfWeek) {
@@ -135,7 +151,13 @@ class Calendar extends Component {
 
         return (
             <div className={'calendar-container-outer'}>
-                {this.state.showNewEvent && <NewEvent user={this.props.user} db={this.props.db} handleSuccess={this.handleSuccess} handleFailure={this.handleFailure}/>}
+                {this.state.showNewEvent && <NewEvent user={this.props.user}
+                                                      db={this.props.db}
+                                                      handleSuccess={this.handleSuccess}
+                                                      handleFailure={this.handleFailure}
+                                                      months={monthNames}
+                                                      monthLengths={this.monthLengths}
+                                                      weekDays={this.weekNames}/>}
                 <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
                     <div className={'calendar-header'}>
                         <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
