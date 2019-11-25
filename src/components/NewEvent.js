@@ -110,10 +110,8 @@ class NewEvent extends Component {
         this.setState({showEventDatePicker: !showing});
     }
 
-    setEventDate(event) {
-        const date = new Date(event.target.innerText);
+    setEventDate(date) {
         this.setState({
-            showEventDatePicker: false,
             eventDateDay: date.getDate(),
             eventDateMonth: date.getMonth(),
             eventDateYear: date.getFullYear(),
@@ -129,16 +127,17 @@ class NewEvent extends Component {
 
                 <h3>date + time</h3>
                 {/*<input className={'input-event-location'} type={'text'} name={'eventDateTime'} placeholder={'mm/dd/yy hh:mm am|pm'} value={this.state.eventDateTime} onChange={this.handleChange}/>*/}
-                <div className={'date-time'}>
-                    <button className={'btn-date-time'} onClick={this.clickEventDate}>
-                        {this.weekDays[this.state.eventDateWeekDay][1]}. {this.months[this.state.eventDateMonth]} {this.state.eventDateDay} {this.state.eventDateYear}
-                    </button>
-                    {this.state.showEventDatePicker && <DatePicker setDate={this.setEventDate} months={this.months} monthLengths={this.monthLengths} weekDays={this.weekDays}/>}
-                </div>
+
+                <DatePicker startDate={this.date}
+                            setDate={this.setEventDate}
+                            months={this.months}
+                            monthLengths={this.monthLengths}
+                            weekDays={this.weekDays}/>
+
+                <TimePicker startTime={'7:00'}/>
 
                 <h3>location</h3>
-                <input className={'input-event-location'} type={'text'} name={'eventLocation'} placeholder={'Add location'} value={this.state.eventLocation}
-                       onChange={this.handleChange}/>
+                <input className={'input-event-location'} type={'text'} name={'eventLocation'} placeholder={'Add location'} value={this.state.eventLocation} onChange={this.handleChange}/>
 
                 {/*<h3>friends</h3>*/}
                 {/*<div>don't know her</div>*/}
@@ -171,12 +170,21 @@ class DatePicker extends Component {
         super(props);
         this.dates = [];
         this.monthLengths = this.props.monthLengths;
+        this.startDate = this.props.startDate;
+        this.displayDate = this.startDate;
+        this.weekDays = this.props.weekDays;
+        this.months = this.props.months;
+        this.setDate = this.props.setDate;
 
-        const currDate = new Date();
-        let currDay = currDate.getDate();
-        let currMonth = currDate.getMonth();
-        let currYear = currDate.getFullYear();
-        for (let i = 1; i < 100; i ++) {
+        this.state = {
+            showPicker: false
+        };
+
+        let currDay = this.startDate.getDate();
+        let currMonth = this.startDate.getMonth();
+        let currYear = this.startDate.getFullYear();
+
+        for (let i = 1; i < 100; i++) {
             if (currDay === this.monthLengths[currMonth]) {
                 currMonth += 1;
                 currDay = 0;
@@ -187,24 +195,135 @@ class DatePicker extends Component {
                 }
             }
             const nextDate = currDay += 1;
-            let next = this.props.months[currMonth] + ' ' + nextDate + ' ' + currYear;
+            let next = this.months[currMonth] + ' ' + nextDate + ' ' + currYear;
             this.dates.push(new Date(next));
         }
+
+        this.clickEventDate = this.clickEventDate.bind(this);
+        this.clickDate = this.clickDate.bind(this);
+    }
+
+    clickEventDate() {
+        const showing = this.state.showPicker;
+        this.setState({showPicker: !showing});
+    }
+
+    clickDate(event) {
+        const fullDate = event.target.innerText;
+        const split = fullDate.indexOf(' ') + 1; // Get index to separate weekday from date
+        const dateStr = fullDate.substring(split); // Get the date without the weekday
+        const date = new Date(dateStr);
+
+        this.setState({showPicker: false});
+        this.displayDate = date;
+        this.setDate(date);
     }
 
     render() {
         return (
-            <div className={'date-picker'}>
-                {this.dates.map(date => {
-                    return (
-                        <button className={'date-picker-inner'} onClick={this.props.setDate}>
-                            {this.props.weekDays[date.getDay()][1]}. {this.props.months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()}
-                        </button>
-                    );
-                })}
+            <div className={'date-time'}>
+                <button className={'btn-date-time'} onClick={this.clickEventDate}>
+                    {this.weekDays[this.displayDate.getDay()][1]}. {this.months[this.displayDate.getMonth()]} {this.displayDate.getDate()} {this.displayDate.getFullYear()}
+                </button>
+                {this.state.showPicker && <div className={'picker'}>
+                    {this.dates.map(date => {
+                        return (
+                            <button className={'picker-inner'} onClick={this.clickDate} key={date}>
+                                {this.weekDays[date.getDay()][1]}. {this.months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()}
+                            </button>
+                        );
+                    })}
+                </div>}
             </div>
         );
     }
 }
+
+class TimePicker extends Component {
+    constructor(props) {
+        super(props);
+        this.times = [];
+
+        this.getTimeListFromDisplay = this.getTimeListFromDisplay.bind(this);
+        this.clickTimePicker = this.clickTimePicker.bind(this);
+        this.clickTime = this.clickTime.bind(this);
+
+        this.state = {
+            displayTime: this.getTimeListFromString(this.props.startTime),
+            showPicker: false
+        };
+
+        for (let i = 0; i < 24; i++) {
+            const formattedTime = this.getTimeListFromString(i + ':00');
+            this.times.push(formattedTime);
+        }
+    }
+
+    getTimeListFromString(time) {
+        // TODO: Add time validation here
+        const splitTime = time.split(':'); // Split the hour and minute
+        const hour = parseInt(splitTime[0]);
+        const min = parseInt(splitTime[1]);
+        if (hour > 12) {
+            return [hour - 12, min, TimeOfDay.PM];
+        } else {
+            return [hour, min, TimeOfDay.AM];
+        }
+    }
+
+    getTimeListFromDisplay(time) {
+        const splitTime = time.split(':'); // Split the hour and minute
+        const hour = parseInt(splitTime[0]);
+        const minSplit = splitTime[1].split(' '); // Split the minute and 'AM' or 'PM'
+        const min = parseInt(minSplit[0]);
+        const timeOfDay = minSplit[1];
+        return [hour, min, timeOfDay];
+    }
+
+    getDisplayFromTimeList(time) {
+        let hour = time[0];
+        const min = time[1];
+        const timeOfDay = time[2];
+        if (hour === 0) {
+            hour = 12;
+        }
+
+        return hour.toString().padStart(2, '0') + ':' + min.toString().padStart(2, '0') + ' ' + timeOfDay;
+    }
+
+    clickTimePicker() {
+        const showing = this.state.showPicker;
+        this.setState({showPicker: !showing});
+    }
+
+    clickTime(event) {
+        const displayTime = this.getTimeListFromDisplay(event.target.innerText);
+        this.setState({displayTime, showPicker: false});
+    }
+
+    render() {
+        return (
+            <div className={'date-time time-container'}>
+                <button className={'btn-date-time btn-time'} onClick={this.clickTimePicker}>
+                    {this.getDisplayFromTimeList(this.state.displayTime)}
+                </button>
+                {this.state.showPicker && <div className={'picker picker-time'}>
+                    {this.times.map(time => {
+                        return (
+                            <button className={'picker-inner'} onClick={this.clickTime} key={time}>
+                                {this.getDisplayFromTimeList(time)}
+                            </button>
+                        );
+                    })}
+                </div>}
+            </div>
+        );
+    }
+}
+
+const TimeOfDay = {
+    AM: 'AM',
+    PM: 'PM'
+};
 
 export default NewEvent;

@@ -34,10 +34,11 @@
   margin: 25px auto;
 }
 
-$dropDownHeight: 150px;
+$dropDownHeight: 200px;
 $spacingDateTB: 8px;
 $spacingDateLR: 12px;
 $widthDate: 225px;
+$widthTime: 100px;
 
 .date-time {
   text-align: left;
@@ -54,7 +55,13 @@ $widthDate: 225px;
   }
 }
 
-.date-picker {
+.time-container {
+  .btn-time {
+    width: $widthTime;
+  }
+}
+
+.picker {
   height: $dropDownHeight;
   width: $widthDate;
   overflow: scroll;
@@ -62,8 +69,9 @@ $widthDate: 225px;
   border-radius: 0;
   color: var(--dull-blue);
   position: absolute;
+  border-bottom: 1px solid var(--dark-gray);
 
-  .date-picker-inner {
+  .picker-inner {
     display: block;
     color: var(--dull-blue);
     background-color: var(--pale-gray);
@@ -74,4 +82,8 @@ $widthDate: 225px;
     border-bottom: 1px solid var(--dark-gray);
     margin: 0;
   }
+}
+
+.picker-time {
+  width: $widthTime;
 }

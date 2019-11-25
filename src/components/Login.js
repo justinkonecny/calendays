@@ -6,8 +6,6 @@ class Login extends Component {
 
     render() {
         const user = this.props.firebase.auth().currentUser;
-        console.log("LOGIN");
-        console.log(user);
         if (user) {
             return (
                 <Redirect to={'/home'}/>
@@ -65,8 +63,6 @@ class LoginForm extends Component {
 
     handleSubmit(event) {
         if (event.target.id === 'submitLogin') {
-            console.log('email ' + this.state.email);
-            console.log('pass ' + this.state.password);
             this.props.firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).catch(this.firebaseError);
 
             if (this.props.firebase.auth().currentUser) {
@@ -105,6 +101,7 @@ class LoginForm extends Component {
                     </div>
                     <div style={{'margin': '10px 0'}}>
                         <a className='forgot'>forgot password?</a>
+                        {/*TODO: make this another page*/}
                     </div>
                     <div style={{'textAlign': 'center'}}>
                         <button id={'submitLogin'} className={'login-submit'} onClick={this.handleSubmit}>login</button>
