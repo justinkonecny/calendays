@@ -8,6 +8,15 @@
   overflow: scroll;
 }
 
+.display-flex {
+  display: flex;
+}
+
+.space-between-wrap {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
 .input-event-name {
   font-size: 20px;
   font-weight: 600;
@@ -37,8 +46,8 @@
 $dropDownHeight: 200px;
 $spacingDateTB: 8px;
 $spacingDateLR: 12px;
-$widthDate: 225px;
-$widthTime: 100px;
+$widthDate: 210px;
+$widthTime: 50px;
 
 .date-time {
   text-align: left;
@@ -62,7 +71,7 @@ $widthTime: 100px;
 }
 
 .picker {
-  height: $dropDownHeight;
+  max-height: $dropDownHeight;
   width: $widthDate;
   overflow: scroll;
   background-color: var(--pale-gray);

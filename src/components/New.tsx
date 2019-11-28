@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import '../css/NewEvent.scss';
 
 class NewEvent extends Component {
+
     constructor(props) {
         super(props);
         this.date = new Date();
@@ -14,18 +15,15 @@ class NewEvent extends Component {
             eventDateDay: this.date.getDate(),
             eventDateYear: this.date.getFullYear(),
             eventDateWeekDay: this.date.getDay(),
-            eventStartTime: [5, 30, TimeOfDay.PM],
             eventLocation: '',
             eventMessage: 'Hey! Are you free for [event title] on [event date] from [event start] to [event end]?'
         };
-
         this.handleChange = this.handleChange.bind(this);
-        this.populateEventParameters = this.populateEventParameters.bind(this);
+        this.populateEventName = this.populateEventName.bind(this);
         this.submitEvent = this.submitEvent.bind(this);
         this.parseDateTime = this.parseDateTime.bind(this);
         this.clickEventDate = this.clickEventDate.bind(this);
         this.setEventDate = this.setEventDate.bind(this);
-        this.setEventTime = this.setEventTime.bind(this);
     }
 
     handleChange(event) {
@@ -34,24 +32,11 @@ class NewEvent extends Component {
         this.setState({[name]: value});
     }
 
-    populateEventParameters() {
-        let newMessage = this.state.eventMessage;
-
-        if (this.state.eventName !== '' && newMessage.includes('[event title]')) {
-            newMessage = newMessage.replace('[event title]', this.state.eventName);
+    populateEventName() {
+        if (this.state.eventName !== '' && this.state.eventMessage.includes('[event title]')) {
+            const newMessage = this.state.eventMessage.replace('[event title]', this.state.eventName);
+            this.setState({eventMessage: newMessage});
         }
-
-        if (this.state.eventDateMonth !== null && this.state.eventDateDay !== null && this.state.eventDateYear !== null && newMessage.includes('[event date]')) {
-            const date = (this.state.eventDateMonth + 1) + '/' + this.state.eventDateDay + '/' + this.state.eventDateYear;
-            newMessage = newMessage.replace('[event date]', date);
-        }
-
-        if (this.state.eventStartTime !== null && this.state.eventStartTime.length === 3 && newMessage.includes('[event start]')) {
-            const start = this.state.eventStartTime[0] + ':' + this.state.eventStartTime[1].toString().padStart(2, '0') + ' ' + this.state.eventStartTime[2];
-            newMessage = newMessage.replace('[event start]', start);
-        }
-
-        this.setState({eventMessage: newMessage});
     }
 
     submitEvent() {
@@ -135,25 +120,25 @@ class NewEvent extends Component {
     }
 
     setEventTime(timeList) {
-        this.setState({eventStartTime: timeList});
+
     }
 
     render() {
         return (
             <div className={'create-new-event'}>
-                <input className={'input-event-name'} type={'text'} name={'eventName'} placeholder={'new event title'} value={this.state.eventName} onChange={this.handleChange}/>
+                <input className={'input-event-name'} type={'text'} name={'eventName'} placeholder={'new event'} value={this.state.eventName} onChange={this.handleChange}/>
 
                 <h3>date + time</h3>
-                <div className={'display-flex space-between-wrap'}>
-                    <DatePicker startDate={this.date}
-                                setDate={this.setEventDate}
-                                months={this.months}
-                                monthLengths={this.monthLengths}
-                                weekDays={this.weekDays}/>
+                {/*<input className={'input-event-location'} type={'text'} name={'eventDateTime'} placeholder={'mm/dd/yy hh:mm am|pm'} value={this.state.eventDateTime} onChange={this.handleChange}/>*/}
 
-                    <TimePicker startTime={this.state.eventStartTime}
-                                setTime={this.setEventTime}/>
-                </div>
+                <DatePicker startDate={this.date}
+                            setDate={this.setEventDate}
+                            months={this.months}
+                            monthLengths={this.monthLengths}
+                            weekDays={this.weekDays}/>
+
+                <TimePicker startTime={[5, 30, TimeOfDay.PM]}
+                            setTime={this.setEventTime}/>
 
                 <h3>location</h3>
                 <input className={'input-event-location'} type={'text'} name={'eventLocation'} placeholder={'Add location'} value={this.state.eventLocation} onChange={this.handleChange}/>
@@ -163,7 +148,7 @@ class NewEvent extends Component {
                 {/*<div>confused where these come from</div>*/}
 
                 <h3>message</h3>
-                <textarea className={'new-event-message'} name={'eventMessage'} value={this.state.eventMessage} onChange={this.handleChange} onFocus={this.populateEventParameters}/>
+                <textarea className={'new-event-message'} name={'eventMessage'} value={this.state.eventMessage} onChange={this.handleChange} onFocus={this.populateEventName}/>
 
                 {/*<h3>include poll</h3>*/}
                 {/*<div>probably never gonna be able to do this</div>*/}
@@ -194,18 +179,16 @@ class DatePicker extends Component {
         this.weekDays = this.props.weekDays;
         this.months = this.props.months;
         this.setDate = this.props.setDate;
+
         this.state = {
             showPicker: false
         };
-
-        this.clickEventDate = this.clickEventDate.bind(this);
-        this.clickDate = this.clickDate.bind(this);
 
         let currDay = this.startDate.getDate();
         let currMonth = this.startDate.getMonth();
         let currYear = this.startDate.getFullYear();
 
-        for (let i = 1; i < 150; i++) {
+        for (let i = 1; i < 100; i++) {
             if (currDay === this.monthLengths[currMonth]) {
                 currMonth += 1;
                 currDay = 0;
@@ -219,6 +202,9 @@ class DatePicker extends Component {
             let next = this.months[currMonth] + ' ' + nextDate + ' ' + currYear;
             this.dates.push(new Date(next));
         }
+
+        this.clickEventDate = this.clickEventDate.bind(this);
+        this.clickDate = this.clickDate.bind(this);
     }
 
     clickEventDate() {
@@ -263,14 +249,7 @@ class TimePicker extends Component {
         this.timesHours = [];
         this.timesMinutes = [];
         this.timesOfDay = [];
-        this.state = {
-            displayTime: this.props.startTime,
-            showHourPicker: false,
-            showMinutePicker: false,
-            showTimeOfDayPicker: false
-        };
 
-        this.setTime = this.props.setTime;
         this.clickHourPicker = this.clickHourPicker.bind(this);
         this.clickMinutePicker = this.clickMinutePicker.bind(this);
         this.clickTimeOfDayPicker = this.clickTimeOfDayPicker.bind(this);
@@ -278,23 +257,21 @@ class TimePicker extends Component {
         this.selectMinuteFromMenu = this.selectMinuteFromMenu.bind(this);
         this.selectTimeOfDayFromMenu = this.selectTimeOfDayFromMenu.bind(this);
 
-        this.btnHours = [];
-        this.btnMinutes = [];
-        this.btnTimesOfDay = [];
+        this.state = {
+            displayTime: this.props.startTime,
+            showHourPicker: false,
+            showMinutePicker: false,
+            showTimeOfDayPicker: false
+        };
 
         for (let i = 1; i < 13; i++) {
             const min = (i - 1) * 5;
             this.timesHours.push(i);
             this.timesMinutes.push(min);
-
-            this.btnHours.push(this.getPickerOptionsHtml(i.toString().padStart(2, '0'), this.selectHourFromMenu));
-            this.btnMinutes.push(this.getPickerOptionsHtml(min.toString().padStart(2, '0'), this.selectMinuteFromMenu));
-
         }
 
         for (const tod in TimeOfDay) {
             this.timesOfDay.push(tod);
-            this.btnTimesOfDay.push(this.getPickerOptionsHtml(tod.toString().padStart(2, '0'), this.selectTimeOfDayFromMenu));
         }
     }
 
@@ -327,7 +304,7 @@ class TimePicker extends Component {
 
     selectHourFromMenu(event) {
         const displayTime = [
-            parseInt(event.target.innerText),
+            event.target.innerText,
             this.state.displayTime[1],
             this.state.displayTime[2]
         ];
@@ -335,20 +312,18 @@ class TimePicker extends Component {
             displayTime,
             showHourPicker: false
         });
-        this.setTime(displayTime);
     }
 
     selectMinuteFromMenu(event) {
         const displayTime = [
             this.state.displayTime[0],
-            parseInt(event.target.innerText),
+            event.target.innerText,
             this.state.displayTime[2]
         ];
         this.setState({
             displayTime,
             showMinutePicker: false
         });
-        this.setTime(displayTime);
     }
 
     selectTimeOfDayFromMenu(event) {
@@ -361,7 +336,6 @@ class TimePicker extends Component {
             displayTime,
             showTimeOfDayPicker: false
         });
-        this.setTime(displayTime);
     }
 
     getPickerContainer(onOpenCloseMenu, btnText, menuOptions, showPicker) {
@@ -386,11 +360,26 @@ class TimePicker extends Component {
     }
 
     render() {
+        const btnHours = [];
+        for (const hour of this.timesHours) {
+            btnHours.push(this.getPickerOptionsHtml(hour.toString().padStart(2, '0'), this.selectHourFromMenu));
+        }
+
+        const btnMinutes = [];
+        for (const minute of this.timesMinutes) {
+            btnMinutes.push(this.getPickerOptionsHtml(minute.toString().padStart(2, '0'), this.selectMinuteFromMenu));
+        }
+
+        const btnTimesOfDay = [];
+        for (const day of this.timesOfDay) {
+            btnTimesOfDay.push(this.getPickerOptionsHtml(day.toString().padStart(2, '0'), this.selectTimeOfDayFromMenu));
+        }
+
         return (
             <div className={'display-flex'}>
-                {this.getPickerContainer(this.clickHourPicker, this.state.displayTime[0].toString().padStart(2, '0'), this.btnHours, this.state.showHourPicker)}
-                {this.getPickerContainer(this.clickMinutePicker, this.state.displayTime[1].toString().padStart(2, '0'), this.btnMinutes, this.state.showMinutePicker)}
-                {this.getPickerContainer(this.clickTimeOfDayPicker, this.state.displayTime[2], this.btnTimesOfDay, this.state.showTimeOfDayPicker)}
+                {this.getPickerContainer(this.clickHourPicker, this.state.displayTime[0].toString().padStart(2, '0'), btnHours, this.state.showHourPicker)}
+                {this.getPickerContainer(this.clickMinutePicker, this.state.displayTime[1].toString().padStart(2, '0'), btnMinutes, this.state.showMinutePicker)}
+                {this.getPickerContainer(this.clickTimeOfDayPicker, this.state.displayTime[2], btnTimesOfDay, this.state.showTimeOfDayPicker)}
             </div>
         );
     }
