@@ -17,7 +17,8 @@
           "name": "Soccer Tournament",
           "time": {
             "hour": 5,
-            "minute": 45
+            "minute": 45,
+            "timeOfDay": "AM"
           }
         }
       }

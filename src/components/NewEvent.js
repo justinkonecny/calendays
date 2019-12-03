@@ -14,9 +14,10 @@ class NewEvent extends Component {
             eventDateDay: this.date.getDate(),
             eventDateYear: this.date.getFullYear(),
             eventDateWeekDay: this.date.getDay(),
-            eventStartTime: [5, 30, TimeOfDay.PM],
+            eventStartTime: [5, 0, TimeOfDay.PM],
+            eventEndTime: [8, 0, TimeOfDay.PM],
             eventLocation: '',
-            eventMessage: 'Hey! Are you free for [event title] on [event date] from [event start] to [event end]?'
+            eventMessage: 'Hey! Are you free for [title] on [date] from [start] to [end] at [location]?'
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -25,7 +26,8 @@ class NewEvent extends Component {
         this.parseDateTime = this.parseDateTime.bind(this);
         this.clickEventDate = this.clickEventDate.bind(this);
         this.setEventDate = this.setEventDate.bind(this);
-        this.setEventTime = this.setEventTime.bind(this);
+        this.setEventStartTime = this.setEventStartTime.bind(this);
+        this.setEventEndTime = this.setEventEndTime.bind(this);
     }
 
     handleChange(event) {
@@ -37,18 +39,27 @@ class NewEvent extends Component {
     populateEventParameters() {
         let newMessage = this.state.eventMessage;
 
-        if (this.state.eventName !== '' && newMessage.includes('[event title]')) {
-            newMessage = newMessage.replace('[event title]', this.state.eventName);
+        if (this.state.eventName !== '' && newMessage.includes('[title]')) {
+            newMessage = newMessage.replace('[title]', this.state.eventName);
         }
 
-        if (this.state.eventDateMonth !== null && this.state.eventDateDay !== null && this.state.eventDateYear !== null && newMessage.includes('[event date]')) {
+        if (this.state.eventDateMonth !== null && this.state.eventDateDay !== null && this.state.eventDateYear !== null && newMessage.includes('[date]')) {
             const date = (this.state.eventDateMonth + 1) + '/' + this.state.eventDateDay + '/' + this.state.eventDateYear;
-            newMessage = newMessage.replace('[event date]', date);
+            newMessage = newMessage.replace('[date]', date);
         }
 
-        if (this.state.eventStartTime !== null && this.state.eventStartTime.length === 3 && newMessage.includes('[event start]')) {
+        if (this.state.eventStartTime !== null && this.state.eventStartTime.length === 3 && newMessage.includes('[start]')) {
             const start = this.state.eventStartTime[0] + ':' + this.state.eventStartTime[1].toString().padStart(2, '0') + ' ' + this.state.eventStartTime[2];
-            newMessage = newMessage.replace('[event start]', start);
+            newMessage = newMessage.replace('[start]', start);
+        }
+
+        if (this.state.eventEndTime !== null && this.state.eventEndTime.length === 3 && newMessage.includes('[end]')) {
+            const end = this.state.eventEndTime[0] + ':' + this.state.eventEndTime[1].toString().padStart(2, '0') + ' ' + this.state.eventEndTime[2];
+            newMessage = newMessage.replace('[end]', end);
+        }
+
+        if (this.state.eventLocation !== '' && newMessage.includes('[location]')) {
+            newMessage = newMessage.replace('[location]', this.state.eventLocation);
         }
 
         this.setState({eventMessage: newMessage});
@@ -83,39 +94,32 @@ class NewEvent extends Component {
     }
 
     parseDateTime() {
-        const dateTime = this.state.eventDateTime.split(' ');
-        if (dateTime.length !== 3) {
+        const startTime = this.state.eventStartTime;
+        const endTime = this.state.eventEndTime;
+        if (startTime.length !== 3 || endTime.length !== 3) {
             // TODO: Display an error to the user
             return;
         }
 
-        const date = dateTime[0].split('/');
-        const time = dateTime[1].split(':');
-        const tod = dateTime[2]; // TODO: Convert to 24hr
-
-        if (date.length !== 3) {
-            // TODO: Display an error to the user
-            return;
-        } else if (time.length !== 2) {
-            // TODO: Display an error to the user
-            return;
-        }
-
-        if (tod.toLowerCase() === 'pm') {
-            time[0] = parseInt(time[0]) + 12;
-        }
-
-        // TODO: Add date and time validation
+        // TODO: Display error if end time is before start time
+        // TODO: Handle AM/PM differences
+        const durationHours = endTime[0] - startTime[0];
+        const durationMinutes = endTime[1] - startTime[1];
 
         return {
             time: {
-                hour: parseInt(time[0]),
-                minute: parseInt(time[1])
+                hour: startTime[0],
+                minute: startTime[1],
+                timeOfDay: startTime[2]
             },
             date: {
-                month: parseInt(date[0]),
-                day: parseInt(date[1]),
-                year: parseInt(date[2])
+                month: this.state.eventDateMonth + 1,
+                day: this.state.eventDateDay,
+                year: this.state.eventDateYear
+            },
+            duration: {
+                hours: durationHours,
+                minutes: durationMinutes
             }
         }
     }
@@ -134,25 +138,42 @@ class NewEvent extends Component {
         });
     }
 
-    setEventTime(timeList) {
+    setEventStartTime(timeList) {
         this.setState({eventStartTime: timeList});
+    }
+
+    setEventEndTime(timeList) {
+        this.setState({eventEndTime: timeList});
     }
 
     render() {
         return (
             <div className={'create-new-event'}>
-                <input className={'input-event-name'} type={'text'} name={'eventName'} placeholder={'new event title'} value={this.state.eventName} onChange={this.handleChange}/>
+                <h3>title</h3>
+                <input className={'input-event-name'} type={'text'} name={'eventName'} placeholder={'new event'} value={this.state.eventName} onChange={this.handleChange}/>
 
                 <h3>date + time</h3>
-                <div className={'display-flex space-between-wrap'}>
+                <div>
+                    <h4>date</h4>
                     <DatePicker startDate={this.date}
                                 setDate={this.setEventDate}
                                 months={this.months}
                                 monthLengths={this.monthLengths}
                                 weekDays={this.weekDays}/>
+                </div>
 
-                    <TimePicker startTime={this.state.eventStartTime}
-                                setTime={this.setEventTime}/>
+                <div className={'display-flex space-between-wrap'}>
+                    <div>
+                        <h4>start time</h4>
+                        <TimePicker startTime={this.state.eventStartTime}
+                                    setTime={this.setEventStartTime}/>
+                    </div>
+
+                    <div>
+                        <h4>end time</h4>
+                        <TimePicker startTime={this.state.eventEndTime}
+                                    setTime={this.setEventEndTime}/>
+                    </div>
                 </div>
 
                 <h3>location</h3>

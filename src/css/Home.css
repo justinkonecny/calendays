@@ -8,14 +8,22 @@ h2 {
     font-weight: 500;
 }
 
-h3 {
+h3 { /* Title */
     color: var(--dull-blue);
     text-align: left;
     margin-top: 30px;
     margin-bottom: 18px;
 }
 
-h4 { /* Calendar Event Titles */
+h4 { /* Subtitle */
+    color: var(--dull-blue);
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-left: 15px;
+}
+
+h5 { /* Calendar Event Titles */
     font-weight: 600;
     color: white;
     margin: 10px 0;

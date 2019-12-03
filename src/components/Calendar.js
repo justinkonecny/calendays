@@ -8,21 +8,21 @@ const ColumnEnd = {
 };
 
 class Calendar extends Component {
-
     constructor(props) {
         super(props);
         this.toggleNewEvent = this.toggleNewEvent.bind(this);
         this.handleSuccess = this.handleSuccess.bind(this);
         this.handleFailure = this.handleFailure.bind(this);
 
-        this.date = new Date();
+        this.date = new Date();  // Today's date
         this.dateMap = {};  // Used to map date (day) to day of week (index of dayClasses)
 
         this.state = {
-            showNewEvent: false,
-            events: []
+            showNewEvent: false,  // Don't show the new event creator after load
+            events: []  // List of events from the database
         };
 
+        // List of days of the week (full and abbreviated names)
         this.weekNames = [
             ['Sunday', 'Sun'],
             ['Monday', 'Mon'],
@@ -32,6 +32,10 @@ class Calendar extends Component {
             ['Friday', 'Fri'],
             ['Saturday', 'Sat'],
         ];
+
+        // List of months (full names)
+        this.monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'];
 
         this.dayClasses = [
             // TODO: Fix this to use the list of weekDays
@@ -44,6 +48,7 @@ class Calendar extends Component {
             new CalendarDay('Saturday', 'sat', ColumnEnd.RIGHT)
         ];
 
+        // Populate the list of events with the Firebase results
         const userEvents = this.props.db.collection('users').doc(this.props.user.uid).collection('events');
         userEvents.get().then(doc => {
             if (doc.empty) {
@@ -59,15 +64,51 @@ class Calendar extends Component {
             }
         });
 
-        this.monthLengths = [];
-        for (let i = 1; i <= 12; i ++) {
+        this.monthLengths = [];  // The number of days in each month (by index)
+        for (let i = 1; i <= 12; i++) {
             const lastDate = new Date(this.date.getFullYear(), i, 0);
             this.monthLengths.push(lastDate.getDate());
         }
+
+        const dayOfMonth = this.date.getDate();
+        const dayOfWeek = this.date.getDay();
+
+        this.dayClasses[dayOfWeek].setDayMonth(dayOfMonth).setToday(true);  // Sets this date as 'today'
+        this.populateDates(dayOfMonth, dayOfWeek);  // Sets the date for each day of the week
+
+        this.times = [];  // List of times displayed on the side of the calendar
+        for (let i = 7; i < 20; i++) {
+            if (i === 12) {
+                this.times.push('12 pm');
+            } else if (i > 12) {
+                this.times.push((i - 12) + ' pm');
+            } else {
+                this.times.push(i + ' am');
+            }
+        }
+
+        const rowHeight = {height: 'calc(' + (100 / this.times.length) + '% - 2px)'};  // Height of each row in the calendar
+        this.times = this.times.map(time => {
+            return (
+                <div className={'row-time'} style={rowHeight} key={'rowTime' + time.replace(' ', '_')}>
+                    <span className={'time'}>{time}</span>
+                </div>
+            );
+        });
+
+        this.renderEventsForWeek({
+            'day': this.date.getDate(),
+            'month': this.date.getMonth() + 1,
+            'year': this.date.getFullYear()
+        });
+
+        this.columns = this.dayClasses.map(day => {
+            day.setTimesCount(this.times.length);
+            return day.render();
+        });
     }
 
     populateDates(currDate, currDayOfWeek) {
-        // TODO: Move to onComponentWillMount?
         for (let i = 0; i < this.dayClasses.length; i++) {
             const diff = currDayOfWeek - i;
             const day = currDate - diff;
@@ -75,6 +116,10 @@ class Calendar extends Component {
             this.dateMap[day] = i;
             // TODO: Fix when out of range of month
         }
+    }
+
+    addNextWeek() {
+
     }
 
     toggleNewEvent() {
@@ -108,60 +153,28 @@ class Calendar extends Component {
         }
     }
 
+    showNextWeek() {
+
+    }
+
+    showPrevWeek() {
+
+    }
+
     render() {
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'];
-
-        const dayOfMonth = this.date.getDate();
-        const dayOfWeek = this.date.getDay();
-
-        this.dayClasses[dayOfWeek].setDayMonth(dayOfMonth).setToday(true);
-        this.populateDates(dayOfMonth, dayOfWeek);
-
-        let times = [];
-        for (let i = 7; i < 20; i++) {
-            if (i === 12) {
-                times.push('12 pm');
-            } else if (i > 12) {
-                times.push((i - 12) + ' pm');
-            } else {
-                times.push(i + ' am');
-            }
-        }
-
-        const rowHeight = {height: 'calc(' + (100 / times.length) + '% - 2px)'};
-        times = times.map(time => {
-            return (
-                <div className={'row-time'} style={rowHeight} key={'rowTime' + time.replace(' ', '_')}>
-                    <span className={'time'}>{time}</span>
-                </div>
-            );
-        });
-
-        this.renderEventsForWeek({
-            'day': this.date.getDate(),
-            'month': this.date.getMonth() + 1,
-            'year': this.date.getFullYear()
-        });
-
-        const columns = this.dayClasses.map(day => {
-            day.setTimesCount(times.length);
-            return day.render();
-        });
-
         return (
             <div className={'calendar-container-outer'}>
                 {this.state.showNewEvent && <NewEvent user={this.props.user}
                                                       db={this.props.db}
                                                       handleSuccess={this.handleSuccess}
                                                       handleFailure={this.handleFailure}
-                                                      months={monthNames}
+                                                      months={this.monthNames}
                                                       monthLengths={this.monthLengths}
                                                       weekDays={this.weekNames}/>}
                 <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
                     <div className={'calendar-header'}>
                         <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
-                            {monthNames[this.date.getMonth()]} {this.date.getFullYear()}
+                            {this.monthNames[this.date.getMonth()]} {this.date.getFullYear()}
                         </h2>
                         <div className={'calendar-header-right'}>
                             <button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>new event</button>
@@ -169,12 +182,19 @@ class Calendar extends Component {
                     </div>
                     <div className={'calendar'} id={'calendar'}>
                         <div className={this.state.showNewEvent ? 'calendar-column column-time column-time-half' : 'calendar-column column-time'}>
-                            <div className={'column-header column-time-header'}/>
+                            <div className={'column-header column-time-header'}>
+                                <button onClick={this.showPrevWeek}>
+                                    L
+                                </button>
+                            </div>
                             <div className={'container-times'}>
-                                {times}
+                                {this.times}
                             </div>
                         </div>
-                        {columns}
+                        {this.columns}
+                        <button style={{height: '50px'}} onClick={this.showNextWeek}>
+                            R
+                        </button>
                     </div>
                 </div>
             </div>
@@ -183,7 +203,6 @@ class Calendar extends Component {
 }
 
 class CalendarDay {
-
     constructor(name, displayName, columnEnd) {
         this.name = name;
         this.displayName = displayName;
@@ -216,7 +235,6 @@ class CalendarDay {
         const rowHeight = 'calc(' + (100 / this.timesCount) + '% - 2px)';
         const rowHeightStyle = {height: rowHeight};
 
-
         const renderedEvents = this.events.map(event => {
             const hour = event.time.hour;
             const eventStyle = {
@@ -225,10 +243,10 @@ class CalendarDay {
             };
             return (
                 <div className={'calendar-event'} style={eventStyle} key={event.name}>
-                    <h4>{event.name}</h4>
+                    <h5>{event.name}</h5>
                     {/*<div>*/}
-                        {/*<p>{event.location}</p>*/}
-                        {/*<p>{event.message}</p>*/}
+                    {/*<p>{event.location}</p>*/}
+                    {/*<p>{event.message}</p>*/}
                     {/*</div>*/}
                 </div>
             );
