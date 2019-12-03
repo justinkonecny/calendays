@@ -159,9 +159,9 @@ class NewEvent extends Component {
                                 setDate={this.setEventDate}
                                 months={this.months}
                                 monthLengths={this.monthLengths}
-                                weekDays={this.weekDays}/>
+                                weekDays={this.weekDays}
+                                length={200}/>
                 </div>
-
                 <div className={'display-flex space-between-wrap'}>
                     <div>
                         <h4>start time</h4>
@@ -215,6 +215,7 @@ class DatePicker extends Component {
         this.weekDays = this.props.weekDays;
         this.months = this.props.months;
         this.setDate = this.props.setDate;
+        this.length = this.props.length;
         this.state = {
             showPicker: false
         };
@@ -222,23 +223,11 @@ class DatePicker extends Component {
         this.clickEventDate = this.clickEventDate.bind(this);
         this.clickDate = this.clickDate.bind(this);
 
-        let currDay = this.startDate.getDate();
-        let currMonth = this.startDate.getMonth();
-        let currYear = this.startDate.getFullYear();
-
-        for (let i = 1; i < 150; i++) {
-            if (currDay === this.monthLengths[currMonth]) {
-                currMonth += 1;
-                currDay = 0;
-
-                if (currMonth >= 12) {
-                    currMonth = currMonth % 12;
-                    currYear += 1;
-                }
-            }
-            const nextDate = currDay += 1;
-            let next = this.months[currMonth] + ' ' + nextDate + ' ' + currYear;
-            this.dates.push(new Date(next));
+        const firstDate = this.startDate.getDate();
+        for (let i = 0; i < this.length; i++) {
+            const newDate = new Date(this.startDate);
+            newDate.setDate(firstDate + i);
+            this.dates.push(newDate);
         }
     }
 
