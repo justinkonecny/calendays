@@ -11,7 +11,7 @@ class NewEvent extends Component {
         this.state = {
             eventName: '',
             eventDateMonth: this.date.getMonth(),
-            eventDateDay: this.date.getDate(),
+            eventdate: this.date.getDate(),
             eventDateYear: this.date.getFullYear(),
             eventDateWeekDay: this.date.getDay(),
             eventStartTime: [5, 0, TimeOfDay.PM],
@@ -43,8 +43,8 @@ class NewEvent extends Component {
             newMessage = newMessage.replace('[title]', this.state.eventName);
         }
 
-        if (this.state.eventDateMonth !== null && this.state.eventDateDay !== null && this.state.eventDateYear !== null && newMessage.includes('[date]')) {
-            const date = (this.state.eventDateMonth + 1) + '/' + this.state.eventDateDay + '/' + this.state.eventDateYear;
+        if (this.state.eventDateMonth !== null && this.state.eventdate !== null && this.state.eventDateYear !== null && newMessage.includes('[date]')) {
+            const date = (this.state.eventDateMonth + 1) + '/' + this.state.eventdate + '/' + this.state.eventDateYear;
             newMessage = newMessage.replace('[date]', date);
         }
 
@@ -114,7 +114,7 @@ class NewEvent extends Component {
             },
             date: {
                 month: this.state.eventDateMonth + 1,
-                day: this.state.eventDateDay,
+                day: this.state.eventdate,
                 year: this.state.eventDateYear
             },
             duration: {
@@ -131,7 +131,7 @@ class NewEvent extends Component {
 
     setEventDate(date) {
         this.setState({
-            eventDateDay: date.getDate(),
+            eventdate: date.getDate(),
             eventDateMonth: date.getMonth(),
             eventDateYear: date.getFullYear(),
             eventDateWeekDay: date.getDay()
@@ -177,7 +177,7 @@ class NewEvent extends Component {
                 </div>
 
                 <h3>location</h3>
-                <input className={'input-event-location'} type={'text'} name={'eventLocation'} placeholder={'Add location'} value={this.state.eventLocation} onChange={this.handleChange}/>
+                <input className={'input-event-location'} type={'text'} name={'eventLocation'} placeholder={'add location'} value={this.state.eventLocation} onChange={this.handleChange}/>
 
                 {/*<h3>friends</h3>*/}
                 {/*<div>don't know her</div>*/}

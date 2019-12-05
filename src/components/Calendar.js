@@ -20,23 +20,27 @@ const WeekDayNames = [
     ['Wednesday', 'Wed'],
     ['Thursday', 'Thurs'],
     ['Friday', 'Fri'],
-    ['Saturday', 'Sat'],
+    ['Saturday', 'Sat']
 ];
 
 class Calendar extends Component {
     constructor(props) {
         super(props);
+        this.renderEventsForWeek = this.renderEventsForWeek.bind(this);
         this.toggleNewEvent = this.toggleNewEvent.bind(this);
         this.handleSuccess = this.handleSuccess.bind(this);
         this.handleFailure = this.handleFailure.bind(this);
+        this.showNextWeek = this.showNextWeek.bind(this);
+        this.showPrevWeek = this.showPrevWeek.bind(this);
 
-        this.date = new Date();  // Today's date
-        this.dateMap = {};  // Used to map date (day) to day of week (index of dayClasses)
+        this.date = new Date();  // Today's dateDay
+        this.dateMap = {};  // Used to map dateDay (day) to day of week (index of dayClasses)
 
         this.state = {
             showNewEvent: false,  // Don't show the new event creator after load
-            events: [],  // List of events from the database
-            displayedWeek: 0 // Index of first day of the week being displayed
+            displayedWeek: 0, // Index of first day of the week being displayed
+            displayedDate: this.date, // Date of first day of the week being displayed
+            events: []  // List of events from the database
         };
 
         // List of days of the week (full and abbreviated names)
@@ -47,7 +51,7 @@ class Calendar extends Component {
             ['Wednesday', 'Wed'],
             ['Thursday', 'Thurs'],
             ['Friday', 'Fri'],
-            ['Saturday', 'Sat'],
+            ['Saturday', 'Sat']
         ]; // TODO: Remove this and use the constant above
 
         // List of months (full names)
@@ -83,7 +87,7 @@ class Calendar extends Component {
             }
         });
 
-        this.monthLengths = [];  // The number of days in each month (by index)
+        this.monthLengths = [];  // The number of days in each dateMonth (by index)
         for (let i = 1; i <= 12; i++) {
             const lastDate = new Date(this.date.getFullYear(), i, 0);
             this.monthLengths.push(lastDate.getDate());
@@ -91,9 +95,10 @@ class Calendar extends Component {
 
         const dayDate = this.date.getDate();
         const weekIndex = this.date.getDay();
-        this.dayClasses[weekIndex].setDayMonth(dayDate).setToday(true);  // Sets this date as 'today'
+        this.dayClasses[weekIndex].setDayMonth(dayDate).setToday(true);  // Sets this dateDay as 'today'
 
-        this.populateDates(this.date, 0);  // Sets the date for each day of the week
+        this.populateDates(this.date, 0);  // Sets the dateDay for each day of the week
+        this.state.displayedDate = this.dayClasses[0].getDate();
 
         this.times = [];  // List of times displayed on the side of the calendar
         for (let i = 7; i < 20; i++) {
@@ -114,17 +119,6 @@ class Calendar extends Component {
                 </div>
             );
         });
-
-        this.renderEventsForWeek({
-            'day': this.date.getDate(),
-            'month': this.date.getMonth() + 1,
-            'year': this.date.getFullYear()
-        });
-
-        this.columns = this.dayClasses.map(day => {
-            day.setTimesCount(this.times.length);
-            return day.render();
-        });
     }
 
     populateDates(theDate, startOffset) {
@@ -134,19 +128,37 @@ class Calendar extends Component {
             // TODO: Show error to the user
         }
 
+        if (startOffset >= this.dayClasses.length) {
+            for (let i = 0; i < 7; i++) {
+                let pos = ColumnPos.MIDDLE;
+                if (i === 0) {
+                    pos = ColumnPos.LEFT;
+                } else if (i === 6) {
+                    pos = ColumnPos.RIGHT;
+                }
+                this.dayClasses.push(new CalendarDay(i, pos));
+            }
+        } else if (startOffset < 0) {
+            for (let i = 6; i >= 0; i--) {
+                let pos = ColumnPos.MIDDLE;
+                if (i === 0) {
+                    pos = ColumnPos.LEFT;
+                } else if (i === 6) {
+                    pos = ColumnPos.RIGHT;
+                }
+                this.dayClasses.unshift(new CalendarDay(i, pos));
+            }
+            startOffset = 0;
+        }
+
         for (let i = 0; i < 7; i++) {
             const diff = currDayOfWeek - i;
             const newDay = currDate - diff;
             const newDate = new Date(theDate);
             newDate.setDate(newDay);
             this.dayClasses[i + startOffset].setDate(newDate);
-            this.dateMap[newDay] = i;
-            // TODO: Fix when out of range of month
+            this.dateMap[newDate] = i;
         }
-    }
-
-    addNextWeek() {
-
     }
 
     toggleNewEvent() {
@@ -168,14 +180,25 @@ class Calendar extends Component {
         for (const event of events) {
             const date = event.date;
 
-            // TODO: Fix this to work at month and and beginning
+            // TODO: Fix this to work at dateMonth and and beginning
+            console.log(date.year);
+            console.log(date.month);
+            console.log(date.day);
+            console.log(startDate);
 
-            if (date.year === startDate.year
-                && date.month === startDate.month
-                && date.day in this.dateMap) {
+            if (date.year === startDate.getFullYear()
+                && date.month === startDate.getMonth() + 1
+                && date.day >= startDate.getDate()
+                && date.day <= startDate.getDate() + 7) {
 
-                const dayOfWeek = this.dateMap[date.day];
-                this.dayClasses[dayOfWeek].renderEvent(event);
+
+                //get day of week of date
+                // add that to state.displayedWeek
+                const dayOfWeek = startDate.getDay();
+                const index = dayOfWeek + this.state.displayedWeek;
+                console.log(dayOfWeek);
+                console.log(this.state.displayedWeek);
+                this.dayClasses[index].renderEvent(event);
             }
         }
     }
@@ -183,18 +206,36 @@ class Calendar extends Component {
     showNextWeek() {
         // TODO: Use state to update
         const newDisplayedWeek = this.state.displayedWeek + 7;
+        const date = this.state.displayedDate;
+        date.setDate(date.getDate() + 7);
         if (newDisplayedWeek > (this.dayClasses.length - 1)) {
             // Add a new week to the list
-
+            this.populateDates(date, newDisplayedWeek);
         }
-        this.setState({displayedWeek: newDisplayedWeek});
+        this.setState({displayedWeek: newDisplayedWeek, displayedDate: date});
     }
 
     showPrevWeek() {
-
+        // TODO: Use state to update
+        let newDisplayedWeek = this.state.displayedWeek - 7;
+        const date = this.state.displayedDate;
+        date.setDate(date.getDate() - 7);
+        if (newDisplayedWeek < 0) {
+            // Add a new week to the list
+            this.populateDates(date, newDisplayedWeek);
+            newDisplayedWeek = 0;
+        }
+        this.setState({displayedWeek: newDisplayedWeek, displayedDate: date});
     }
 
     render() {
+        const columms = this.dayClasses.slice(this.state.displayedWeek, this.state.displayedWeek + 7).map(day => {
+            day.setTimesCount(this.times.length);
+            return day.render();
+        });
+
+        this.renderEventsForWeek(this.state.displayedDate);
+
         return (
             <div className={'calendar-container-outer'}>
                 {this.state.showNewEvent && <NewEvent user={this.props.user}
@@ -207,7 +248,7 @@ class Calendar extends Component {
                 <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
                     <div className={'calendar-header'}>
                         <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
-                            {this.monthNames[this.date.getMonth()]} {this.date.getFullYear()}
+                            {this.monthNames[this.state.displayedDate.getMonth()]} {this.state.displayedDate.getFullYear()}
                         </h2>
                         <div className={'calendar-header-right'}>
                             <button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>new event</button>
@@ -224,7 +265,7 @@ class Calendar extends Component {
                                 {this.times}
                             </div>
                         </div>
-                        {this.columns}
+                        {columms}
                         <button style={{height: '50px'}} onClick={this.showNextWeek}>
                             R
                         </button>
@@ -237,25 +278,27 @@ class Calendar extends Component {
 
 class CalendarDay {
     constructor(weekDayIndex, columnPos) {
-        // TODO: Assert weekDayIndex in range
         this.weekDay = WeekDayNames[weekDayIndex];
+        // TODO: Assert weekDayIndex in range
         this.name = this.weekDay[0];
         this.displayName = this.weekDay[1].toLowerCase();
         this.columnPos = columnPos;
         this.isToday = false;
-        this.month = -1;
-        this.date = -1;
+        this.dateMonth = -1;
+        this.dateDay = -1;
+        this.date = new Date();
         this.events = [];
     }
 
     setDate(date) {
-        this.month = date.getMonth();
-        this.date = date.getDate();
+        this.date = date;
+        this.dateMonth = date.getMonth();
+        this.dateDay = date.getDate();
         return this;
     }
 
     setDayMonth(num) {
-        this.date = num;
+        this.dateDay = num;
         return this;
     }
 
@@ -271,6 +314,10 @@ class CalendarDay {
 
     renderEvent(event) {
         this.events.push(event);
+    }
+
+    getDate() {
+        return this.date;
     }
 
     render(showNewEvent) {
@@ -319,7 +366,7 @@ class CalendarDay {
                         {this.displayName}
                     </div>
                     <div className={dayClass}>
-                        {this.date}
+                        {this.dateDay}
                     </div>
                 </div>
                 <div className={'container-events'}>

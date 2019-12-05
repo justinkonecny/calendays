@@ -3,9 +3,9 @@
     "3COBqpX6LQS9jHlSnihdye4EYqy1": {
       "events": {
         "9LEwOx8yUvafr4c1CjcL": {
-          "date": {
+          "dateDay": {
             "day": 23,
-            "month": 11,
+            "dateMonth": 11,
             "year": 2019
           },
           "duration": {
