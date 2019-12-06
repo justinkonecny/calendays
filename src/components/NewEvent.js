@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import '../css/NewEvent.scss';
+import {TimeOfDay} from "./Constants";
 
 class NewEvent extends Component {
     constructor(props) {
@@ -11,7 +12,7 @@ class NewEvent extends Component {
         this.state = {
             eventName: '',
             eventDateMonth: this.date.getMonth(),
-            eventdate: this.date.getDate(),
+            eventDate: this.date.getDate(),
             eventDateYear: this.date.getFullYear(),
             eventDateWeekDay: this.date.getDay(),
             eventStartTime: [5, 0, TimeOfDay.PM],
@@ -75,18 +76,20 @@ class NewEvent extends Component {
         const date = dateTime['date'];
         const time = dateTime['time'];
 
+        const newEvent = {
+            name: this.state.eventName,
+            location: this.state.eventLocation,
+            message: this.state.eventMessage,
+            date,
+            time
+        };
+
         this.props.db.collection('users')
             .doc(this.props.user.uid)
             .collection('events')
-            .add({
-                name: this.state.eventName,
-                location: this.state.eventLocation,
-                message: this.state.eventMessage,
-                date,
-                time
-            })
+            .add(newEvent)
             .then(docRef => {
-                this.props.handleSuccess(docRef);
+                this.props.handleSuccess(newEvent);
             })
             .catch(error => {
                 this.props.handleFailure(error);
@@ -405,10 +408,5 @@ class TimePicker extends Component {
         );
     }
 }
-
-const TimeOfDay = {
-    AM: 'AM',
-    PM: 'PM'
-};
 
 export default NewEvent;
