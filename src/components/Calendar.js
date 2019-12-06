@@ -27,6 +27,7 @@ class Calendar extends Component {
     constructor(props) {
         super(props);
         this.renderEventsForWeek = this.renderEventsForWeek.bind(this);
+        this.populateDates = this.populateDates.bind(this);
         this.toggleNewEvent = this.toggleNewEvent.bind(this);
         this.handleSuccess = this.handleSuccess.bind(this);
         this.handleFailure = this.handleFailure.bind(this);
@@ -37,6 +38,7 @@ class Calendar extends Component {
         this.dateMap = {};  // Used to map dateDay (day) to day of week (index of dayClasses)
 
         this.state = {
+            dayClasses: [],  // The list of Calendar days
             showNewEvent: false,  // Don't show the new event creator after load
             displayedWeek: 0, // Index of first day of the week being displayed
             displayedDate: this.date, // Date of first day of the week being displayed
@@ -60,7 +62,7 @@ class Calendar extends Component {
         // TODO: Remove this and use the constant above
 
         // Populate the first week with seven CalendarDays
-        this.dayClasses = [];
+        const firstWeek = [];
         for (let i = 0; i < 7; i++) {
             let pos = ColumnPos.MIDDLE;
             if (i === 0) {
@@ -68,8 +70,9 @@ class Calendar extends Component {
             } else if (i === 6) {
                 pos = ColumnPos.RIGHT;
             }
-            this.dayClasses.push(new CalendarDay(i, pos));
+            firstWeek.push(new CalendarDay(i, pos));
         }
+        this.state.dayClasses = firstWeek;
 
         // Populate the list of events with the Firebase results
         const userEvents = this.props.db.collection('users').doc(this.props.user.uid).collection('events');
@@ -95,10 +98,10 @@ class Calendar extends Component {
 
         const dayDate = this.date.getDate();
         const weekIndex = this.date.getDay();
-        this.dayClasses[weekIndex].setDayMonth(dayDate).setToday(true);  // Sets this dateDay as 'today'
+        this.state.dayClasses[weekIndex].setDayMonth(dayDate).setToday(true);  // Sets this dateDay as 'today'
 
         this.populateDates(this.date, 0);  // Sets the dateDay for each day of the week
-        this.state.displayedDate = this.dayClasses[0].getDate();
+        this.state.displayedDate = this.state.dayClasses[0].getDate();
 
         this.times = [];  // List of times displayed on the side of the calendar
         for (let i = 7; i < 20; i++) {
@@ -128,7 +131,8 @@ class Calendar extends Component {
             // TODO: Show error to the user
         }
 
-        if (startOffset >= this.dayClasses.length) {
+        if (startOffset >= this.state.dayClasses.length) {
+            const populatedDays = this.state.dayClasses;
             for (let i = 0; i < 7; i++) {
                 let pos = ColumnPos.MIDDLE;
                 if (i === 0) {
@@ -136,9 +140,11 @@ class Calendar extends Component {
                 } else if (i === 6) {
                     pos = ColumnPos.RIGHT;
                 }
-                this.dayClasses.push(new CalendarDay(i, pos));
+                populatedDays.push(new CalendarDay(i, pos));
             }
+            this.setState({dayClasses: populatedDays});
         } else if (startOffset < 0) {
+            const populatedDays = this.state.dayClasses;
             for (let i = 6; i >= 0; i--) {
                 let pos = ColumnPos.MIDDLE;
                 if (i === 0) {
@@ -146,8 +152,9 @@ class Calendar extends Component {
                 } else if (i === 6) {
                     pos = ColumnPos.RIGHT;
                 }
-                this.dayClasses.unshift(new CalendarDay(i, pos));
+                populatedDays.unshift(new CalendarDay(i, pos));
             }
+            this.setState({dayClasses: populatedDays});
             startOffset = 0;
         }
 
@@ -156,8 +163,8 @@ class Calendar extends Component {
             const newDay = currDate - diff;
             const newDate = new Date(theDate);
             newDate.setDate(newDay);
-            this.dayClasses[i + startOffset].setDate(newDate);
-            this.dateMap[newDate] = i;
+            this.state.dayClasses[i + startOffset].setDate(newDate);
+            // this.dateMap[newDate] = i;
         }
     }
 
@@ -178,27 +185,25 @@ class Calendar extends Component {
     renderEventsForWeek(startDate) {
         const events = this.state.events;
         for (const event of events) {
-            const date = event.date;
+            const dbDate = event.date;
+            const date = new Date(parseInt(dbDate.month) + ' ' + parseInt(dbDate.day) + ' ' + parseInt(dbDate.year));
 
             // TODO: Fix this to work at dateMonth and and beginning
-            console.log(date.year);
-            console.log(date.month);
-            console.log(date.day);
             console.log(startDate);
+            console.log(date);
 
-            if (date.year === startDate.getFullYear()
-                && date.month === startDate.getMonth() + 1
-                && date.day >= startDate.getDate()
-                && date.day <= startDate.getDate() + 7) {
+            if (date.getFullYear() === startDate.getFullYear()
+                && date.getMonth() === startDate.getMonth()
+                && date.getDate() >= startDate.getDate()
+                && date.getDate() <= startDate.getDate() + 7) {
 
+                const eventDayOfWeek = date.getDay();
+                const eventIndex = eventDayOfWeek + this.state.displayedWeek;
 
-                //get day of week of date
-                // add that to state.displayedWeek
-                const dayOfWeek = startDate.getDay();
-                const index = dayOfWeek + this.state.displayedWeek;
-                console.log(dayOfWeek);
                 console.log(this.state.displayedWeek);
-                this.dayClasses[index].renderEvent(event);
+                console.log(eventIndex);
+                console.log(event);
+                this.state.dayClasses[eventIndex].renderEvent(event);
             }
         }
     }
@@ -208,7 +213,7 @@ class Calendar extends Component {
         const newDisplayedWeek = this.state.displayedWeek + 7;
         const date = this.state.displayedDate;
         date.setDate(date.getDate() + 7);
-        if (newDisplayedWeek > (this.dayClasses.length - 1)) {
+        if (newDisplayedWeek > (this.state.dayClasses.length - 1)) {
             // Add a new week to the list
             this.populateDates(date, newDisplayedWeek);
         }
@@ -229,7 +234,7 @@ class Calendar extends Component {
     }
 
     render() {
-        const columms = this.dayClasses.slice(this.state.displayedWeek, this.state.displayedWeek + 7).map(day => {
+        const columms = this.state.dayClasses.slice(this.state.displayedWeek, this.state.displayedWeek + 7).map(day => {
             day.setTimesCount(this.times.length);
             return day.render();
         });
@@ -324,6 +329,8 @@ class CalendarDay {
         const rowHeight = 'calc(' + (100 / this.timesCount) + '% - 2px)';
         const rowHeightStyle = {height: rowHeight};
 
+        console.log(this.events);
+
         const renderedEvents = this.events.map(event => {
             const hour = event.time.hour;
             const eventStyle = {
@@ -331,6 +338,7 @@ class CalendarDay {
                 top: ((hour - 7) * (100 / this.timesCount)) + '%'
             };
             return (
+                // TODO: Change key to unique value
                 <div className={'calendar-event'} style={eventStyle} key={event.name}>
                     <h5>{event.name}</h5>
                     {/*<div>*/}
@@ -375,6 +383,13 @@ class CalendarDay {
                 </div>
             </div>
         );
+    }
+}
+
+class Day extends Component {
+    constructor(props) {
+        super(props);
+
     }
 }
 
