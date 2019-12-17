@@ -15,6 +15,7 @@
 
 .calendar {
     display: flex;
+    flex-direction: column;
     height: calc(100% - 90px);
 }
 
@@ -22,26 +23,26 @@
     display: flex;
 }
 
-.calendar-column {
+.column-header {
+    height: 100px;
     width: 12.5%;
-    height: 100%;
-    border-right: 2px var(--light-gray) solid;
     border-top: 2px var(--light-gray) solid;
+    border-right: 2px var(--light-gray) solid;
     border-bottom: 2px var(--light-gray) solid;
+}
+
+.calendar-column {
+    border-right: 2px var(--light-gray) solid;
 }
 
 .calendar-column-left {
     border-left: 2px var(--light-gray) solid;
-    border-radius: 5px 0 0 5px;
+    border-radius: 5px 0 0 0;
+    width: calc(12.5% - 2px);
 }
 
 .calendar-column-right {
-    border-radius: 0 5px 5px 0;
-}
-
-.column-header {
-    padding-bottom: 2px;
-    height: 100px;
+    border-radius: 0 5px 0 0;
 }
 
 .column-header-half {
@@ -66,8 +67,9 @@
 }
 
 .column-time-header {
-    border-bottom: none;
+    border: none;
     padding-bottom: 2px;
+    width: 8%;
 }
 
 .calendar-header-left {
@@ -116,16 +118,18 @@
 }
 
 .container-times {
-    height: calc(100% - 100px);
+    width: 8%;
+    height: 100%;
     color: var(--dull-blue);
     font-weight: 400;
 }
 
 .container-events {
-    height: calc(100% - 100px);
+    height: 100%;
     color: var(--dull-blue);
     font-weight: 400;
     position: relative;
+    width: calc(12.5% + 2px);
 }
 
 .calendar-event {
@@ -143,6 +147,22 @@
 .row-time {
     padding-top: 2px;
     text-align: right;
+}
+
+.row-left {
+    border-left: 2px var(--light-gray) solid;
+}
+
+.row-bottom {
+    border-bottom: 2px var(--light-gray) solid;
+}
+
+.row-bottom-right {
+    border-radius: 0 0 5px 0;
+}
+
+.row-bottom-left {
+    border-radius: 0 0 0 5px;
 }
 
 .time {

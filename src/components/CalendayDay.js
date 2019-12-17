@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {TimeOfDay, WeekDayNames} from "./Constants";
+import {ColumnPos, TimeOfDay, WeekDayNames} from "./Constants";
 
 export class CalendarDay {
     constructor(weekDayIndex, columnPos) {
@@ -106,6 +106,7 @@ class Header extends Component {
 
         let columnHeaderClass = this.props.isToday ? 'column-header column-header-today' : 'column-header';
         columnHeaderClass = this.props.showNewEvent ? columnHeaderClass + ' column-header-half' : columnHeaderClass;
+        columnHeaderClass = this.props.columnPos == null ? columnHeaderClass + ' calendar-column' : columnHeaderClass + ' calendar-column ' + this.props.columnPos;
 
         return (
             <div className={columnHeaderClass}>
@@ -132,9 +133,9 @@ class Day extends Component {
             };
 
             if (event.time.timeOfDay === TimeOfDay.AM) {
-                eventStyle.top = ((hour - 7) * (100 / this.props.timesCount)) + '%';
+                eventStyle.top = ((hour) * (100 / this.props.timesCount)) + '%';
             } else {
-                eventStyle.top = ((hour + 5) * (100 / this.props.timesCount)) + '%';
+                eventStyle.top = ((hour + 12) * (100 / this.props.timesCount)) + '%';
             }
 
             return (
@@ -150,9 +151,19 @@ class Day extends Component {
         });
 
         const columnGrid = [];
-        for (let i = 0; i < this.props.timesCount; i++) {
+        for (let i = 0; i < 24; i++) {
+            let className = this.props.columnPos === ColumnPos.LEFT ? 'row-grid calendar-column row-left' : 'row-grid calendar-column';
+            if (i === 23) {
+                if (this.props.columnPos === ColumnPos.RIGHT) {
+                    className += ' row-bottom row-bottom-right';
+                } else if (this.props.columnPos === ColumnPos.LEFT) {
+                    className += ' row-bottom row-bottom-left';
+                } else {
+                    className += ' row-bottom';
+                }
+            }
             columnGrid.push(
-                <div className={'row-grid'} style={rowHeightStyle} key={'row' + i}/>
+                <div className={className} style={rowHeightStyle} key={'row' + i}/>
             );
         }
 

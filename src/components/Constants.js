@@ -27,3 +27,9 @@ export const WeekDayNames = [
     ['Friday', 'Fri'],
     ['Saturday', 'Sat']
 ];
+
+export const ColumnPos = {
+    LEFT: 'calendar-column-left',  // Indicates the left column of a calendar
+    MIDDLE: 'calendar-column-middle', // Indicates a center column of a calendar
+    RIGHT: 'calendar-column-right'  // Indicates the right column of a calendar
+};

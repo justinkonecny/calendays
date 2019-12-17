@@ -2,13 +2,7 @@ import React, {Component} from 'react';
 import NewEvent from './NewEvent';
 import '../css/Calendar.css'
 import {CalendarDay} from "./CalendayDay";
-import {MonthNames, WeekDayNames} from "./Constants";
-
-const ColumnPos = {
-    LEFT: 'calendar-column-left',  // Indicates the left column of a calendar
-    MIDDLE: 'calendar-column-middle', // Indicates a center column of a calendar
-    RIGHT: 'calendar-column-right'  // Indicates the right column of a calendar
-};
+import {ColumnPos, MonthNames, WeekDayNames} from "./Constants";
 
 class Calendar extends Component {
     constructor(props) {
@@ -23,7 +17,6 @@ class Calendar extends Component {
         this.showPrevWeek = this.showPrevWeek.bind(this);
 
         this.date = new Date();  // Today's dateDay
-        this.dateMap = {};  // Used to map dateDay (day) to day of week (index of dayClasses)
 
         this.state = {
             dayClasses: [],  // The list of Calendar days
@@ -66,8 +59,10 @@ class Calendar extends Component {
         this.state.displayedDate = this.state.dayClasses[0].getDate();
 
         this.times = [];  // List of times displayed on the side of the calendar
-        for (let i = 7; i < 20; i++) {
-            if (i === 12) {
+        for (let i = 0; i < 24; i++) {
+            if (i === 0) {
+                this.times.push('');
+            } else if (i === 12) {
                 this.times.push('12 pm');
             } else if (i > 12) {
                 this.times.push((i - 12) + ' pm');
@@ -76,14 +71,20 @@ class Calendar extends Component {
             }
         }
 
-        const rowHeight = {height: 'calc(' + (100 / this.times.length) + '% - 2px)'};  // Height of each row in the calendar
+        const rowHeight = {height: 'calc(' + (100 / 12) + '% - 2px)'};  // Height of each row in the calendar
         this.times = this.times.map(time => {
+            const idArr = time.split(' ');
+            const id = idArr[0] + idArr[1];
             return (
-                <div className={'row-time'} style={rowHeight} key={'rowTime' + time.replace(' ', '_')}>
+                <div id={id} className={'row-time'} style={rowHeight} key={'rowTime' + time.replace(' ', '_')}>
                     <span className={'time'}>{time}</span>
                 </div>
             );
         });
+    }
+
+    componentDidMount() {
+        document.getElementById('12pm').scrollIntoView({block: 'center'});
     }
 
     queryForEvents(displayedWeek) {
@@ -231,10 +232,14 @@ class Calendar extends Component {
     }
 
     render() {
-        const columms = this.state.dayClasses.slice(this.state.displayedWeek, this.state.displayedWeek + 7).map(day => {
-            day.setTimesCount(this.times.length);
-            return day.getComponent(this.state.showNewEvent);
+        const columnBodies = [];
+        const columnHeaders = this.state.dayClasses.slice(this.state.displayedWeek, this.state.displayedWeek + 7).map(day => {
+            day.setTimesCount(12);
+            // return day.getComponent(this.state.showNewEvent);
+            columnBodies.push(day.getDayComponent(this.state.showNewEvent));
+            return day.getHeaderComponent(this.state.showNewEvent);
         });
+
 
         return (
             <div className={'calendar-container-outer'}>
@@ -255,20 +260,23 @@ class Calendar extends Component {
                         </div>
                     </div>
                     <div className={'calendar'} id={'calendar'}>
-                        <div className={this.state.showNewEvent ? 'calendar-column column-time column-time-half' : 'calendar-column column-time'}>
+                        <div style={{width: '100%', display: 'flex'}}>
                             <div className={'column-header column-time-header'}>
                                 <button onClick={this.showPrevWeek}>
                                     L
                                 </button>
                             </div>
+                            {columnHeaders}
+                            <button style={{height: '50px'}} onClick={this.showNextWeek}>
+                                R
+                            </button>
+                        </div>
+                        <div style={{width: '100%', display: 'flex', height: 'calc(100% - 100px)', overflow: 'scroll'}}>
                             <div className={'container-times'}>
                                 {this.times}
                             </div>
+                            {columnBodies}
                         </div>
-                        {columms}
-                        <button style={{height: '50px'}} onClick={this.showNextWeek}>
-                            R
-                        </button>
                     </div>
                 </div>
             </div>

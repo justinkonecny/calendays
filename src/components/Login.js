@@ -52,6 +52,8 @@ class LoginForm extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.getCurrentForm = this.getCurrentForm.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.submit = this.submit.bind(this);
     }
 
     firebaseError(error) {
@@ -62,7 +64,11 @@ class LoginForm extends Component {
     }
 
     handleSubmit(event) {
-        if (event.target.id === 'submitLogin') {
+        this.submit(event.target.id);
+    }
+
+    submit(id) {
+        if (id === 'submitLogin') {
             this.props.firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).catch(this.firebaseError);
 
             if (this.props.firebase.auth().currentUser) {
@@ -91,13 +97,19 @@ class LoginForm extends Component {
         }
     }
 
+    handleKeyPress(event) {
+        if (event.keyCode === 13) {
+            this.submit('submitLogin');
+        }
+    }
+
     getCurrentForm() {
         if (this.state.isExistingUser) {
             return (
                 <div className={'login-form'}>
                     <div>
                         <input className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange}/>
-                        <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange}/>
+                        <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
                     </div>
                     <div style={{'margin': '10px 0'}}>
                         <a className='forgot'>forgot password?</a>
