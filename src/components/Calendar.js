@@ -267,7 +267,7 @@ class Calendar extends Component {
                                 </button>
                             </div>
                             {columnHeaders}
-                            <button style={{height: '50px'}} onClick={this.showNextWeek}>
+                            <button style={{height: '50px', padding: 0}} onClick={this.showNextWeek}>
                                 R
                             </button>
                         </div>
