@@ -247,9 +247,7 @@ class Calendar extends Component {
                                                       db={this.props.db}
                                                       handleSuccess={this.handleSuccess}
                                                       handleFailure={this.handleFailure}
-                                                      months={this.monthNames}
-                                                      monthLengths={this.monthLengths}
-                                                      weekDays={this.weekNames}/>}
+                                                      monthLengths={this.monthLengths}/>}
                 <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
                     <div className={'calendar-header'}>
                         <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>

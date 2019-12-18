@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import '../css/NewEvent.scss';
-import {TimeOfDay} from "./Constants";
+import {MonthNames, TimeOfDay, WeekDayNames} from "./Constants";
 
 class NewEvent extends Component {
     constructor(props) {
         super(props);
         this.date = new Date();
-        this.months = this.props.months;
+        this.months = MonthNames;
         this.monthLengths = this.props.monthLengths;
-        this.weekDays = this.props.weekDays;
+        this.weekDays = WeekDayNames;
         this.state = {
             eventName: '',
             eventDateMonth: this.date.getMonth(),
@@ -44,8 +44,8 @@ class NewEvent extends Component {
             newMessage = newMessage.replace('[title]', this.state.eventName);
         }
 
-        if (this.state.eventDateMonth !== null && this.state.eventdate !== null && this.state.eventDateYear !== null && newMessage.includes('[date]')) {
-            const date = (this.state.eventDateMonth + 1) + '/' + this.state.eventdate + '/' + this.state.eventDateYear;
+        if (this.state.eventDateMonth !== null && this.state.eventDate !== null && this.state.eventDateYear !== null && newMessage.includes('[date]')) {
+            const date = (this.state.eventDateMonth + 1) + '/' + this.state.eventDate + '/' + this.state.eventDateYear;
             newMessage = newMessage.replace('[date]', date);
         }
 
@@ -73,15 +73,14 @@ class NewEvent extends Component {
         }
 
         const dateTime = this.parseDateTime();
-        const date = dateTime['date'];
-        const time = dateTime['time'];
 
         const newEvent = {
             name: this.state.eventName,
             location: this.state.eventLocation,
             message: this.state.eventMessage,
-            date,
-            time
+            duration: dateTime['duration'],
+            date: dateTime['date'],
+            time: dateTime['time']
         };
 
         this.props.db.collection('users')
@@ -117,7 +116,7 @@ class NewEvent extends Component {
             },
             date: {
                 month: this.state.eventDateMonth + 1,
-                day: this.state.eventdate,
+                day: this.state.eventDate,
                 year: this.state.eventDateYear
             },
             duration: {
@@ -134,7 +133,7 @@ class NewEvent extends Component {
 
     setEventDate(date) {
         this.setState({
-            eventdate: date.getDate(),
+            eventDate: date.getDate(),
             eventDateMonth: date.getMonth(),
             eventDateYear: date.getFullYear(),
             eventDateWeekDay: date.getDay()

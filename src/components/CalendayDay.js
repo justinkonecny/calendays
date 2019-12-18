@@ -123,13 +123,12 @@ class Header extends Component {
 
 class Day extends Component {
     render() {
-        const rowHeight = 'calc(' + (100 / this.props.timesCount) + '% - 2px)';
-        const rowHeightStyle = {height: rowHeight};
-
         const renderedEvents = this.props.events.map(event => {
-            const hour = event.time.hour;
+            const hour = parseInt(event.time.hour);
+            const duration = parseInt(event.duration.hours) + (parseInt(event.duration.minutes) / 60);
+
             const eventStyle = {
-                height: rowHeight
+                height: 'calc((' + (100 / this.props.timesCount) + '% - 2px) * ' + duration + ')'
             };
 
             if (event.time.timeOfDay === TimeOfDay.AM) {
@@ -150,6 +149,7 @@ class Day extends Component {
             );
         });
 
+        const rowHeightStyle = {height: 'calc(' + (100 / this.props.timesCount) + '% - 2px)'};
         const columnGrid = [];
         for (let i = 0; i < 24; i++) {
             let className = this.props.columnPos === ColumnPos.LEFT ? 'row-grid calendar-column row-left' : 'row-grid calendar-column';
