@@ -73,6 +73,10 @@ class NewEvent extends Component {
         }
 
         const dateTime = this.parseDateTime();
+        if (dateTime == null) {
+            // TODO: Display error to the user, end time before start time
+            return;
+        }
 
         const newEvent = {
             name: this.state.eventName,
@@ -103,10 +107,28 @@ class NewEvent extends Component {
             return;
         }
 
-        // TODO: Display error if end time is before start time
-        // TODO: Handle AM/PM differences
-        const durationHours = endTime[0] - startTime[0];
-        const durationMinutes = endTime[1] - startTime[1];
+        let durationHours;
+        let durationMinutes;
+        if (startTime[2] === endTime[2]) {
+            // Start and end times are both AM or PM
+            durationHours = endTime[0] - startTime[0];
+            durationMinutes = endTime[1] - startTime[1];
+        } else {
+            // Start and end times are different AM or PM
+            durationHours = (12 + endTime[0]) - startTime[0];
+            durationMinutes = endTime[1] - startTime[1];
+        }
+
+        if (durationMinutes < 0) {
+            // Adjustment for when end minute is before start minute
+            durationMinutes += 60;
+            durationHours--;
+        }
+
+        if (durationMinutes < 0 || durationMinutes < 0) {
+            // TODO: Display error if end time is before start time
+            return null;
+        }
 
         return {
             time: {

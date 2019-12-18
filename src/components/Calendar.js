@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import NewEvent from './NewEvent';
-import '../css/Calendar.css'
+import '../css/Calendar.scss'
 import {CalendarDay} from "./CalendayDay";
 import {ColumnPos, MonthNames, WeekDayNames} from "./Constants";
 
@@ -250,24 +250,19 @@ class Calendar extends Component {
                                                       monthLengths={this.monthLengths}/>}
                 <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
                     <div className={'calendar-header'}>
+                        <button className={'left-arrow'} onClick={this.showPrevWeek}/>
                         <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
                             {this.monthNames[this.state.displayedDate.getMonth()]} {this.state.displayedDate.getFullYear()}
                         </h2>
                         <div className={'calendar-header-right'}>
                             <button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>new event</button>
                         </div>
+                        <button className={'right-arrow'} onClick={this.showNextWeek}/>
                     </div>
                     <div className={'calendar'} id={'calendar'}>
                         <div style={{width: '100%', display: 'flex'}}>
-                            <div className={'column-header column-time-header'}>
-                                <button onClick={this.showPrevWeek}>
-                                    L
-                                </button>
-                            </div>
+                            <div className={'column-header column-time-header'}/>
                             {columnHeaders}
-                            <button style={{height: '50px', padding: 0}} onClick={this.showNextWeek}>
-                                R
-                            </button>
                         </div>
                         <div style={{width: '100%', display: 'flex', height: 'calc(100% - 100px)', overflow: 'scroll'}}>
                             <div className={'container-times'}>
