@@ -138,9 +138,19 @@ $timeWidth: 8%;
 .calendar-event {
   background-color: var(--blush);
   border-radius: 5px;
-  width: calc(100% - 4px);
+  width: calc(100% - 16px);
   position: absolute;
-  padding: 2px;
+  color: white;
+  overflow: hidden;
+  padding: 8px;
+
+  .event-description {
+    margin: 0 0.5em;
+  }
+
+  p {
+    margin: 0.5em;
+  }
 }
 
 .row-grid {

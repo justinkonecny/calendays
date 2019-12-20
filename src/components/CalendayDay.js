@@ -128,7 +128,7 @@ class Day extends Component {
             const duration = parseInt(event.duration.hours) + (parseInt(event.duration.minutes) / 60);
 
             const eventStyle = {
-                height: 'calc((' + (100 / this.props.timesCount) + '% - 2px) * ' + duration + ')'
+                height: 'calc((' + (100 / this.props.timesCount) + '% - 2px) * ' + duration + ' - 8px)'
             };
 
             if (event.time.timeOfDay === TimeOfDay.AM) {
@@ -141,10 +141,10 @@ class Day extends Component {
                 // TODO: Change key to unique value
                 <div className={'calendar-event'} style={eventStyle} key={event.name}>
                     <h5>{event.name}</h5>
-                    {/*<div>*/}
-                    {/*<p>{event.location}</p>*/}
-                    {/*<p>{event.message}</p>*/}
-                    {/*</div>*/}
+                    <div className={'event-description'}>
+                        <p>{event.location}</p>
+                        <p>{event.message}</p>
+                    </div>
                 </div>
             );
         });
