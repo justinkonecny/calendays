@@ -132,9 +132,9 @@ class Day extends Component {
             };
 
             if (event.time.timeOfDay === TimeOfDay.AM) {
-                eventStyle.top = ((hour) * (100 / this.props.timesCount)) + '%';
+                eventStyle.top = 'calc(' + ((hour) * (100 / this.props.timesCount)) + '% + 2px)';
             } else {
-                eventStyle.top = ((hour + 12) * (100 / this.props.timesCount)) + '%';
+                eventStyle.top = 'calc(' + ((hour + 12) * (100 / this.props.timesCount)) + '% + 2px)';
             }
 
             return (
@@ -143,7 +143,7 @@ class Day extends Component {
                     <h5>{event.name}</h5>
                     <div className={'event-description'}>
                         <p>{event.location}</p>
-                        <p>{event.message}</p>
+                        {/*<p>{event.message}</p>*/}
                     </div>
                 </div>
             );

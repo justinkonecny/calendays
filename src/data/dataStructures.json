@@ -21,6 +21,14 @@
             "timeOfDay": "AM"
           }
         }
+      },
+      "profile": {
+        "2F2NDd4uKvZsZmI61BQMpbxs9PVCx2": {
+          "firstName": "J",
+          "lastName": "K",
+          "email": "jk@gmail.com",
+          "uid": "3COBqpX6LQS9jHlSnihdye4EYqy1"
+        }
       }
     }
   }

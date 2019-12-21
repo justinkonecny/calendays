@@ -2,20 +2,21 @@ h1 {
     margin: 0;
 }
 
-h2 {
+h2 { /* Title (Calendar Month) */
     color: var(--dull-blue);
     font-size: 30px;
     font-weight: 500;
+    text-align: left;
 }
 
-h3 { /* Title */
+h3 { /* Heading (date + time) */
     color: var(--dull-blue);
     text-align: left;
     margin-top: 30px;
     margin-bottom: 18px;
 }
 
-h4 { /* Subtitle */
+h4 { /* Sub-heading (start time) */
     color: var(--dull-blue);
     text-align: left;
     margin-top: 20px;
@@ -52,7 +53,8 @@ button {
 }
 
 button:hover {
-    filter: brightness(110%);
+    filter: brightness(120%);
+    cursor: pointer;
 }
 
 button:active {
@@ -84,8 +86,18 @@ textarea {
     border-radius: 0;
 }
 
-.btn-open:hover {
-    filter: none;
+.btn-home {
+    background: none;
+    border: none;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--dull-blue);
+    border-bottom: 2px solid;
+    padding: 10px 20px 2px 20px;
+}
+
+.btn-active-tab {
+    color: var(--blush);
 }
 
 .header {
@@ -133,21 +145,6 @@ textarea {
     width: 75px;
     height: calc(100vh - 50px);
     background-color: var(--pale-gray);
-}
-
-.btn-home {
-    background: none;
-    border: none;
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--dull-blue);
-    border-bottom: 2px solid;
-    padding: 10px 20px 2px 20px;
-}
-
-.btn-home:hover {
-    cursor: pointer;
-    color: var(--blush);
 }
 
 .nav-btn-container {

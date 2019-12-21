@@ -3,6 +3,7 @@ import NewEvent from './NewEvent';
 import '../css/Calendar.scss'
 import {CalendarDay} from "./CalendayDay";
 import {ColumnPos, MonthNames, WeekDayNames} from "./Constants";
+import {DbConstants} from "../data/DbConstants";
 
 class Calendar extends Component {
     constructor(props) {
@@ -89,12 +90,11 @@ class Calendar extends Component {
 
     queryForEvents(displayedWeek) {
         // Populate the list of events with the Firebase results
-        const userEvents = this.props.db.collection('users').doc(this.props.user.uid).collection('events');
+        const userEvents = this.props.db.collection(DbConstants.USERS).doc(this.props.user.uid).collection(DbConstants.EVENTS);
         userEvents.get().then(doc => {
             if (doc.empty) {
                 // TODO: Display error to user
-                console.error('No doc found');
-                console.error(doc);
+                console.error('No user events found!');
             } else {
                 const events = [];
                 doc.docs.forEach(docQuery => {

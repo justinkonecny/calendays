@@ -138,11 +138,12 @@ $timeWidth: 8%;
 .calendar-event {
   background-color: var(--blush);
   border-radius: 5px;
-  width: calc(100% - 16px);
+  width: calc(85% - 18px);
   position: absolute;
   color: white;
   overflow: hidden;
   padding: 8px;
+  text-align: left;
 
   .event-description {
     margin: 0 0.5em;
@@ -150,6 +151,7 @@ $timeWidth: 8%;
 
   p {
     margin: 0.5em;
+    font-size: 13px;
   }
 }
 

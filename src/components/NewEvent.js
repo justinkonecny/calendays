@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import '../css/NewEvent.scss';
-import {MonthNames, TimeOfDay, WeekDayNames} from "./Constants";
+import {MonthNames, TimeOfDay, WeekDayNames} from './Constants';
+import {DbConstants} from '../data/DbConstants';
 
 class NewEvent extends Component {
     constructor(props) {
@@ -87,9 +88,9 @@ class NewEvent extends Component {
             time: dateTime['time']
         };
 
-        this.props.db.collection('users')
+        this.props.db.collection(DbConstants.USERS)
             .doc(this.props.user.uid)
-            .collection('events')
+            .collection(DbConstants.EVENTS)
             .add(newEvent)
             .then(docRef => {
                 this.props.handleSuccess(newEvent);

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import '../css/Login.css';
 import {Redirect} from "react-router";
+import {DbConstants} from "../data/DbConstants";
 
 class Login extends Component {
 
@@ -79,7 +80,31 @@ class LoginForm extends Component {
                 });
             }
         } else {
-            this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).catch(this.firebaseError);
+            this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).catch(this.firebaseError).then(docRef => {
+                    const user = this.props.firebase.auth().currentUser;
+
+                    if (user) {
+                        const userProfile = {
+                            uid: user.uid,
+                            email: this.state.email,
+                            firstName: this.state.firstName,
+                            lastName: this.state.lastName
+                        };
+
+                        // Populate the users profile
+                        this.props.firebase.firestore().collection(DbConstants.USERS)
+                            .doc(user.uid)
+                            .collection(DbConstants.PROFILE)
+                            .add(userProfile)
+                            .then(docRef => {
+                                console.log('Successfully created profile');
+                            })
+                            .catch(error => {
+                                console.log('Failed to creat profile');
+                            });
+                    }
+                }
+            );
         }
     }
 
@@ -134,7 +159,7 @@ class LoginForm extends Component {
                         </div>
                     </div>
                     <div style={{'textAlign': 'center'}}>
-                        <button id={'submitRegister'} className={'login-submit btn-open'} onClick={this.handleSubmit}>register</button>
+                        <button id={'submitRegister'} className={'login-submit'} onClick={this.handleSubmit}>register</button>
                     </div>
                 </div>
             );
