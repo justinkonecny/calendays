@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "firebase": "5.9.3",
+    "firebase": "^7.6.1",
     "node-sass": "^4.13.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
