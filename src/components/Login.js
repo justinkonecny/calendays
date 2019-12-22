@@ -4,11 +4,10 @@ import {Redirect} from "react-router";
 import {DbConstants} from "../data/DbConstants";
 
 class Login extends Component {
-
     render() {
         const user = this.props.firebase.auth().currentUser;
         if (user) {
-            return (
+            return (  // Redirect home if currently authenticated
                 <Redirect to={'/home'}/>
             );
         }
@@ -23,6 +22,7 @@ class Login extends Component {
                             <li>easily see when friends are free</li>
                             <li>send invitations and polls</li>
                             <li>connect Google calendar</li>
+                            {/* TODO: ADJUST WHAT THIS SAYS */}
                         </ul>
                     </div>
                     <div className={'user-login'}>
@@ -36,17 +36,16 @@ class Login extends Component {
 }
 
 class LoginForm extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
-            isExistingUser: true,
-            firstName: '',
-            lastName: '',
-            username: '',
-            email: '',
-            password: '',
-            auth: false
+            isExistingUser: true,  // Displays login tab or sign up tab
+            firstName: '',  // The user's first name
+            lastName: '',  // The user's last name
+            username: '',  // TODO: Add field or remove this
+            email: '',  // The user's email address
+            password: '',  // The user's password
+            auth: false  // Whether or not a user is authenticated
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -58,10 +57,8 @@ class LoginForm extends Component {
     }
 
     firebaseError(error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log(errorCode);
-        console.log(errorMessage);
+        console.log('Failed to authenticate user');
+        console.error(error.code, error.message);
     }
 
     handleSubmit(event) {
@@ -70,25 +67,25 @@ class LoginForm extends Component {
 
     submit(id) {
         if (id === 'submitLogin') {
-            this.props.firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).catch(this.firebaseError);
-
-            if (this.props.firebase.auth().currentUser) {
-                this.setState({
-                    auth: true,
-                    email: '',
-                    password: ''
-                });
-            }
+            this.props.firebase.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password)
+                .catch(this.firebaseError)
+                .then(() => {
+                        this.setState({
+                            auth: true,
+                            email: '',
+                            password: ''
+                        })
+                    }
+                );
         } else {
-            this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).catch(this.firebaseError).then(docRef => {
+            this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email.trim(), this.state.password).catch(this.firebaseError).then(docRef => {
                     const user = this.props.firebase.auth().currentUser;
-
                     if (user) {
                         const userProfile = {
                             uid: user.uid,
-                            email: this.state.email,
-                            firstName: this.state.firstName,
-                            lastName: this.state.lastName
+                            email: this.state.email.trim(),
+                            firstName: this.state.firstName.trim(),
+                            lastName: this.state.lastName.trim()
                         };
 
                         // Populate the users profile
@@ -100,8 +97,14 @@ class LoginForm extends Component {
                                 console.log('Successfully created profile');
                             })
                             .catch(error => {
-                                console.log('Failed to creat profile');
+                                console.log('Failed to create profile');
                             });
+
+                        this.setState({
+                            auth: true,
+                            email: '',
+                            password: ''
+                        })
                     }
                 }
             );
@@ -124,6 +127,7 @@ class LoginForm extends Component {
 
     handleKeyPress(event) {
         if (event.keyCode === 13) {
+            // Submit the login form when the 'enter' key is pressed on the input field
             this.submit('submitLogin');
         }
     }
@@ -131,9 +135,10 @@ class LoginForm extends Component {
     getCurrentForm() {
         if (this.state.isExistingUser) {
             return (
+                // The login form; displays fields for email and password
                 <div className={'login-form'}>
                     <div>
-                        <input className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange}/>
+                        <input className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
                         <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
                     </div>
                     <div style={{'margin': '10px 0'}}>
@@ -147,6 +152,7 @@ class LoginForm extends Component {
             );
         } else {
             return (
+                // The sign up form; displays fields for first name, last name, email and password
                 <div className={'login-form'} onSubmit={this.handleSubmit}>
                     <div>
                         <div>
@@ -168,12 +174,12 @@ class LoginForm extends Component {
 
     render() {
         if (this.state.auth) {
-            return (
+            return ( // Redirect to home page if user is already authenticated
                 <Redirect to={'/home'}/>
             );
         }
 
-
+        // Adjusts the style of the 'login' and 'sign up' tabs based on currently selected tab
         let styleLogin = {'marginRight': '5px', 'color': '#467c95'};
         let styleSignUp = {'marginLeft': '5px', 'color': '#f48a84'};
 
