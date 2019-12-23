@@ -1,16 +1,17 @@
 class UserProfile {
-    constructor(firstName, lastName, email, uid) {
+    constructor(firstName, lastName, email, uid, networks) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.uid = uid;
+        this.networks = networks;
     }
 
     getFullName() {
         return this.firstName + ' ' + this.lastName;
     }
 
-    getFistName() {
+    getFirstName() {
         return this.firstName;
     }
 
@@ -24,6 +25,14 @@ class UserProfile {
 
     getUid() {
         return this.uid;
+    }
+
+    getNetworks() {
+        return this.networks;
+    }
+
+    setNetworks(networkList) {
+        return this.networks = networkList;
     }
 }
 

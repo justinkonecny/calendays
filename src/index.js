@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
-import App from './components/App';
+import App from './components/main/App';
 import './index.css';
 import { Config } from './config';
 

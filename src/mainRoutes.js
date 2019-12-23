@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import Login from './components/Login';
-import Home from "./components/Home";
+import Login from './components/main/Login';
+import Home from "./components/main/Home";
 
 class MainRoutes extends Component {
     render() {

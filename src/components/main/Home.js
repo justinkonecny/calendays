@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router';
-import '../css/Home.css';
-import logo from '../resources/logo.svg';
-import notification from '../resources/notification.svg';
-import profile from '../resources/profile.svg';
-import Calendar from './Calendar';
-import Profile from './Profile';
-import UserProfile from '../data/UserProfile';
+import '../../css/Home.css';
+import logo from '../../resources/logo.svg';
+import notification from '../../resources/notification.svg';
+import profile from '../../resources/profile.svg';
+import Calendar from '../calendar/Calendar';
+import Profile from '../profile/Profile';
+import UserProfile from '../../data/UserProfile';
 import {MonthNames} from './Constants';
-import {DbConstants} from "../data/DbConstants";
+import {DbConstants} from "../../data/DbConstants";
+import Networks from "../networks/Networks";
 
 const Pages = {  // The main tabs that a user can view; the value is the 'id' of the tab <button>
     CALENDAR: 'my-calendar',
@@ -26,10 +27,11 @@ class Home extends Component {
         this.db = this.props.firebase.firestore();  // The Firebase Firestore (used as user database)
 
         this.state = {
-            currentTab: Pages.PROFILE,  // The active tab selected by the user (this is the starting tab)
+            currentTab: Pages.CALENDAR,  // The active tab selected by the user (this is the starting tab)
             userProfile: null  // The current user's profile
         };
 
+        this.queryUserNetworks = this.queryUserNetworks.bind(this);
         this.queryUserProfile = this.queryUserProfile.bind(this);
         this.setActiveTab = this.setActiveTab.bind(this);
 
@@ -49,7 +51,30 @@ class Home extends Component {
                         console.error('No user profile found!');
                     } else {
                         const profile = doc.docs[0].data();
-                        const userProfile = new UserProfile(profile.firstName, profile.lastName, this.user.email, this.user.uid);
+                        const userProfile = new UserProfile(profile.firstName, profile.lastName, this.user.email, this.user.uid, []);
+                        this.setState({userProfile});
+                        this.queryUserNetworks();
+                    }
+                });
+        }
+    }
+
+    queryUserNetworks() {
+        if (this.user == null) {
+            return null;  // There is no authenticated user
+        } else {  // Get the user's networks
+            this.db.collection(DbConstants.USERS)
+                .doc(this.user.uid)
+                .collection(DbConstants.NETWORKS).get()
+                .then(doc => {
+                    if (doc.empty) {
+                        // TODO: Display error to user
+                        console.error('No user networks found!');
+                    } else {
+                        const networkData = doc.docs[0].data();
+                        const networkList = networkData[DbConstants.MEMBER_OF];
+                        const userProfile = this.state.userProfile;
+                        userProfile.setNetworks(networkList);
                         this.setState({userProfile});
                     }
                 });
@@ -81,9 +106,9 @@ class Home extends Component {
 
         let currentPage = (<h3>Loading...</h3>);
         if (this.state.currentTab === Pages.CALENDAR) {
-            currentPage = (<Calendar user={this.user} db={this.db}/>);
+            currentPage = (<Calendar uid={this.user.uid} userProfile={this.state.userProfile} db={this.db}/>);
         } else if (this.state.currentTab === Pages.NETWORKS) {
-            currentPage = (<h4>Networks!</h4>);
+            currentPage = (<Networks userProfile={this.state.userProfile} db={this.db}/>);
         } else if (this.state.currentTab === Pages.PROFILE && this.state.userProfile) {
             currentPage = (<Profile userProfile={this.state.userProfile}/>);
         }

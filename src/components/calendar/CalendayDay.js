@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {ColumnPos, TimeOfDay, WeekDayNames} from "./Constants";
+import React, {Component} from 'react';
+import {ColumnPos, TimeOfDay, WeekDayNames} from '../main/Constants';
 
 export class CalendarDay {
     constructor(weekDayIndex, columnPos) {

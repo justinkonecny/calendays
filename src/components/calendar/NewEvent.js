@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import '../css/NewEvent.scss';
-import {MonthNames, TimeOfDay, WeekDayNames} from './Constants';
-import {DbConstants} from '../data/DbConstants';
+import '../../css/NewEvent.scss';
+import {MonthNames, TimeOfDay, WeekDayNames} from '../main/Constants';
+import {DbConstants} from '../../data/DbConstants';
 
 class NewEvent extends Component {
     constructor(props) {
@@ -68,7 +68,7 @@ class NewEvent extends Component {
     }
 
     submitEvent() {
-        if (!this.props.user) {
+        if (!this.props.userProfile) {
             this.props.handleFailure('User is not authorized');
             return;
         }
@@ -89,7 +89,7 @@ class NewEvent extends Component {
         };
 
         this.props.db.collection(DbConstants.USERS)
-            .doc(this.props.user.uid)
+            .doc(this.props.userProfile.getUid())
             .collection(DbConstants.EVENTS)
             .add(newEvent)
             .then(docRef => {

@@ -1,5 +1,4 @@
-$columnWidth: 12.3%;
-$timeWidth: 8%;
+@import 'Constants';
 
 .calendar-container-outer {
   width: 100%;
@@ -28,7 +27,7 @@ $timeWidth: 8%;
 
 .column-header {
   height: 100px;
-  width: $columnWidth;
+  width: $calendarColumnWidth;
   border-top: 2px var(--light-gray) solid;
   border-right: 2px var(--light-gray) solid;
   border-bottom: 2px var(--light-gray) solid;
@@ -41,7 +40,7 @@ $timeWidth: 8%;
 .calendar-column-left {
   border-left: 2px var(--light-gray) solid;
   border-radius: 5px 0 0 0;
-  width: calc(#{$columnWidth} - 2px);
+  width: calc(#{$calendarColumnWidth} - 2px);
 }
 
 .calendar-column-right {
@@ -59,7 +58,7 @@ $timeWidth: 8%;
 }
 
 .column-time {
-  width: $timeWidth;
+  width: $containerMarginLeft;
   border: none;
   padding-top: 2px;
   padding-bottom: 2px;
@@ -72,12 +71,12 @@ $timeWidth: 8%;
 .column-time-header {
   border: none;
   padding-bottom: 2px;
-  width: $timeWidth;
+  width: $containerMarginLeft;
 }
 
 .calendar-header-left {
   text-align: left;
-  margin-left: $timeWidth;
+  margin-left: calc(#{$containerMarginLeft} - #{$arrowWidth});
   width: 50%;
 }
 
@@ -132,7 +131,7 @@ $timeWidth: 8%;
   color: var(--dull-blue);
   font-weight: 400;
   position: relative;
-  width: calc(#{$columnWidth} + 2px);
+  width: calc(#{$calendarColumnWidth} + 2px);
 }
 
 .calendar-event {
@@ -191,8 +190,8 @@ $timeWidth: 8%;
 }
 
 .left-arrow {
-  width: 20px;
-  height: 20px;
+  width: $arrowWidth;
+  height: $arrowWidth;
   background-color: transparent;
   border-left: 3px var(--dull-blue) solid;
   border-bottom: 3px var(--dull-blue) solid;
@@ -200,13 +199,13 @@ $timeWidth: 8%;
   transform: rotate(45deg);
   padding: 0;
   position: relative;
-  left: calc(#{$timeWidth} / 2);
+  left: calc(#{$containerMarginLeft} / 2);
   top: 100px;
 }
 
 .right-arrow {
-  width: 20px;
-  height: 20px;
+  width: $arrowWidth;
+  height: $arrowWidth;
   background-color: transparent;
   border-right: 3px var(--dull-blue) solid;
   border-bottom: 3px var(--dull-blue) solid;

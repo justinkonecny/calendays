@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import '../css/Login.css';
+import '../../css/Login.css';
 import {Redirect} from "react-router";
-import {DbConstants} from "../data/DbConstants";
+import {DbConstants} from "../../data/DbConstants";
 
 class Login extends Component {
     render() {
@@ -142,8 +142,8 @@ class LoginForm extends Component {
                         <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
                     </div>
                     <div style={{'margin': '10px 0'}}>
-                        <a className='forgot'>forgot password?</a>
-                        {/*TODO: make this another page*/}
+                        <a className='forgot' href={'/reset'}>forgot password?</a>
+                        {/* TODO: make this another page */}
                     </div>
                     <div style={{'textAlign': 'center'}}>
                         <button id={'submitLogin'} className={'login-submit'} onClick={this.handleSubmit}>login</button>

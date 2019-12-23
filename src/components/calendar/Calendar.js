@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import NewEvent from './NewEvent';
-import '../css/Calendar.scss'
+import '../../css/Calendar.scss'
 import {CalendarDay} from "./CalendayDay";
-import {ColumnPos, MonthNames, WeekDayNames} from "./Constants";
-import {DbConstants} from "../data/DbConstants";
+import {ColumnPos, MonthNames, WeekDayNames} from '../main/Constants';
+import {DbConstants} from "../../data/DbConstants";
 
 class Calendar extends Component {
     constructor(props) {
@@ -90,7 +90,7 @@ class Calendar extends Component {
 
     queryForEvents(displayedWeek) {
         // Populate the list of events with the Firebase results
-        const userEvents = this.props.db.collection(DbConstants.USERS).doc(this.props.user.uid).collection(DbConstants.EVENTS);
+        const userEvents = this.props.db.collection(DbConstants.USERS).doc(this.props.uid).collection(DbConstants.EVENTS);
         userEvents.get().then(doc => {
             if (doc.empty) {
                 // TODO: Display error to user
@@ -243,7 +243,7 @@ class Calendar extends Component {
 
         return (
             <div className={'calendar-container-outer'}>
-                {this.state.showNewEvent && <NewEvent user={this.props.user}
+                {this.state.showNewEvent && <NewEvent userProfile={this.props.userProfile}
                                                       db={this.props.db}
                                                       handleSuccess={this.handleSuccess}
                                                       handleFailure={this.handleFailure}

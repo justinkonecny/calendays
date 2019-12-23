@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import '../css/Profile.scss'
+import '../../css/Profile.scss'
 
 class Profile extends Component {
     constructor(props) {
@@ -10,7 +10,7 @@ class Profile extends Component {
     render() {
         return (
             <div className={'profile-container'}>
-                <h2>Hi {this.userProfile.getFistName()}!</h2>
+                <h2>hi {this.userProfile.getFirstName()}!</h2>
 
                 <h3>full name</h3>
                 <h4>{this.userProfile.getFullName()}</h4>

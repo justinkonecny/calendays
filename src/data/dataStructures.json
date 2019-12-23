@@ -24,12 +24,30 @@
       },
       "profile": {
         "2F2NDd4uKvZsZmI61BQMpbxs9PVCx2": {
-          "firstName": "J",
-          "lastName": "K",
-          "email": "jk@gmail.com",
+          "firstName": "John",
+          "lastName": "Appleseed",
+          "email": "john.appleseed@gmail.com",
           "uid": "3COBqpX6LQS9jHlSnihdye4EYqy1"
         }
+      },
+      "networks": {
+        "dqDJC6RRF99LgZGRAa6V": {
+          "memberOf": [
+            "52fHrpb3DrHJ7X04Vw1b"
+          ]
+        }
       }
+    }
+  },
+  "networks": {
+    "52fHrpb3DrHJ7X04Vw1b": {
+      "name": "Team A",
+      "owner": "3COBqpX6LQS9jHlSnihdye4EYqy1",
+      "members": [
+        "3COBwJhMzQS9jHlSni6V4kgEYqy1",
+        "2NDd4uKvZsZmI61BQMpbxs9PVCx2"
+      ],
+      "timestamp": "12-15-19 13:41"
     }
   }
 }
