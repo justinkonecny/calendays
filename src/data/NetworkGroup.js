@@ -4,6 +4,7 @@ class NetworkGroup {
         this.name = name;  // (string): the group name
         this.timestamp = timestamp;  // (string): the creation date/time
         this.members = members;  // (list of UID): list of group members
+        this.users = [];  // (list of UserProfile): list of group members
     }
 
     getName() {
@@ -16,6 +17,18 @@ class NetworkGroup {
 
     getMembers() {
         return this.members;
+    }
+
+    getUsers() {
+        return this.users;
+    }
+
+    setUsers(users) {
+        this.users = users;
+    }
+
+    addUser(user) {
+        this.users.push(user);
     }
 }
 

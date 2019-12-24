@@ -10,6 +10,7 @@ import UserProfile from '../../data/UserProfile';
 import {MonthNames} from './Constants';
 import {DbConstants} from "../../data/DbConstants";
 import Networks from "../networks/Networks";
+import NetworkGroup from "../../data/NetworkGroup";
 
 const Pages = {  // The main tabs that a user can view; the value is the 'id' of the tab <button>
     CALENDAR: 'my-calendar',
@@ -28,10 +29,13 @@ class Home extends Component {
 
         this.state = {
             currentTab: Pages.CALENDAR,  // The active tab selected by the user (this is the starting tab)
-            userProfile: null  // The current user's profile
+            userProfile: null,  // The current user's profile
+            networkGroups: []
         };
 
+        this.queryUserProfileFromId = this.queryUserProfileFromId.bind(this);
         this.queryUserNetworks = this.queryUserNetworks.bind(this);
+        this.queryNetworkGroups = this.queryNetworkGroups.bind(this);
         this.queryUserProfile = this.queryUserProfile.bind(this);
         this.setActiveTab = this.setActiveTab.bind(this);
 
@@ -39,6 +43,10 @@ class Home extends Component {
     }
 
     queryUserProfile() {
+        /**
+         * Queries the Firestore for the current user's information and
+         * saves the user's first name, last name, email, and uid.
+         */
         if (this.user == null) {
             return null;  // There is no authenticated user
         } else {  // Create the UserProfile from query result
@@ -50,16 +58,23 @@ class Home extends Component {
                         // TODO: Display error to user
                         console.error('No user profile found!');
                     } else {
+                        // const profile = doc.docs[0].data();
+                        // const userProfile = new UserProfile(profile.firstName, profile.lastName, this.user.email, this.user.uid, []);
+                        // this.setState({userProfile});
+                        // this.queryUserNetworks();
+
                         const profile = doc.docs[0].data();
-                        const userProfile = new UserProfile(profile.firstName, profile.lastName, this.user.email, this.user.uid, []);
-                        this.setState({userProfile});
-                        this.queryUserNetworks();
+                        this.queryUserNetworks(profile.firstName, profile.lastName, this.user.email, this.user.uid);
                     }
                 });
         }
     }
 
-    queryUserNetworks() {
+    queryUserNetworks(firstName, lastName, email, uid) {
+        /**
+         * Queries the Firestore for the current user's networks and saves
+         * them to the user's profile as a list of network IDs.
+         */
         if (this.user == null) {
             return null;  // There is no authenticated user
         } else {  // Get the user's networks
@@ -71,14 +86,71 @@ class Home extends Component {
                         // TODO: Display error to user
                         console.error('No user networks found!');
                     } else {
+                        // const networkData = doc.docs[0].data();
+                        // const networkList = networkData[DbConstants.MEMBER_OF];
+                        // const userProfile = this.state.userProfile;
+                        // userProfile.setNetworks(networkList);
+                        // this.setState({userProfile});
+
                         const networkData = doc.docs[0].data();
                         const networkList = networkData[DbConstants.MEMBER_OF];
-                        const userProfile = this.state.userProfile;
-                        userProfile.setNetworks(networkList);
+                        const userProfile = new UserProfile(firstName, lastName, email, uid, networkList);
                         this.setState({userProfile});
+                        this.queryNetworkGroups(networkList);
                     }
                 });
         }
+    }
+
+    queryNetworkGroups(networkListUid) {
+        /**
+         * Queries the Firestore for all networks and saves those which the current user is in.
+         */
+
+            // TODO: Change this function to make multiple calls?
+        // const networkGroups = this.state.networkGroups;
+        this.db.collection(DbConstants.NETWORKS).get()
+            .then(col => {
+                if (col.empty) {
+                    // TODO: Display error to user
+                    console.error('No networks found!');
+                } else {
+                    console.log(col.docs.length + ' networks found');
+                    for (const doc of col.docs) {
+                        if (networkListUid.includes(doc.id)) {
+                            const network = doc.data();
+                            const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
+                            // networkGroups.push(networkGroup);
+                            this.queryUserProfileFromId(networkGroup);
+                        }
+                    }
+                    // this.setState({networkGroups});
+                }
+            });
+    }
+
+    queryUserProfileFromId(group) {
+        /**
+         * Queries the Firestore for a user's profile given their uid.
+         */
+        const networkGroups = this.state.networkGroups;
+        for (const uid of group.getMembers()) {
+            this.db.collection(DbConstants.USERS)
+                .doc(uid)
+                .collection(DbConstants.PROFILE).get()
+                .then(doc => {
+                    if (doc.empty) {
+                        // TODO: Display error to user
+                        console.error('No user profile found!');
+                    } else {
+                        const prof = doc.docs[0].data();
+                        const networkUser = new UserProfile(prof.firstName, prof.lastName, prof.email, prof.uid, null);
+                        group.addUser(networkUser);
+                    }
+                });
+        }
+        networkGroups.push(group);
+        this.setState({networkGroups});
     }
 
     setActiveTab(event) {
@@ -108,7 +180,7 @@ class Home extends Component {
         if (this.state.currentTab === Pages.CALENDAR) {
             currentPage = (<Calendar uid={this.user.uid} userProfile={this.state.userProfile} db={this.db}/>);
         } else if (this.state.currentTab === Pages.NETWORKS) {
-            currentPage = (<Networks userProfile={this.state.userProfile} db={this.db}/>);
+            currentPage = (<Networks userProfile={this.state.userProfile} networkGroups={this.state.networkGroups}/>);
         } else if (this.state.currentTab === Pages.PROFILE && this.state.userProfile) {
             currentPage = (<Profile userProfile={this.state.userProfile}/>);
         }
