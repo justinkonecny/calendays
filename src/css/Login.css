@@ -87,6 +87,11 @@
 .login-form {
 }
 
+.forgot {
+    color: var(--dull-blue);
+    text-decoration: none;
+}
+
 .forgot:hover {
     cursor: pointer;
     color: var(--blush);

@@ -41,7 +41,7 @@ class Home extends Component {
     queryUserProfile() {
         if (this.user == null) {
             return null;  // There is no authenticated user
-        } else {  // Create the UserProfile
+        } else {  // Create the UserProfile from query result
             this.db.collection(DbConstants.USERS)
                 .doc(this.user.uid)
                 .collection(DbConstants.PROFILE).get()

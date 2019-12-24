@@ -11,7 +11,7 @@ require('firebase/auth');
 require("firebase/firestore");
 firebase.initializeApp(Config);
 
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
     .then(function() {
         // Existing and future Auth states are now persisted in the current
         // session only. Closing the window would clear any existing state even
@@ -32,7 +32,7 @@ const routerApp = (
         <App firebase={firebase} />
     </BrowserRouter>
 );
-ReactDOM.render(routerApp, document.getElementById("root"));
+ReactDOM.render(routerApp, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

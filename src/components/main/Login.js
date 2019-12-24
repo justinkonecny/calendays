@@ -70,11 +70,12 @@ class LoginForm extends Component {
             this.props.firebase.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password)
                 .catch(this.firebaseError)
                 .then(() => {
+                        console.log('Successfully authenticated user ' + this.state.email);
                         this.setState({
                             auth: true,
                             email: '',
                             password: ''
-                        })
+                        });
                     }
                 );
         } else {
@@ -142,7 +143,7 @@ class LoginForm extends Component {
                         <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
                     </div>
                     <div style={{'margin': '10px 0'}}>
-                        <a className='forgot' href={'/reset'}>forgot password?</a>
+                        <a className={'forgot'} href={'/reset'}>forgot password?</a>
                         {/* TODO: make this another page */}
                     </div>
                     <div style={{'textAlign': 'center'}}>
