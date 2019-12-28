@@ -1,0 +1,25 @@
+@import 'src/css/Constants';
+
+.networks-container-outer {
+  height: $containerHeightFull;
+  display: flex;
+
+  .network-groups {
+    width: 100%;
+    margin-left: $containerMarginLeft;
+    padding-right: $containerPaddingRight;
+
+    .networks-header {
+      display: flex;
+
+      .btn-new-network {
+        margin-right: 0;
+      }
+    }
+
+    .group-list-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+}

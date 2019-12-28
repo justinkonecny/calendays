@@ -1,0 +1,11 @@
+@import '../Constants';
+
+.create-new-network {
+  width: $sideMenuWidth;
+  height: $sideMenuHeight;
+  margin: $sideMenuMargin;
+  padding: $sideMenuPadding;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+}

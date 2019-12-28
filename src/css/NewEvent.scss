@@ -1,8 +1,10 @@
+@import './Constants';
+
 .create-new-event {
-  width: 24%;
-  height: 94%;
-  margin: 2% 2% 2% 0;
-  padding: 0 2%;
+  width: $sideMenuWidth;
+  height: $sideMenuHeight;
+  margin: $sideMenuMargin;
+  padding: $sideMenuPadding;
   display: flex;
   flex-direction: column;
   overflow: scroll;

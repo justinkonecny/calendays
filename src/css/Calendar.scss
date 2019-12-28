@@ -2,7 +2,7 @@
 
 .calendar-container-outer {
   width: 100%;
-  height: calc(100% - 100px);
+  height: $containerHeightFull;
   display: flex;
 }
 

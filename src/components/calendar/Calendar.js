@@ -3,14 +3,13 @@ import NewEvent from './NewEvent';
 import '../../css/Calendar.scss'
 import {CalendarDay} from "./CalendayDay";
 import {ColumnPos, MonthNames, WeekDayNames} from '../main/Constants';
-import {DbConstants} from "../../data/DbConstants";
 
 class Calendar extends Component {
     constructor(props) {
         super(props);
+
         this.renderEventsForWeek = this.renderEventsForWeek.bind(this);
         this.getPopulatedDates = this.getPopulatedDates.bind(this);
-        this.queryForEvents = this.queryForEvents.bind(this);
         this.toggleNewEvent = this.toggleNewEvent.bind(this);
         this.handleSuccess = this.handleSuccess.bind(this);
         this.handleFailure = this.handleFailure.bind(this);
@@ -24,7 +23,6 @@ class Calendar extends Component {
             showNewEvent: false,  // Don't show the new event creator after load
             displayedWeek: 0, // Index of first day of the week being displayed
             displayedDate: this.date, // Date of first day of the week being displayed
-            events: []  // List of events from the database
         };
 
         this.weekNames = WeekDayNames;  // List of days of the week (full and abbreviated names)
@@ -43,8 +41,6 @@ class Calendar extends Component {
         }
         this.state.dayClasses = firstWeek;
 
-        this.queryForEvents(0);
-
         this.monthLengths = [];  // The number of days in each dateMonth (by index)
         for (let i = 1; i <= 12; i++) {
             const lastDate = new Date(this.date.getFullYear(), i, 0);
@@ -55,7 +51,6 @@ class Calendar extends Component {
         const weekIndex = this.date.getDay();
         this.state.dayClasses[weekIndex].setDayMonth(dayDate).setToday(true);  // Sets this dateDay as 'today'
 
-        // this.populateDates(this.date, 0);  // Sets the dateDay for each day of the week
         this.state.dayClasses = this.getPopulatedDates(this.date, 0);
         this.state.displayedDate = this.state.dayClasses[0].getDate();
 
@@ -84,26 +79,15 @@ class Calendar extends Component {
         });
     }
 
-    componentDidMount() {
-        document.getElementById('12pm').scrollIntoView({block: 'center'});
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.events == null && this.props.events != null) {
+            // The 'events' prop is null until the Firestore query returns
+            this.renderEventsForWeek(0);
+        }
     }
 
-    queryForEvents(displayedWeek) {
-        // Populate the list of events with the Firebase results
-        const userEvents = this.props.db.collection(DbConstants.USERS).doc(this.props.uid).collection(DbConstants.EVENTS);
-        userEvents.get().then(doc => {
-            if (doc.empty) {
-                // TODO: Display error to user
-                console.error('No user events found!');
-            } else {
-                const events = [];
-                doc.docs.forEach(docQuery => {
-                    events.push(docQuery.data());
-                });
-                this.setState({events});
-                this.renderEventsForWeek(displayedWeek);
-            }
-        });
+    componentDidMount() {
+        document.getElementById('12pm').scrollIntoView({block: 'center'});
     }
 
     getPopulatedDates(theDate, startOffset) {
@@ -156,7 +140,7 @@ class Calendar extends Component {
     }
 
     handleSuccess(event) {
-        const events = this.state.events;
+        const events = this.props.events;
         events.push(event);
         this.setState({showNewEvent: false, events});
         this.renderEventsForWeek(this.state.displayedWeek);
@@ -169,7 +153,7 @@ class Calendar extends Component {
 
     renderEventsForWeek(displayedWeek) {
         const startDate = this.state.displayedDate;
-        const events = this.state.events;
+        const events = this.props.events;
         const toRemove = [];
         for (let i = 0; i < events.length; i++) {
             const event = events[i];
@@ -239,7 +223,6 @@ class Calendar extends Component {
             columnBodies.push(day.getDayComponent(this.state.showNewEvent));
             return day.getHeaderComponent(this.state.showNewEvent);
         });
-
 
         return (
             <div className={'calendar-container-outer'}>

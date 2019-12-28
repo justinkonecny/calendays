@@ -2,21 +2,22 @@ import React, {Component} from 'react';
 import '../../css/Profile.scss'
 
 class Profile extends Component {
-    constructor(props) {
-        super(props);
-        this.userProfile = this.props.userProfile;
-    }
 
     render() {
+        const userProfile = this.props.userProfile;
+
         return (
             <div className={'profile-container'}>
-                <h2>hi {this.userProfile.getFirstName()}!</h2>
+                <h2>hi {userProfile.getFirstName()}!</h2>
 
                 <h3>full name</h3>
-                <h4>{this.userProfile.getFullName()}</h4>
+                <h4>{userProfile.getFullName()}</h4>
 
                 <h3>email</h3>
-                <h4>{this.userProfile.getEmail()}</h4>
+                <h4>{userProfile.getEmail()}</h4>
+
+                <h3>user id</h3>
+                <h4>{userProfile.getUid()}</h4>
             </div>
         );
     }

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import '../../css/Group.scss'
+import '../../css/networks/Group.scss'
 
 class Group extends Component {
     render() {

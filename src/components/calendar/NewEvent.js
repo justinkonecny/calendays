@@ -69,7 +69,7 @@ class NewEvent extends Component {
 
     submitEvent() {
         if (!this.props.userProfile) {
-            this.props.handleFailure('User is not authorized');
+            this.props.handleFailure('User is not authenticated');
             return;
         }
 
@@ -93,9 +93,11 @@ class NewEvent extends Component {
             .collection(DbConstants.EVENTS)
             .add(newEvent)
             .then(docRef => {
+                console.log('Successfully created a new event');
                 this.props.handleSuccess(newEvent);
             })
             .catch(error => {
+                console.error('Failed to create a new event!');
                 this.props.handleFailure(error);
             });
     }
@@ -222,7 +224,7 @@ class NewEvent extends Component {
 
                 {/*<h3>request response by</h3>*/}
                 {/*<input className={'input-event-location'} type={'text'} name={'eventDateTime'} placeholder={'Add date/time'} value={this.state.eventDateTime}*/}
-                {/*onChange={this.handleChange}/>*/}
+                {/*onChange={this.handleInputChange}/>*/}
 
                 <button className={'btn-primary btn-create-event'} onClick={this.submitEvent}>create event</button>
             </div>

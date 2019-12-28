@@ -8,17 +8,15 @@ import Calendar from '../calendar/Calendar';
 import Profile from '../profile/Profile';
 import UserProfile from '../../data/UserProfile';
 import {MonthNames} from './Constants';
-import {DbConstants} from "../../data/DbConstants";
-import Networks from "../networks/Networks";
-import NetworkGroup from "../../data/NetworkGroup";
+import {DbConstants} from '../../data/DbConstants';
+import Networks from '../networks/Networks';
+import NetworkGroup from '../../data/NetworkGroup';
 
 const Pages = {  // The main tabs that a user can view; the value is the 'id' of the tab <button>
     CALENDAR: 'my-calendar',
     NETWORKS: 'my-networks',
     PROFILE: 'my-profile'
 };
-
-// TODO: Move EVENT list to Home component to prevent unnecessary calls to DB
 
 class Home extends Component {
     constructor(props) {
@@ -29,17 +27,47 @@ class Home extends Component {
 
         this.state = {
             currentTab: Pages.CALENDAR,  // The active tab selected by the user (this is the starting tab)
-            userProfile: null,  // The current user's profile
-            networkGroups: []
+            userProfile: null,  // (UserProfile): The current user's profile
+            networkGroups: [],  // (List of NetworkGroup): the current user's networks,
+            events: null  // (List): the current user's events
         };
 
-        this.queryUserProfileFromId = this.queryUserProfileFromId.bind(this);
         this.queryUserNetworks = this.queryUserNetworks.bind(this);
+        this.queryUserProfileFromId = this.queryUserProfileFromId.bind(this);
         this.queryNetworkGroups = this.queryNetworkGroups.bind(this);
+        this.queryUserEvents = this.queryUserEvents.bind(this);
         this.queryUserProfile = this.queryUserProfile.bind(this);
+        this.onAddUserNetwork = this.onAddUserNetwork.bind(this);
         this.setActiveTab = this.setActiveTab.bind(this);
 
+        this.queryUserEvents();
         this.queryUserProfile();
+    }
+
+    queryUserEvents() {
+        /**
+         * Queries the Firestore for the current user's events
+         */
+        if (this.user == null) {
+            return null;  // There is no authenticated user
+        } else {
+            this.db.collection(DbConstants.USERS)
+                .doc(this.user.uid)
+                .collection(DbConstants.EVENTS).get()
+                .then(doc => {
+                    if (doc.empty) {
+                        // TODO: Display error to user
+                        console.error('No user events found!');
+                        this.setState({events: []});
+                    } else {
+                        const events = [];
+                        doc.docs.forEach(docQuery => {
+                            events.push(docQuery.data());
+                        });
+                        this.setState({events});
+                    }
+                });
+        }
     }
 
     queryUserProfile() {
@@ -58,11 +86,6 @@ class Home extends Component {
                         // TODO: Display error to user
                         console.error('No user profile found!');
                     } else {
-                        // const profile = doc.docs[0].data();
-                        // const userProfile = new UserProfile(profile.firstName, profile.lastName, this.user.email, this.user.uid, []);
-                        // this.setState({userProfile});
-                        // this.queryUserNetworks();
-
                         const profile = doc.docs[0].data();
                         this.queryUserNetworks(profile.firstName, profile.lastName, this.user.email, this.user.uid);
                     }
@@ -85,13 +108,9 @@ class Home extends Component {
                     if (doc.empty) {
                         // TODO: Display error to user
                         console.error('No user networks found!');
+                        const userProfile = new UserProfile(firstName, lastName, email, uid, []);
+                        this.setState({userProfile});
                     } else {
-                        // const networkData = doc.docs[0].data();
-                        // const networkList = networkData[DbConstants.MEMBER_OF];
-                        // const userProfile = this.state.userProfile;
-                        // userProfile.setNetworks(networkList);
-                        // this.setState({userProfile});
-
                         const networkData = doc.docs[0].data();
                         const networkList = networkData[DbConstants.MEMBER_OF];
                         const userProfile = new UserProfile(firstName, lastName, email, uid, networkList);
@@ -106,9 +125,6 @@ class Home extends Component {
         /**
          * Queries the Firestore for all networks and saves those which the current user is in.
          */
-
-            // TODO: Change this function to make multiple calls?
-        // const networkGroups = this.state.networkGroups;
         this.db.collection(DbConstants.NETWORKS).get()
             .then(col => {
                 if (col.empty) {
@@ -120,20 +136,21 @@ class Home extends Component {
                         if (networkListUid.includes(doc.id)) {
                             const network = doc.data();
                             const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
-                            // networkGroups.push(networkGroup);
                             this.queryUserProfileFromId(networkGroup);
                         }
                     }
-                    // this.setState({networkGroups});
                 }
             });
     }
 
     queryUserProfileFromId(group) {
         /**
-         * Queries the Firestore for a user's profile given their uid.
+         * Queries the Firestore for user profiles for all users in a given NetworkGroup.
          */
         const networkGroups = this.state.networkGroups;
+        networkGroups.push(group);
+        this.setState({networkGroups});
+
         for (const uid of group.getMembers()) {
             this.db.collection(DbConstants.USERS)
                 .doc(uid)
@@ -146,11 +163,10 @@ class Home extends Component {
                         const prof = doc.docs[0].data();
                         const networkUser = new UserProfile(prof.firstName, prof.lastName, prof.email, prof.uid, null);
                         group.addUser(networkUser);
+                        this.setState({networkGroups});
                     }
                 });
         }
-        networkGroups.push(group);
-        this.setState({networkGroups});
     }
 
     setActiveTab(event) {
@@ -159,7 +175,6 @@ class Home extends Component {
          * and is used to change which page is currently displayed.
          */
         const id = event.target.id;
-
         if (id === Pages.CALENDAR) {
             this.setState({currentTab: Pages.CALENDAR});
         } else if (id === Pages.NETWORKS) {
@@ -167,6 +182,12 @@ class Home extends Component {
         } else if (id === Pages.PROFILE) {
             this.setState({currentTab: Pages.PROFILE});
         }
+    }
+
+    onAddUserNetwork(network) {
+        console.log("NEW", network);
+        const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
+        this.queryUserProfileFromId(networkGroup);
     }
 
     render() {
@@ -178,9 +199,9 @@ class Home extends Component {
 
         let currentPage = (<h3>Loading...</h3>);
         if (this.state.currentTab === Pages.CALENDAR) {
-            currentPage = (<Calendar uid={this.user.uid} userProfile={this.state.userProfile} db={this.db}/>);
+            currentPage = (<Calendar userProfile={this.state.userProfile} events={this.state.events} db={this.db}/>);
         } else if (this.state.currentTab === Pages.NETWORKS) {
-            currentPage = (<Networks userProfile={this.state.userProfile} networkGroups={this.state.networkGroups}/>);
+            currentPage = (<Networks userProfile={this.state.userProfile} networkGroups={this.state.networkGroups} db={this.db} addNewNetwork={this.onAddUserNetwork}/>);
         } else if (this.state.currentTab === Pages.PROFILE && this.state.userProfile) {
             currentPage = (<Profile userProfile={this.state.userProfile}/>);
         }
@@ -216,7 +237,6 @@ class Home extends Component {
 class NavBar extends Component {
     render() {
         const date = new Date();  // The current date to render at bottom of side nav
-        this.monthNames = MonthNames;  // Array containing the months
 
         return (
             <div className={'navbar'}>
@@ -239,7 +259,7 @@ class NavBar extends Component {
                     <div className={'nav-date-container'}>
                         <div className={'flex-centered'}>
                             <div className={'nav-month'}>
-                                {this.monthNames[date.getMonth()].substring(0, 3).toUpperCase()}
+                                {MonthNames[date.getMonth()].substring(0, 3).toUpperCase()}
                             </div>
                             <div className={'nav-day'}>
                                 {date.getDate()}
