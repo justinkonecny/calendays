@@ -28,6 +28,9 @@ class NewNetwork extends Component {
             return;
         }
 
+        if (this.state.memberId.trim() === '') {
+            return;
+        }
 
         let members = this.state.memberId.split(',');
         members.push(this.props.userProfile.getUid());
