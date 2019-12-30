@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import '../../css/NewEvent.scss';
 import {MonthNames, TimeOfDay, WeekDayNames} from '../main/Constants';
 import {DbConstants} from '../../data/DbConstants';
+import InputField from "../common/InputField";
 
 class NewEvent extends Component {
     constructor(props) {
@@ -177,7 +178,7 @@ class NewEvent extends Component {
         return (
             <div className={'create-new-event'}>
                 <h3>title</h3>
-                <input className={'input-event-name'} type={'text'} name={'eventName'} placeholder={'new event'} value={this.state.eventName} onChange={this.handleChange}/>
+                <InputField className={'input-event-name'} type={'text'} name={'eventName'} placeholder={'new event'} value={this.state.eventName} onChange={this.handleChange}/>
 
                 <h3>date + time</h3>
                 <div>
@@ -204,7 +205,7 @@ class NewEvent extends Component {
                 </div>
 
                 <h3>location</h3>
-                <input className={'input-event-location'} type={'text'} name={'eventLocation'} placeholder={'add location'} value={this.state.eventLocation} onChange={this.handleChange}/>
+                <InputField className={'input-event-location'} type={'text'} name={'eventLocation'} placeholder={'add location'} value={this.state.eventLocation} onChange={this.handleChange}/>
 
                 {/*<h3>friends</h3>*/}
                 {/*<div>don't know her</div>*/}
@@ -297,6 +298,7 @@ class DatePicker extends Component {
 class TimePicker extends Component {
     constructor(props) {
         super(props);
+        this.setTime = this.props.setTime;
         this.timesHours = [];
         this.timesMinutes = [];
         this.timesOfDay = [];
@@ -307,7 +309,6 @@ class TimePicker extends Component {
             showTimeOfDayPicker: false
         };
 
-        this.setTime = this.props.setTime;
         this.clickHourPicker = this.clickHourPicker.bind(this);
         this.clickMinutePicker = this.clickMinutePicker.bind(this);
         this.clickTimeOfDayPicker = this.clickTimeOfDayPicker.bind(this);
@@ -326,7 +327,6 @@ class TimePicker extends Component {
 
             this.btnHours.push(this.getPickerOptionsHtml(i.toString().padStart(2, '0'), this.selectHourFromMenu));
             this.btnMinutes.push(this.getPickerOptionsHtml(min.toString().padStart(2, '0'), this.selectMinuteFromMenu));
-
         }
 
         for (const tod in TimeOfDay) {

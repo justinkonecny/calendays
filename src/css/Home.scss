@@ -32,16 +32,27 @@ h5 { /* Calendar Event Titles */
 }
 
 input {
+    width: calc(100% - 10px);
     background: none;
     border: none;
     color: var(--dull-blue);
     border-bottom: 1px solid;
     font-size: 17px;
-    padding: 4px;
+    padding: 5px;
 }
 
 input::placeholder {
     color: var(--dull-blue);
+}
+
+input:focus {
+    outline: none;
+    color: var(--light-blue);
+    border-color: var(--dull-blue);
+}
+
+input:focus::placeholder {
+    color: var(--light-blue);
 }
 
 button {
@@ -62,6 +73,7 @@ button:active {
 }
 
 button:focus {
+    filter: brightness(95%);
     outline: none;
 }
 
@@ -74,6 +86,11 @@ textarea {
     font-size: 13px;
     padding: 10px;
     resize: none;
+    outline: none;
+}
+
+textarea:focus {
+    border-color: var(--light-blue);
 }
 
 .btn-primary {
@@ -133,12 +150,6 @@ textarea {
     height: calc(100vh - 50px);
 }
 
-.content-btns {
-    height: 50px;
-    text-align: left;
-    margin: 25px 0 10px 8%;
-}
-
 .navbar {
     display: flex;
     flex-direction: column;
@@ -182,4 +193,12 @@ textarea {
 
 .flex-centered {
     margin: auto;
+}
+
+.scrollable {
+    overflow: scroll;
+}
+
+.btn-invisible {
+    background-color: transparent;
 }

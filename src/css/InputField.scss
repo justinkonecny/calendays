@@ -1,0 +1,34 @@
+.input-container {
+  position: relative;
+  display: inline-block;
+
+  .input-border {
+    position: absolute;
+    height: 1px;
+    background: var(--light-blue);
+    transition: all 0.3s ease-in-out;
+    width: 0;
+    bottom: 0;
+    margin-left: -50%;
+    left: 50%;
+  }
+
+  .input-animated:focus ~ .input-border {
+    width: 100%;
+  }
+
+  .label-animated {
+    transition: all 0.3s ease-in-out;
+    font-size: 17px;
+    color: var(--dull-blue);
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    pointer-events: none;
+  }
+
+  .input-animated:focus ~ .label-animated {
+    top: -10px;
+    font-size: 10px;
+  }
+}

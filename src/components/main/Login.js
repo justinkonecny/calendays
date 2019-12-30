@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import '../../css/Login.css';
 import {Redirect} from "react-router";
 import {DbConstants} from "../../data/DbConstants";
+import InputField from "../common/InputField";
 
 class Login extends Component {
     render() {
@@ -139,8 +140,8 @@ class LoginForm extends Component {
                 // The login form; displays fields for email and password
                 <div className={'login-form'}>
                     <div>
-                        <input className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
-                        <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
+                        <InputField className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
+                        <InputField className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
                     </div>
                     <div style={{'margin': '10px 0'}}>
                         <a className={'forgot'} href={'/reset'}>forgot password?</a>
@@ -157,12 +158,12 @@ class LoginForm extends Component {
                 <div className={'login-form'} onSubmit={this.handleSubmit}>
                     <div>
                         <div>
-                            <input className={'login-input'} type={'text'} name={'firstName'} placeholder={'first name'} value={this.state.firstName} onChange={this.handleChange}/>
-                            <input className={'login-input'} type={'text'} name={'lastName'} placeholder={'last name'} value={this.state.lastName} onChange={this.handleChange}/>
+                            <InputField className={'login-input'} type={'text'} name={'firstName'} placeholder={'first name'} value={this.state.firstName} onChange={this.handleChange}/>
+                            <InputField className={'login-input'} type={'text'} name={'lastName'} placeholder={'last name'} value={this.state.lastName} onChange={this.handleChange}/>
                         </div>
                         <div>
-                            <input className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange}/>
-                            <input className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange}/>
+                            <InputField className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange}/>
+                            <InputField className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange}/>
                         </div>
                     </div>
                     <div style={{'textAlign': 'center'}}>

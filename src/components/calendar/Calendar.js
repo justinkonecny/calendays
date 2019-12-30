@@ -19,6 +19,7 @@ class Calendar extends Component {
         this.date = new Date();  // Today's dateDay
 
         this.state = {
+            events: null,
             dayClasses: [],  // The list of Calendar days
             showNewEvent: false,  // Don't show the new event creator after load
             displayedWeek: 0, // Index of first day of the week being displayed
@@ -81,13 +82,17 @@ class Calendar extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.events == null && this.props.events != null) {
-            // The 'events' prop is null until the Firestore query returns
-            this.renderEventsForWeek(0);
+            this.setState({events: this.props.events.slice()});
+        } else if (prevState.events == null && this.state.events != null) {
+            this.renderEventsForWeek(0);  // The 'events' prop is null until the Firestore query returns
         }
     }
 
     componentDidMount() {
         document.getElementById('12pm').scrollIntoView({block: 'center'});
+        if (this.props.events != null && this.state.events == null) {
+            this.setState({events: this.props.events.slice()});
+        }
     }
 
     getPopulatedDates(theDate, startOffset) {
@@ -140,10 +145,11 @@ class Calendar extends Component {
     }
 
     handleSuccess(event) {
-        const events = this.props.events;
+        const events = this.state.events;
         events.push(event);
         this.setState({showNewEvent: false, events});
         this.renderEventsForWeek(this.state.displayedWeek);
+        this.props.handleNewEvent(event);
     }
 
     handleFailure(error) {
@@ -153,7 +159,7 @@ class Calendar extends Component {
 
     renderEventsForWeek(displayedWeek) {
         const startDate = this.state.displayedDate;
-        const events = this.props.events;
+        const events = this.state.events;
         const toRemove = [];
         for (let i = 0; i < events.length; i++) {
             const event = events[i];
@@ -219,7 +225,6 @@ class Calendar extends Component {
         const columnBodies = [];
         const columnHeaders = this.state.dayClasses.slice(this.state.displayedWeek, this.state.displayedWeek + 7).map(day => {
             day.setTimesCount(12);
-            // return day.getComponent(this.state.showNewEvent);
             columnBodies.push(day.getDayComponent(this.state.showNewEvent));
             return day.getHeaderComponent(this.state.showNewEvent);
         });

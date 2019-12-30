@@ -72,10 +72,6 @@
 }
 
 .login-input {
-    background: none;
-    border: none;
-    color: var(--dull-blue);
-    border-bottom: 1px solid;
     margin: 8px 10px 8px 0;
     width: 100%;
 }

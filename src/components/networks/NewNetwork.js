@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import '../../css/networks/NewNetwork.scss';
 import {DbConstants} from "../../data/DbConstants";
+import InputField from "../common/InputField";
 
 class NewNetwork extends Component {
     constructor(props) {
@@ -34,7 +35,9 @@ class NewNetwork extends Component {
 
         let members = this.state.memberId.split(',');
         members.push(this.props.userProfile.getUid());
-        members = members.map(member => {return member.trim()});
+        members = members.map(member => {
+            return member.trim()
+        });
 
         const newNetwork = {
             name: this.state.netName,
@@ -113,10 +116,10 @@ class NewNetwork extends Component {
         return (
             <div className={'create-new-network'}>
                 <h3>network name</h3>
-                <input type={'text'} name={'netName'} placeholder={'new network'} value={this.state.netName} onChange={this.handleInputChange}/>
+                <InputField type={'text'} name={'netName'} placeholder={'new network'} value={this.state.netName} onChange={this.handleInputChange}/>
 
                 <h3>member id</h3>
-                <input type={'text'} name={'memberId'} placeholder={'member id'} value={this.state.memberId} onChange={this.handleInputChange}/>
+                <InputField type={'text'} name={'memberId'} placeholder={'member id'} value={this.state.memberId} onChange={this.handleInputChange}/>
 
                 <button className={'btn-primary'} onClick={this.submitNetwork}>create network</button>
             </div>

@@ -7,7 +7,6 @@
   padding: $sideMenuPadding;
   display: flex;
   flex-direction: column;
-  overflow: scroll;
 }
 
 .display-flex {
@@ -85,6 +84,7 @@ $widthTime: 50px;
   color: var(--dull-blue);
   position: absolute;
   border-bottom: 1px solid var(--dark-gray);
+  z-index: 2;
 
   .picker-inner {
     display: block;

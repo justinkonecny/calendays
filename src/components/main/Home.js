@@ -1,21 +1,20 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router';
-import '../../css/Home.css';
+import '../../css/Home.scss';
 import logo from '../../resources/logo.svg';
+import home from '../../resources/home.svg';
 import notification from '../../resources/notification.svg';
 import profile from '../../resources/profile.svg';
-import Calendar from '../calendar/Calendar';
-import Profile from '../profile/Profile';
 import UserProfile from '../../data/UserProfile';
 import {MonthNames} from './Constants';
 import {DbConstants} from '../../data/DbConstants';
-import Networks from '../networks/Networks';
 import NetworkGroup from '../../data/NetworkGroup';
+import User from "./User";
+import Calendar from "../calendar/Calendar";
 
-const Pages = {  // The main tabs that a user can view; the value is the 'id' of the tab <button>
-    CALENDAR: 'my-calendar',
-    NETWORKS: 'my-networks',
-    PROFILE: 'my-profile'
+const HomePages = {
+    HOME: 'icon-home',
+    USER: 'icon-user'
 };
 
 class Home extends Component {
@@ -26,7 +25,7 @@ class Home extends Component {
         this.db = this.props.firebase.firestore();  // The Firebase Firestore (used as user database)
 
         this.state = {
-            currentTab: Pages.CALENDAR,  // The active tab selected by the user (this is the starting tab)
+            currentPage: HomePages.HOME,  // The active page selected by the use
             userProfile: null,  // (UserProfile): The current user's profile
             networkGroups: [],  // (List of NetworkGroup): the current user's networks,
             events: null  // (List): the current user's events
@@ -38,7 +37,8 @@ class Home extends Component {
         this.queryUserEvents = this.queryUserEvents.bind(this);
         this.queryUserProfile = this.queryUserProfile.bind(this);
         this.onAddUserNetwork = this.onAddUserNetwork.bind(this);
-        this.setActiveTab = this.setActiveTab.bind(this);
+        this.handlePageChange = this.handlePageChange.bind(this);
+        this.handleNewEvent = this.handleNewEvent.bind(this);
 
         this.queryUserEvents();
         this.queryUserProfile();
@@ -169,25 +169,24 @@ class Home extends Component {
         }
     }
 
-    setActiveTab(event) {
-        /**
-         * Called when the user clicks one of the tabs at the top of the page (Calendar, Profile, Networks)
-         * and is used to change which page is currently displayed.
-         */
+    onAddUserNetwork(network) {
+        const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
+        this.queryUserProfileFromId(networkGroup);
+    }
+
+    handlePageChange(event) {
         const id = event.target.id;
-        if (id === Pages.CALENDAR) {
-            this.setState({currentTab: Pages.CALENDAR});
-        } else if (id === Pages.NETWORKS) {
-            this.setState({currentTab: Pages.NETWORKS});
-        } else if (id === Pages.PROFILE) {
-            this.setState({currentTab: Pages.PROFILE});
+        if (id === HomePages.USER) {
+            this.setState({currentPage: HomePages.USER});
+        } else if (id === HomePages.HOME) {
+            this.setState({currentPage: HomePages.HOME});
         }
     }
 
-    onAddUserNetwork(network) {
-        console.log("NEW", network);
-        const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
-        this.queryUserProfileFromId(networkGroup);
+    handleNewEvent(event) {
+        const events = this.state.events;
+        events.push(event);
+        this.setState({events});
     }
 
     render() {
@@ -198,17 +197,11 @@ class Home extends Component {
         }
 
         let currentPage = (<h3>Loading...</h3>);
-        if (this.state.currentTab === Pages.CALENDAR) {
-            currentPage = (<Calendar userProfile={this.state.userProfile} events={this.state.events} db={this.db}/>);
-        } else if (this.state.currentTab === Pages.NETWORKS) {
-            currentPage = (<Networks userProfile={this.state.userProfile} networkGroups={this.state.networkGroups} db={this.db} addNewNetwork={this.onAddUserNetwork}/>);
-        } else if (this.state.currentTab === Pages.PROFILE && this.state.userProfile) {
-            currentPage = (<Profile userProfile={this.state.userProfile}/>);
+        if (this.state.currentPage === HomePages.HOME) {
+            currentPage = (<Calendar userProfile={this.state.userProfile} events={this.state.events} db={this.db} handleNewEvent={this.handleNewEvent}/>);
+        } else if (this.state.currentPage === HomePages.USER) {
+            currentPage = (<User userProfile={this.state.userProfile} networkGroups={this.state.networkGroups} events={this.state.events} db={this.db} handleNewEvent={this.handleNewEvent}/>);
         }
-
-        const classCalendar = (this.state.currentTab === Pages.CALENDAR) ? 'btn-home btn-open btn-active-tab' : 'btn-home btn-open';
-        const classNetworks = (this.state.currentTab === Pages.NETWORKS) ? 'btn-home btn-open btn-active-tab' : 'btn-home btn-open';
-        const classProfile = (this.state.currentTab === Pages.PROFILE) ? 'btn-home btn-open btn-active-tab' : 'btn-home btn-open';
 
         return (
             <div>
@@ -219,13 +212,8 @@ class Home extends Component {
                     <h1 id={'title'}>calendays</h1>
                 </div>
                 <div className={'page'}>
-                    <NavBar/>
+                    <NavBar onClick={this.handlePageChange}/>
                     <div className={'contents'}>
-                        <div className={'content-btns'}>
-                            <button id={'my-calendar'} className={classCalendar} onClick={this.setActiveTab}>my calendar</button>
-                            <button id={'my-networks'} className={classNetworks} onClick={this.setActiveTab}>my networks</button>
-                            <button id={'my-profile'} className={classProfile} onClick={this.setActiveTab}>my profile</button>
-                        </div>
                         {currentPage}
                     </div>
                 </div>
@@ -242,10 +230,17 @@ class NavBar extends Component {
             <div className={'navbar'}>
                 <div className={'nav-btn-container'}>
                     <div style={{'marginTop': '20px'}}>
+                        <button className={'btn-invisible'} onClick={this.props.onClick}>
+                            <img id={'icon-home'} className={'logo'} src={home} alt={'home'}/>
+                        </button>
+                    </div>
+                    <div style={{'marginTop': '20px'}}>
                         <img className={'logo'} src={notification} alt={'notification'}/>
                     </div>
                     <div style={{'marginTop': '20px'}}>
-                        <img className={'logo'} src={profile} alt={'profile'}/>
+                        <button className={'btn-invisible'} onClick={this.props.onClick}>
+                            <img id={'icon-user'} className={'logo'} src={profile} alt={'profile'}/>
+                        </button>
                     </div>
                 </div>
                 <div className={'nav-today-container'}>
