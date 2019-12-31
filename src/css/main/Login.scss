@@ -44,15 +44,15 @@
     color: var(--dull-blue);
     border-radius: 0 10px 10px 0;
     box-sizing: border-box;
-    padding: 100px 5vw;
     display: flex;
     flex-wrap: wrap;
-    align-content: center;
+    align-content: flex-start;
 }
 
 .login-main {
-    width: 100%;
+    width: 85%;
     text-align: left;
+    margin: auto;
 }
 
 .login-button {
@@ -63,7 +63,7 @@
     font-weight: 600;
     color: var(--dull-blue);
     border-bottom: 2px solid;
-    margin: 10px 0
+    margin: 10px 0;
 }
 
 .login-button:hover {
@@ -84,13 +84,18 @@
 }
 
 .forgot {
-    color: var(--dull-blue);
+    color: var(--brown-gray);
     text-decoration: none;
 }
 
 .forgot:hover {
     cursor: pointer;
     color: var(--blush);
+}
+
+.login-btn-container {
+    width: 100%;
+    display: flex;
 }
 
 .login-submit {
@@ -100,10 +105,8 @@
     background-color: var(--blush);
     border-radius: 5px;
     padding: 8px 30px;
-}
-
-.login-submit:hover {
-    cursor: pointer;
+    margin: 20px auto 0 auto;
+    text-align: center;
 }
 
 #greeting {
@@ -117,4 +120,5 @@
     width: 100%;
     font-size: 27px;
     font-weight: 600;
+    margin-top: 35%;
 }

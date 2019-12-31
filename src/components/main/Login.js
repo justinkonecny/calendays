@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import '../../css/main/Login.css';
+import '../../css/main/Login.scss';
 import {Redirect} from "react-router";
 import {DbConstants} from "../../data/DbConstants";
 import InputField from "../common/InputField";
@@ -67,7 +67,7 @@ class LoginForm extends Component {
     }
 
     submit(id) {
-        if (id === 'submitLogin') {
+        if (id === 'submit-login') {
             this.props.firebase.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password)
                 .catch(this.firebaseError)
                 .then(() => {
@@ -75,7 +75,8 @@ class LoginForm extends Component {
                         this.setState({
                             auth: true,
                             email: '',
-                            password: ''
+                            password: '',
+                            username: ''
                         });
                     }
                 );
@@ -87,7 +88,8 @@ class LoginForm extends Component {
                             uid: user.uid,
                             email: this.state.email.trim(),
                             firstName: this.state.firstName.trim(),
-                            lastName: this.state.lastName.trim()
+                            lastName: this.state.lastName.trim(),
+                            username: this.state.username.trim()
                         };
 
                         // Populate the users profile
@@ -105,7 +107,8 @@ class LoginForm extends Component {
                         this.setState({
                             auth: true,
                             email: '',
-                            password: ''
+                            password: '',
+                            username: ''
                         })
                     }
                 }
@@ -130,7 +133,7 @@ class LoginForm extends Component {
     handleKeyPress(event) {
         if (event.keyCode === 13) {
             // Submit the login form when the 'enter' key is pressed on the input field
-            this.submit('submitLogin');
+            this.submit('submit-login');
         }
     }
 
@@ -147,8 +150,8 @@ class LoginForm extends Component {
                         <a className={'forgot'} href={'/reset'}>forgot password?</a>
                         {/* TODO: make this another page */}
                     </div>
-                    <div style={{'textAlign': 'center'}}>
-                        <button id={'submitLogin'} className={'login-submit'} onClick={this.handleSubmit}>login</button>
+                    <div className={'login-btn-container'}>
+                        <button id={'submit-login'} className={'login-submit'} onClick={this.handleSubmit}>login</button>
                     </div>
                 </div>
             );
@@ -160,14 +163,15 @@ class LoginForm extends Component {
                         <div>
                             <InputField className={'login-input'} type={'text'} name={'firstName'} placeholder={'first name'} value={this.state.firstName} onChange={this.handleChange}/>
                             <InputField className={'login-input'} type={'text'} name={'lastName'} placeholder={'last name'} value={this.state.lastName} onChange={this.handleChange}/>
+                            <InputField className={'login-input'} type={'text'} name={'username'} placeholder={'username'} value={this.state.username} onChange={this.handleChange}/>
                         </div>
                         <div>
                             <InputField className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange}/>
                             <InputField className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange}/>
                         </div>
                     </div>
-                    <div style={{'textAlign': 'center'}}>
-                        <button id={'submitRegister'} className={'login-submit'} onClick={this.handleSubmit}>register</button>
+                    <div className={'login-btn-container'}>
+                        <button id={'submit-register'} className={'login-submit'} onClick={this.handleSubmit}>register</button>
                     </div>
                 </div>
             );
@@ -182,12 +186,12 @@ class LoginForm extends Component {
         }
 
         // Adjusts the style of the 'login' and 'sign up' tabs based on currently selected tab
-        let styleLogin = {'marginRight': '5px', 'color': '#467c95'};
-        let styleSignUp = {'marginLeft': '5px', 'color': '#f48a84'};
+        let styleLogin = {color: '#467c95'};
+        let styleSignUp = {color: '#f48a84'};
 
         if (this.state.isExistingUser) {
-            styleLogin = {'marginRight': '5px', 'color': '#f48a84'};
-            styleSignUp = {'marginLeft': '5px', 'color': '#467c95'};
+            styleLogin = {color: '#f48a84'};
+            styleSignUp = {color: '#467c95'};
         }
 
         return (
