@@ -136,11 +136,6 @@ textarea:focus {
     width: 75px;
 }
 
-.logo {
-    width: 35px;
-    margin: auto;
-}
-
 .page {
     display: flex;
 }
@@ -156,6 +151,15 @@ textarea:focus {
     width: 75px;
     height: calc(100vh - 50px);
     background-color: var(--pale-gray);
+
+    .nav-icon {
+        margin-top: 20px;
+
+        .logo {
+            width: 35px;
+            margin: auto;
+        }
+    }
 }
 
 .nav-btn-container {

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import NewEvent from './NewEvent';
-import '../../css/Calendar.scss'
+import '../../css/calendar/Calendar.scss'
 import {CalendarDay} from "./CalendayDay";
 import {ColumnPos, MonthNames, WeekDayNames} from '../main/Constants';
 

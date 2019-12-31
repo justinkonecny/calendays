@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import '../../css/NewEvent.scss';
+import '../../css/calendar/NewEvent.scss';
 import {MonthNames, TimeOfDay, WeekDayNames} from '../main/Constants';
 import {DbConstants} from '../../data/DbConstants';
 import InputField from "../common/InputField";

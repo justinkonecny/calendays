@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router';
-import '../../css/Home.scss';
+import '../../css/main/Home.scss';
 import logo from '../../resources/logo.svg';
 import home from '../../resources/home.svg';
 import notification from '../../resources/notification.svg';
@@ -207,7 +207,7 @@ class Home extends Component {
             <div>
                 <div className={'header'}>
                     <div className={'container-logo'}>
-                        <img className={'logo'} src={logo} alt={'logo'}/>
+                        <img className={'flex-centered'} src={logo} alt={'logo'}/>
                     </div>
                     <h1 id={'title'}>calendays</h1>
                 </div>
@@ -229,15 +229,15 @@ class NavBar extends Component {
         return (
             <div className={'navbar'}>
                 <div className={'nav-btn-container'}>
-                    <div style={{'marginTop': '20px'}}>
+                    <div className={'nav-icon'}>
                         <button className={'btn-invisible'} onClick={this.props.onClick}>
                             <img id={'icon-home'} className={'logo'} src={home} alt={'home'}/>
                         </button>
                     </div>
-                    <div style={{'marginTop': '20px'}}>
+                    <div className={'nav-icon'}>
                         <img className={'logo'} src={notification} alt={'notification'}/>
                     </div>
-                    <div style={{'marginTop': '20px'}}>
+                    <div className={'nav-icon'}>
                         <button className={'btn-invisible'} onClick={this.props.onClick}>
                             <img id={'icon-user'} className={'logo'} src={profile} alt={'profile'}/>
                         </button>

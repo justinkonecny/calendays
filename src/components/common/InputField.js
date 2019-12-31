@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import '../../css/InputField.scss';
+import '../../css/common/InputField.scss';
 
 class InputField extends Component {
     render() {

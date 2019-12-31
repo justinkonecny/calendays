@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import '../../css/User.scss';
+import '../../css/main/User.scss';
 import Calendar from '../calendar/Calendar';
 import Profile from '../profile/Profile';
 import Networks from '../networks/Networks';

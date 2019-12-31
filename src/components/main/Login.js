@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import '../../css/Login.css';
+import '../../css/main/Login.css';
 import {Redirect} from "react-router";
 import {DbConstants} from "../../data/DbConstants";
 import InputField from "../common/InputField";
