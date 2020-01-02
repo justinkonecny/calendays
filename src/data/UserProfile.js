@@ -1,9 +1,10 @@
 class UserProfile {
-    constructor(firstName, lastName, email, uid, networks) {
+    constructor(firstName, lastName, email, uid, username, networks) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.uid = uid;
+        this.username = username;
         this.networks = networks;
     }
 
@@ -25,6 +26,10 @@ class UserProfile {
 
     getUid() {
         return this.uid;
+    }
+
+    getUsername() {
+        return this.username;
     }
 
     getNetworks() {

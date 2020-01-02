@@ -2,15 +2,12 @@ import React, {Component} from 'react';
 import {Redirect} from 'react-router';
 import '../../css/main/Home.scss';
 import logo from '../../resources/logo.svg';
-import home from '../../resources/home.svg';
-import notification from '../../resources/notification.svg';
-import profile from '../../resources/profile.svg';
 import UserProfile from '../../data/UserProfile';
-import {MonthNames} from './Constants';
 import {DbConstants} from '../../data/DbConstants';
 import NetworkGroup from '../../data/NetworkGroup';
-import User from "./User";
-import Calendar from "../calendar/Calendar";
+import User from './User';
+import Calendar from '../calendar/Calendar';
+import NavBar from './NavBar';
 
 const HomePages = {
     HOME: 'icon-home',
@@ -87,13 +84,13 @@ class Home extends Component {
                         console.error('No user profile found!');
                     } else {
                         const profile = doc.docs[0].data();
-                        this.queryUserNetworks(profile.firstName, profile.lastName, this.user.email, this.user.uid);
+                        this.queryUserNetworks(profile.firstName, profile.lastName, this.user.email, this.user.uid, profile.username);
                     }
                 });
         }
     }
 
-    queryUserNetworks(firstName, lastName, email, uid) {
+    queryUserNetworks(firstName, lastName, email, uid, username) {
         /**
          * Queries the Firestore for the current user's networks and saves
          * them to the user's profile as a list of network IDs.
@@ -108,12 +105,12 @@ class Home extends Component {
                     if (doc.empty) {
                         // TODO: Display error to user
                         console.error('No user networks found!');
-                        const userProfile = new UserProfile(firstName, lastName, email, uid, []);
+                        const userProfile = new UserProfile(firstName, lastName, email, uid, username, []);
                         this.setState({userProfile});
                     } else {
                         const networkData = doc.docs[0].data();
                         const networkList = networkData[DbConstants.MEMBER_OF];
-                        const userProfile = new UserProfile(firstName, lastName, email, uid, networkList);
+                        const userProfile = new UserProfile(firstName, lastName, email, uid, username, networkList);
                         this.setState({userProfile});
                         this.queryNetworkGroups(networkList);
                     }
@@ -161,7 +158,7 @@ class Home extends Component {
                         console.error('No user profile found!');
                     } else {
                         const prof = doc.docs[0].data();
-                        const networkUser = new UserProfile(prof.firstName, prof.lastName, prof.email, prof.uid, null);
+                        const networkUser = new UserProfile(prof.firstName, prof.lastName, prof.email, prof.uid, prof.username,null);
                         group.addUser(networkUser);
                         this.setState({networkGroups});
                     }
@@ -215,51 +212,6 @@ class Home extends Component {
                     <NavBar onClick={this.handlePageChange}/>
                     <div className={'contents'}>
                         {currentPage}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-}
-
-class NavBar extends Component {
-    render() {
-        const date = new Date();  // The current date to render at bottom of side nav
-
-        return (
-            <div className={'navbar'}>
-                <div className={'nav-btn-container'}>
-                    <div className={'nav-icon'}>
-                        <button className={'btn-invisible'} onClick={this.props.onClick}>
-                            <img id={'icon-home'} className={'logo'} src={home} alt={'home'}/>
-                        </button>
-                    </div>
-                    <div className={'nav-icon'}>
-                        <img className={'logo'} src={notification} alt={'notification'}/>
-                    </div>
-                    <div className={'nav-icon'}>
-                        <button className={'btn-invisible'} onClick={this.props.onClick}>
-                            <img id={'icon-user'} className={'logo'} src={profile} alt={'profile'}/>
-                        </button>
-                    </div>
-                </div>
-                <div className={'nav-today-container'}>
-
-                    <div className={'nav-today-header'}>
-                        <div className={'flex-centered'}>
-                            today
-                        </div>
-                    </div>
-
-                    <div className={'nav-date-container'}>
-                        <div className={'flex-centered'}>
-                            <div className={'nav-month'}>
-                                {MonthNames[date.getMonth()].substring(0, 3).toUpperCase()}
-                            </div>
-                            <div className={'nav-day'}>
-                                {date.getDate()}
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,7 @@ import '../../css/main/Login.scss';
 import {Redirect} from "react-router";
 import {DbConstants} from "../../data/DbConstants";
 import InputField from "../common/InputField";
+import logo from "../../resources/logo.svg";
 
 class Login extends Component {
     render() {
@@ -17,6 +18,9 @@ class Login extends Component {
             <div className={'Login'}>
                 <div className={'container'}>
                     <div className={'info-intro'}>
+                        <div className={'intro-logo-container'}>
+                            <img className={'intro-logo'} src={logo} alt={'logo'}/>
+                        </div>
                         <h1 id={'greeting'}>hey! let's make plans!</h1>
                         <p className={'intro-blurb'}>crazy busy and can’t remember your friends’ schedules? calendays is here to help!</p>
                         <ul className={'intro-blurb bullets'}>
@@ -186,19 +190,14 @@ class LoginForm extends Component {
         }
 
         // Adjusts the style of the 'login' and 'sign up' tabs based on currently selected tab
-        let styleLogin = {color: '#467c95'};
-        let styleSignUp = {color: '#f48a84'};
-
-        if (this.state.isExistingUser) {
-            styleLogin = {color: '#f48a84'};
-            styleSignUp = {color: '#467c95'};
-        }
+        const loginClass = this.state.isExistingUser ? 'login-button btn-open login-active' : 'login-button btn-open';
+        const signUpClass = this.state.isExistingUser ? 'login-button btn-open' : 'login-button btn-open login-active';
 
         return (
             <div className={'login-main'}>
                 <div>
-                    <button id={'login'} className={'login-button btn-open'} style={styleLogin} onClick={this.handleClick}>login</button>
-                    <button id={'sign-up'} className={'login-button btn-open'} style={styleSignUp} onClick={this.handleClick}>sign up</button>
+                    <button id={'login'} className={loginClass} onClick={this.handleClick}>login</button>
+                    <button id={'sign-up'} className={signUpClass} onClick={this.handleClick}>sign up</button>
                 </div>
                 <div>
                     {this.getCurrentForm()}

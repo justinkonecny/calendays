@@ -60,6 +60,8 @@ class NewNetwork extends Component {
     }
 
     addNetworkToUsers(networkId, network) {
+        // TODO: Validate MemberIDs before adding network to user
+
         for (const userId of network.members) {
             // First get the user's list of current networks
             this.props.db.collection(DbConstants.USERS)

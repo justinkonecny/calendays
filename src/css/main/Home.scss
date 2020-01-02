@@ -37,8 +37,8 @@ input {
     border: none;
     color: var(--dull-blue);
     border-bottom: 1px solid;
-    font-size: 17px;
-    padding: 5px 5px 5px 0;
+    font-size: 15px;
+    padding: 8px 0;
     margin: 0;
 }
 
@@ -57,9 +57,10 @@ input:focus::placeholder {
 }
 
 button {
-    border-radius: 5px;
+    border-radius: 4px;
     font-size: 16px;
-    padding: 8px 12px;
+    font-weight: 500;
+    padding: 9px 32px;
     border: none;
     box-shadow: none;
 }
@@ -146,23 +147,6 @@ textarea:focus {
     height: calc(100vh - 50px);
 }
 
-.navbar {
-    display: flex;
-    flex-direction: column;
-    width: 75px;
-    height: calc(100vh - 50px);
-    background-color: var(--pale-gray);
-
-    .nav-icon {
-        margin-top: 20px;
-
-        .logo {
-            width: 35px;
-            margin: auto;
-        }
-    }
-}
-
 .nav-btn-container {
     height: 80%;
 }
@@ -194,6 +178,10 @@ textarea:focus {
 .nav-date-container {
     display: flex;
     height: calc(100% - 30px);
+}
+
+.flex-container {
+    display: flex;
 }
 
 .flex-centered {

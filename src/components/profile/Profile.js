@@ -16,6 +16,9 @@ class Profile extends Component {
                 <h3>email</h3>
                 <h4>{userProfile.getEmail()}</h4>
 
+                <h3>username</h3>
+                <h4>{userProfile.getUsername()}</h4>
+
                 <h3>user id</h3>
                 <h4>{userProfile.getUid()}</h4>
             </div>

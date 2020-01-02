@@ -1,124 +1,140 @@
 .Login {
-    background-color: var(--slate);
-    height: 100vh;
-    display: flex;
-    margin: auto;
-    align-items: center;
+  background-color: var(--slate);
+  height: 100vh;
+  display: flex;
+  margin: auto;
+  align-items: center;
 }
 
 .container {
-    height: 42vw;
-    display: flex;
-    margin: auto;
-    align-items: center;
+  height: 70vh;
+  display: flex;
+  margin: auto;
+  align-items: center;
 }
 
 .info-intro {
-    width: 30vw;
-    height: 100%;
-    background-color: var(--light-blue);
-    color: white;
-    border-radius: 10px 0 0 10px;
-    box-sizing: border-box;
-    padding: 90px;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: center;
+  width: 25vw;
+  height: 100%;
+  background-color: var(--light-blue);
+  color: white;
+  border-radius: 10px 0 0 10px;
+  box-sizing: border-box;
+  padding: 55px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
 }
 
 .intro-blurb {
-    font-size: 15px;
-    margin: 15px 0;
+  font-size: 15px;
+  margin: 15px 0;
+}
+
+.intro-logo-container {
+  background-color: var(--dull-blue);
+  border-radius: 50%;
+  margin: 0 auto 20px auto;
+  display: flex;
+  width: 95px;
+  height: 95px;
+}
+
+.intro-logo {
+  width: 60%;
+  margin: auto;
 }
 
 .bullets {
-    width: 100%;
-    text-align: left;
-    padding-left: 10%;
+  width: 100%;
+  text-align: left;
+  padding-left: 10%;
 }
 
 .user-login {
-    width: 30vw;
-    height: 100%;
-    background-color: var(--pale-gray);
-    color: var(--dull-blue);
-    border-radius: 0 10px 10px 0;
-    box-sizing: border-box;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
+  width: 35vw;
+  height: 100%;
+  background-color: var(--pale-gray);
+  color: var(--dull-blue);
+  border-radius: 0 10px 10px 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
 }
 
 .login-main {
-    width: 85%;
-    text-align: left;
-    margin: auto;
+  width: 65%;
+  text-align: left;
+  margin: auto;
 }
 
 .login-button {
-    width: calc(50% - 5px);
-    background: none;
-    border: none;
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--dull-blue);
-    border-bottom: 2px solid;
-    margin: 10px 0;
+  width: calc(50% - 5px);
+  background: none;
+  border: none;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--dull-blue);
+  border-bottom: 2px solid;
+  margin: 10px 0;
 }
 
 .login-button:hover {
-    cursor: pointer;
-    color: var(--blush);
+  cursor: pointer;
+  color: var(--blush);
+}
+
+.login-active {
+  color: var(--blush);
+  font-weight: 700;
 }
 
 .login-input {
-    margin: 8px 10px 8px 0;
-    width: 100%;
+  margin: 8px 10px 8px 0;
+  width: 100%;
 }
 
 .login-input::placeholder {
-    color: var(--dull-blue);
-}
-
-.login-form {
+  color: var(--dull-blue);
 }
 
 .forgot {
-    color: var(--brown-gray);
-    text-decoration: none;
+  color: var(--brown-gray);
+  text-decoration: none;
 }
 
 .forgot:hover {
-    cursor: pointer;
-    color: var(--blush);
+  cursor: pointer;
+  color: var(--blush);
 }
 
 .login-btn-container {
-    width: 100%;
-    display: flex;
+  width: 100%;
+  display: flex;
 }
 
 .login-submit {
-    font-size: 16px;
-    font-weight: 500;
-    color: white;
-    background-color: var(--blush);
-    border-radius: 5px;
-    padding: 8px 30px;
-    margin: 20px auto 0 auto;
-    text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  background-color: var(--blush);
+  border-radius: 5px;
+  padding: 8px 30px;
+  margin: 20px auto 0 auto;
+  text-align: center;
 }
 
 #greeting {
-    width: 100%;
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 15px;
+  width: 100%;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 15px;
 }
 
 #calendays {
-    width: 100%;
-    font-size: 27px;
-    font-weight: 600;
-    margin-top: 35%;
+  width: 100%;
+  font-size: 27px;
+  font-weight: 600;
+  margin-top: 30%;
 }

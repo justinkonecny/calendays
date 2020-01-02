@@ -1,0 +1,22 @@
+.navbar {
+  display: flex;
+  flex-direction: column;
+  width: 75px;
+  height: calc(100vh - 50px);
+  background-color: var(--pale-gray);
+
+  .nav-icon {
+    margin-top: 10px;
+    display: flex;
+
+    .logo {
+      width: 35px;
+      margin: auto;
+    }
+
+    .btn-nav {
+      margin: auto;
+      padding: 5px;
+    }
+  }
+}
