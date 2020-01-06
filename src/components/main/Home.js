@@ -41,6 +41,7 @@ class Home extends Component {
         this.queryUserProfile();
     }
 
+
     queryUserEvents() {
         /**
          * Queries the Firestore for the current user's events
@@ -62,6 +63,7 @@ class Home extends Component {
                             events.push(docQuery.data());
                         });
                         this.setState({events});
+                        console.log(events.length + ' events found!');
                     }
                 });
         }
@@ -158,7 +160,7 @@ class Home extends Component {
                         console.error('No user profile found!');
                     } else {
                         const prof = doc.docs[0].data();
-                        const networkUser = new UserProfile(prof.firstName, prof.lastName, prof.email, prof.uid, prof.username,null);
+                        const networkUser = new UserProfile(prof.firstName, prof.lastName, prof.email, prof.uid, prof.username, null);
                         group.addUser(networkUser);
                         this.setState({networkGroups});
                     }
@@ -197,7 +199,7 @@ class Home extends Component {
         if (this.state.currentPage === HomePages.HOME) {
             currentPage = (<Calendar userProfile={this.state.userProfile} events={this.state.events} db={this.db} handleNewEvent={this.handleNewEvent}/>);
         } else if (this.state.currentPage === HomePages.USER) {
-            currentPage = (<User userProfile={this.state.userProfile} networkGroups={this.state.networkGroups} events={this.state.events} db={this.db} handleNewEvent={this.handleNewEvent}/>);
+            currentPage = (<User userProfile={this.state.userProfile} networkGroups={this.state.networkGroups} events={this.state.events} db={this.db} handleNewEvent={this.handleNewEvent} firebase={this.props.firebase}/>);
         }
 
         return (

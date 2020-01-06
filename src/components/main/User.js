@@ -21,6 +21,7 @@ class User extends Component {
         };
 
         this.setActiveTab = this.setActiveTab.bind(this);
+        this.signOut = this.signOut.bind(this);
     }
 
     setActiveTab(event) {
@@ -36,6 +37,14 @@ class User extends Component {
         } else if (id === UserPages.PROFILE) {
             this.setState({currentTab: UserPages.PROFILE});
         }
+    }
+
+    signOut() {
+        this.props.firebase.auth().signOut().then(() => {
+            console.log('Successfully signed out');
+        }).catch(error => {
+            console.error('Failed to sign out!');
+        })
     }
 
     render() {
@@ -58,6 +67,7 @@ class User extends Component {
                     <button id={'my-calendar'} className={classCalendar} onClick={this.setActiveTab}>my calendar</button>
                     <button id={'my-networks'} className={classNetworks} onClick={this.setActiveTab}>my networks</button>
                     <button id={'my-profile'} className={classProfile} onClick={this.setActiveTab}>my profile</button>
+                    <button id={'sign-out'} className={classProfile} onClick={this.signOut}>sign out</button>
                 </div>
                 <div className={'user-content'}>
                     {currentPage}

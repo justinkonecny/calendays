@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import '../../css/main/Login.scss';
-import {Redirect} from "react-router";
-import {DbConstants} from "../../data/DbConstants";
-import InputField from "../common/InputField";
-import logo from "../../resources/logo.svg";
+import {Redirect} from 'react-router';
+import {DbConstants} from '../../data/DbConstants';
+import InputField from '../common/InputField';
+import logo from '../../resources/logo.svg';
 
 class Login extends Component {
     render() {
@@ -45,12 +45,19 @@ class LoginForm extends Component {
         super(props);
         this.state = {
             isExistingUser: true,  // Displays login tab or sign up tab
-            firstName: '',  // The user's first name
-            lastName: '',  // The user's last name
+            fname: '',  // The user's first name
+            lname: '',  // The user's last name
             username: '',  // TODO: Add field or remove this
             email: '',  // The user's email address
             password: '',  // The user's password
-            auth: false  // Whether or not a user is authenticated
+            auth: false,  // Whether or not a user is authenticated
+            userVerified: true,
+            invalidFirstName: false,
+            invalidLastName: false,
+            invalidUsername: false,
+            invalidEmail: false,
+            invalidPassword: false,
+            invalidLogin: false
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -58,7 +65,15 @@ class LoginForm extends Component {
         this.handleClick = this.handleClick.bind(this);
         this.getCurrentForm = this.getCurrentForm.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.validateAllFields = this.validateAllFields.bind(this);
         this.submit = this.submit.bind(this);
+
+        this.textUnverifiedEmail = 'email is not verified';
+        this.textBlankField = 'field cannot be blank';
+        this.textInvalidEmail = 'enter a valid email';
+        this.textInvalidUsername = 'must be unique and at least 4 characters';
+        this.textInvalidPassword = 'must be at least 8 characters with uppercase';
+        this.textInvalidLogin = 'invalid email/password combination';
     }
 
     firebaseError(error) {
@@ -70,33 +85,113 @@ class LoginForm extends Component {
         this.submit(event.target.id);
     }
 
+    isValidEmail(email) {
+        return email.length > 3
+            && (/@/.test(email))
+            && (email.split('@')[0].length > 2)
+            && (email.split('@')[1].length > 2);
+    }
+
+    isValidName(name) {
+        return name.length > 0;
+    }
+
+    isValidUsername(username) {
+        return username.length > 3;
+    }
+
+    isValidPassword(password) {
+        return password.length > 7
+            && (/[a-z]/.test(password))
+            && (/[A-Z]/.test(password));
+    }
+
+    validateAllFields() {
+        const invalidFirstName = !this.isValidName(this.state.fname);
+        const invalidLastName = !this.isValidName(this.state.lname);
+        const invalidUsername = !this.isValidUsername(this.state.username);
+        const invalidEmail = !this.isValidEmail(this.state.email);
+        const invalidPassword = !this.isValidPassword(this.state.password);
+
+        if (invalidFirstName || invalidLastName || invalidUsername || invalidEmail || invalidPassword) {
+            this.setState({
+                invalidFirstName,
+                invalidLastName,
+                invalidUsername,
+                invalidEmail,
+                invalidPassword
+            });
+            return false;
+        }
+        return true;
+    }
+
     submit(id) {
         if (id === 'submit-login') {
             this.props.firebase.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password)
-                .catch(this.firebaseError)
-                .then(() => {
-                        console.log('Successfully authenticated user ' + this.state.email);
-                        this.setState({
-                            auth: true,
-                            email: '',
-                            password: '',
-                            username: ''
-                        });
+                .catch(error => {
+                    this.setState({invalidLogin: true});
+                    this.firebaseError(error);
+                })
+                .then((success) => {
+                        if (success) {
+                            console.log('Successfully authenticated user ' + this.state.email);
+                            const user = this.props.firebase.auth().currentUser;
+                            if (!user.emailVerified) {
+                                console.error('Email is not verified!');
+                                this.setState({userVerified: false});
+                            } else {
+                                this.setState({
+                                    auth: true,
+                                    email: '',
+                                    password: '',
+                                    username: '',
+                                    userVerified: true
+                                });
+                            }
+                        } else {
+                            console.error('Failed to authenticate user');
+                            this.setState({invalidLogin: true});
+                        }
                     }
                 );
         } else {
+            if (!this.validateAllFields()) {
+                console.error('Invalid sign-up fields!');
+                return;
+            }
+
+            // TODO: Add Username validation
+
             this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email.trim(), this.state.password).catch(this.firebaseError).then(docRef => {
                     const user = this.props.firebase.auth().currentUser;
+                    this.setState({userVerified: false});
+
                     if (user) {
                         const userProfile = {
                             uid: user.uid,
                             email: this.state.email.trim(),
-                            firstName: this.state.firstName.trim(),
-                            lastName: this.state.lastName.trim(),
+                            fname: this.state.fname.trim(),
+                            lname: this.state.lname.trim(),
                             username: this.state.username.trim()
                         };
 
-                        // Populate the users profile
+                        // Update the user's display name in Firebase
+                        user.updateProfile({
+                            displayName: userProfile.fname
+                        }).then(result => {
+                            console.log('Successfully updated display name');
+                            user.sendEmailVerification().then(() => {
+                                console.log('Successfully sent verification email');
+                            }).then(error => {
+                                console.error('Failed to send verification email');
+                            })
+                        }).catch(error => {
+                            console.error('Failed to update display name!');
+                        });
+
+
+                        // Populate the user's profile in the Firestore
                         this.props.firebase.firestore().collection(DbConstants.USERS)
                             .doc(user.uid)
                             .collection(DbConstants.PROFILE)
@@ -105,15 +200,15 @@ class LoginForm extends Component {
                                 console.log('Successfully created profile');
                             })
                             .catch(error => {
-                                console.log('Failed to create profile');
+                                console.error('Failed to create profile');
                             });
 
-                        this.setState({
-                            auth: true,
-                            email: '',
-                            password: '',
-                            username: ''
-                        })
+                        // this.setState({
+                        //     auth: true,
+                        //     email: '',
+                        //     password: '',
+                        //     username: ''
+                        // })
                     }
                 }
             );
@@ -143,14 +238,25 @@ class LoginForm extends Component {
 
     getCurrentForm() {
         if (this.state.isExistingUser) {
+            console.log(this.state.userVerified);
             return (
                 // The login form; displays fields for email and password
                 <div className={'login-form'}>
-                    <div>
-                        <InputField className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
-                        <InputField className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange} onKeyDown={this.handleKeyPress}/>
-                    </div>
-                    <div style={{'margin': '10px 0'}}>
+                    <form>
+                        <InputField className={'login-input'} type={'email'} autocomplete={'email'} name={'email'} placeholder={'email'}
+                                    value={this.state.email}
+                                    isInvalid={!this.state.userVerified}
+                                    invalidText={this.textUnverifiedEmail}
+                                    onChange={this.handleChange}
+                                    onKeyDown={this.handleKeyPress}/>
+                        <InputField className={'login-input'} type={'password'} autocomplete={'current-password'} name={'password'} placeholder={'password'}
+                                    value={this.state.password}
+                                    isInvalid={this.state.invalidLogin}
+                                    invalidText={this.textInvalidLogin}
+                                    onChange={this.handleChange}
+                                    onKeyDown={this.handleKeyPress}/>
+                    </form>
+                    <div className={'forgot-container'}>
                         <a className={'forgot'} href={'/reset'}>forgot password?</a>
                         {/* TODO: make this another page */}
                     </div>
@@ -163,17 +269,33 @@ class LoginForm extends Component {
             return (
                 // The sign up form; displays fields for first name, last name, email and password
                 <div className={'login-form'} onSubmit={this.handleSubmit}>
-                    <div>
-                        <div>
-                            <InputField className={'login-input'} type={'text'} name={'firstName'} placeholder={'first name'} value={this.state.firstName} onChange={this.handleChange}/>
-                            <InputField className={'login-input'} type={'text'} name={'lastName'} placeholder={'last name'} value={this.state.lastName} onChange={this.handleChange}/>
-                            <InputField className={'login-input'} type={'text'} name={'username'} placeholder={'username'} value={this.state.username} onChange={this.handleChange}/>
-                        </div>
-                        <div>
-                            <InputField className={'login-input'} type={'email'} name={'email'} placeholder={'email'} value={this.state.email} onChange={this.handleChange}/>
-                            <InputField className={'login-input'} type={'password'} name={'password'} placeholder={'password'} value={this.state.password} onChange={this.handleChange}/>
-                        </div>
-                    </div>
+                    <form>
+                        <InputField className={'login-input'} type={'text'} autocomplete={'given-name'} name={'fname'} placeholder={'first name'}
+                                    value={this.state.fname}
+                                    isInvalid={this.state.invalidFirstName}
+                                    invalidText={this.textBlankField}
+                                    onChange={this.handleChange}/>
+                        <InputField className={'login-input'} type={'text'} autocomplete={'family-name'} name={'lname'} placeholder={'last name'}
+                                    value={this.state.lname}
+                                    isInvalid={this.state.invalidLastName}
+                                    invalidText={this.textBlankField}
+                                    onChange={this.handleChange}/>
+                        <InputField className={'login-input'} type={'username'} autocomplete={'username'} name={'username'} placeholder={'username'}
+                                    value={this.state.username}
+                                    isInvalid={this.state.invalidUsername}
+                                    invalidText={this.textInvalidUsername}
+                                    onChange={this.handleChange}/>
+                        <InputField className={'login-input'} type={'email'} autocomplete={'email'} name={'email'} placeholder={'email'}
+                                    value={this.state.email}
+                                    isInvalid={this.state.invalidEmail}
+                                    invalidText={this.textInvalidEmail}
+                                    onChange={this.handleChange}/>
+                        <InputField className={'login-input'} type={'password'} autocomplete={'new-password'} name={'password'} placeholder={'password'}
+                                    value={this.state.password}
+                                    isInvalid={this.state.invalidPassword}
+                                    invalidText={this.textInvalidPassword}
+                                    onChange={this.handleChange}/>
+                    </form>
                     <div className={'login-btn-container'}>
                         <button id={'submit-register'} className={'login-submit'} onClick={this.handleSubmit}>register</button>
                     </div>
@@ -182,13 +304,25 @@ class LoginForm extends Component {
         }
     }
 
+    componentDidMount() {
+        this.props.firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                if (!user.emailVerified) {
+                    console.error('Email is not verified!');
+                } else {
+                    this.setState({auth: true});
+                    console.log('Successfully authenticated user ' + user.email);
+                }
+            }
+        });
+    }
+
     render() {
         if (this.state.auth) {
             return ( // Redirect to home page if user is already authenticated
                 <Redirect to={'/home'}/>
             );
         }
-
         // Adjusts the style of the 'login' and 'sign up' tabs based on currently selected tab
         const loginClass = this.state.isExistingUser ? 'login-button btn-open login-active' : 'login-button btn-open';
         const signUpClass = this.state.isExistingUser ? 'login-button btn-open' : 'login-button btn-open login-active';

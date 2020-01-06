@@ -1,34 +1,57 @@
-.input-container {
-  position: relative;
-  display: inline-block;
+.input-outer-container {
+  .input-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 5px;
 
-  .input-border {
-    position: absolute;
-    height: 1px;
-    background: var(--light-blue);
-    transition: all 0.3s ease-in-out;
-    width: 0;
-    bottom: 0;
-    margin-left: -50%;
-    left: 50%;
+    .input-invalid {
+      color: var(--error-red);
+      border-color: var(--error-red);
+    }
+
+    .input-invalid::placeholder {
+      color: var(--error-red);
+    }
+
+    .input-border {
+      position: absolute;
+      height: 1px;
+      background: var(--light-blue);
+      transition: all 0.3s ease-in-out;
+      width: 0;
+      bottom: 0;
+      margin-left: -50%;
+      left: 50%;
+    }
+
+    .input-animated:focus {
+      color: var(--light-blue);
+    }
+
+    .input-animated:focus ~ .input-border {
+      width: 100%;
+    }
+
+    .label-animated {
+      transition: all 0.3s ease-in-out;
+      font-size: 17px;
+      color: var(--dull-blue);
+      position: absolute;
+      left: 5px;
+      top: 5px;
+      pointer-events: none;
+    }
+
+    .input-animated:focus ~ .label-animated {
+      top: -10px;
+      font-size: 10px;
+    }
   }
 
-  .input-animated:focus ~ .input-border {
-    width: 100%;
-  }
-
-  .label-animated {
-    transition: all 0.3s ease-in-out;
-    font-size: 17px;
-    color: var(--dull-blue);
-    position: absolute;
-    left: 5px;
-    top: 5px;
-    pointer-events: none;
-  }
-
-  .input-animated:focus ~ .label-animated {
-    top: -10px;
-    font-size: 10px;
+  .input-invalid-text {
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    color: var(--error-red);
   }
 }

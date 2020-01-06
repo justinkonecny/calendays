@@ -70,7 +70,7 @@
 }
 
 .login-button {
-  width: calc(50% - 5px);
+  width: 50%;
   background: none;
   border: none;
   font-size: 17px;
@@ -82,7 +82,6 @@
 
 .login-button:hover {
   cursor: pointer;
-  color: var(--blush);
 }
 
 .login-active {
@@ -99,17 +98,22 @@
   color: var(--dull-blue);
 }
 
-.forgot {
-  color: var(--brown-gray);
-  text-decoration: none;
-}
+.forgot-container {
+  margin: 22px 0 30px 0;
 
-.forgot:hover {
-  cursor: pointer;
-  color: var(--blush);
+  .forgot {
+    color: var(--brown-gray);
+    text-decoration: none;
+  }
+
+  .forgot:hover {
+    cursor: pointer;
+    color: var(--blush);
+  }
 }
 
 .login-btn-container {
+  margin-top: 10px;
   width: 100%;
   display: flex;
 }
@@ -121,7 +125,7 @@
   background-color: var(--blush);
   border-radius: 5px;
   padding: 8px 30px;
-  margin: 20px auto 0 auto;
+  margin: 0 auto;
   text-align: center;
 }
 
