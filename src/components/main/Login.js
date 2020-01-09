@@ -57,7 +57,8 @@ class LoginForm extends Component {
             invalidUsername: false,
             invalidEmail: false,
             invalidPassword: false,
-            invalidLogin: false
+            invalidLogin: false,
+            emailSent: false
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -183,8 +184,9 @@ class LoginForm extends Component {
                             console.log('Successfully updated display name');
                             user.sendEmailVerification().then(() => {
                                 console.log('Successfully sent verification email');
-                            }).then(error => {
-                                console.error('Failed to send verification email');
+                                this.setState({emailSent: true});
+                            }).catch(error => {
+                                console.error('Failed to send verification email', error);
                             })
                         }).catch(error => {
                             console.error('Failed to update display name!');
@@ -238,7 +240,6 @@ class LoginForm extends Component {
 
     getCurrentForm() {
         if (this.state.isExistingUser) {
-            console.log(this.state.userVerified);
             return (
                 // The login form; displays fields for email and password
                 <div className={'login-form'}>
@@ -299,6 +300,7 @@ class LoginForm extends Component {
                     <div className={'login-btn-container'}>
                         <button id={'submit-register'} className={'login-submit'} onClick={this.handleSubmit}>register</button>
                     </div>
+                    {this.state.emailSent && <p>A verification email has been sent!</p>}
                 </div>
             );
         }
