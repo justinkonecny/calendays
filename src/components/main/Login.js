@@ -67,7 +67,8 @@ class LoginForm extends Component {
         this.getCurrentForm = this.getCurrentForm.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.validateAllFields = this.validateAllFields.bind(this);
-        this.submit = this.submit.bind(this);
+        this.loginUser = this.loginUser.bind(this);
+        this.createUser = this.createUser.bind(this);
 
         this.textUnverifiedEmail = 'email is not verified';
         this.textBlankField = 'field cannot be blank';
@@ -77,13 +78,17 @@ class LoginForm extends Component {
         this.textInvalidLogin = 'invalid email/password combination';
     }
 
-    firebaseError(error) {
-        console.log('Failed to authenticate user');
-        console.error(error.code, error.message);
-    }
-
-    handleSubmit(event) {
-        this.submit(event.target.id);
+    componentDidMount() {
+        this.props.firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                if (!user.emailVerified) {
+                    console.error('(ME01) User email is not verified');
+                } else if (!this.state.auth) {
+                    console.log('(MS01) Successfully authenticated user ' + user.email);
+                    this.setState({auth: true});
+                }
+            }
+        });
     }
 
     isValidEmail(email) {
@@ -127,93 +132,85 @@ class LoginForm extends Component {
         return true;
     }
 
-    submit(id) {
-        if (id === 'submit-login') {
-            this.props.firebase.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password)
-                .catch(error => {
-                    this.setState({invalidLogin: true});
-                    this.firebaseError(error);
-                })
-                .then((success) => {
-                        if (success) {
-                            console.log('Successfully authenticated user ' + this.state.email);
-                            const user = this.props.firebase.auth().currentUser;
-                            if (!user.emailVerified) {
-                                console.error('Email is not verified!');
-                                this.setState({userVerified: false});
-                            } else {
-                                this.setState({
-                                    auth: true,
-                                    email: '',
-                                    password: '',
-                                    username: '',
-                                    userVerified: true
-                                });
-                            }
-                        } else {
-                            console.error('Failed to authenticate user');
-                            this.setState({invalidLogin: true});
-                        }
-                    }
-                );
-        } else {
-            if (!this.validateAllFields()) {
-                console.error('Invalid sign-up fields!');
-                return;
-            }
-
-            // TODO: Add Username validation
-
-            this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email.trim(), this.state.password).catch(this.firebaseError).then(docRef => {
-                    const user = this.props.firebase.auth().currentUser;
-                    this.setState({userVerified: false});
-
-                    if (user) {
-                        const userProfile = {
-                            uid: user.uid,
-                            email: this.state.email.trim(),
-                            fname: this.state.fname.trim(),
-                            lname: this.state.lname.trim(),
-                            username: this.state.username.trim()
-                        };
-
-                        // Update the user's display name in Firebase
-                        user.updateProfile({
-                            displayName: userProfile.fname
-                        }).then(result => {
-                            console.log('Successfully updated display name');
-                            user.sendEmailVerification().then(() => {
-                                console.log('Successfully sent verification email');
-                                this.setState({emailSent: true});
-                            }).catch(error => {
-                                console.error('Failed to send verification email', error);
-                            })
-                        }).catch(error => {
-                            console.error('Failed to update display name!');
+    loginUser() {
+        this.props.firebase.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password)
+            .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log('(LS01) Successfully authenticated in user ' + user.email);
+                    if (!user.emailVerified) {
+                        console.error('(LE01) User email is not verified');
+                        this.setState({userVerified: false});
+                    } else {
+                        this.setState({
+                            userVerified: true,
+                            auth: true,
+                            password: ''
                         });
-
-
-                        // Populate the user's profile in the Firestore
-                        this.props.firebase.firestore().collection(DbConstants.USERS)
-                            .doc(user.uid)
-                            .collection(DbConstants.PROFILE)
-                            .add(userProfile)
-                            .then(docRef => {
-                                console.log('Successfully created profile');
-                            })
-                            .catch(error => {
-                                console.error('Failed to create profile');
-                            });
-
-                        // this.setState({
-                        //     auth: true,
-                        //     email: '',
-                        //     password: '',
-                        //     username: ''
-                        // })
                     }
                 }
-            );
+            )
+            .catch((error) => {
+                console.error('(LE02) Failed to authenticate user');
+                console.error(error.message);
+                this.setState({invalidLogin: true});
+            });
+    }
+
+    createUser() {
+        if (!this.validateAllFields()) {
+            console.error('(SUE01) Invalid sign-up fields');
+            return;
+        }
+
+        // TODO: Add Username validation
+
+        this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email.trim(), this.state.password).then((userCredential) => {
+                this.setState({userVerified: false});
+                const user = userCredential.user;
+                if (user) {
+                    const userProfile = {
+                        uid: user.uid,
+                        email: this.state.email.trim(),
+                        fname: this.state.fname.trim(),
+                        lname: this.state.lname.trim(),
+                        username: this.state.username.trim()
+                    };
+
+                    // Update the user's display name in Firebase
+                    user.updateProfile({
+                        displayName: userProfile.fname
+                    }).then(() => {
+                        console.log('(SUS01) Successfully updated display name');
+                        return user.sendEmailVerification();
+                    }).then(() => {
+                        console.log('(SUS02) Successfully sent verification email');
+                        this.setState({emailSent: true});
+                    }).catch((error) => {
+                        console.error('(SUE02) Failed to update display name and send verification email');
+                        console.error(error);
+                    });
+
+                    // Populate the user's profile in the Firestore
+                    this.props.firebase.firestore().collection(DbConstants.USERS)
+                        .doc(user.uid)
+                        .collection(DbConstants.PROFILE)
+                        .add(userProfile)
+                        .then((docRef) => {
+                            console.log('(SUS03) Successfully created user profile');
+                        })
+                        .catch((error) => {
+                            console.error('(SUE03) Failed to create profile');
+                        });
+                }
+            }
+        );
+    }
+
+    handleSubmit(event) {
+        if (event.target.id === 'submit-login') {
+            this.loginUser();
+        } else {
+            this.createUser();
         }
     }
 
@@ -304,19 +301,6 @@ class LoginForm extends Component {
                 </div>
             );
         }
-    }
-
-    componentDidMount() {
-        this.props.firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                if (!user.emailVerified) {
-                    console.error('Email is not verified!');
-                } else {
-                    this.setState({auth: true});
-                    console.log('Successfully authenticated user ' + user.email);
-                }
-            }
-        });
     }
 
     render() {
