@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
-import '../../css/main/Login.scss';
 import {Redirect} from 'react-router';
 import {DbConstants} from '../../data/DbConstants';
 import InputField from '../common/InputField';
 import logo from '../../resources/logo.svg';
+import '../../css/main/Login.scss';
 
-class Login extends Component {
+export interface LoginProps {
+    firebase: any;
+}
+
+export class Login extends Component<LoginProps, {}> {
     render() {
         const user = this.props.firebase.auth().currentUser;
         if (user) {
@@ -40,8 +44,37 @@ class Login extends Component {
     }
 }
 
-class LoginForm extends Component {
-    constructor(props) {
+interface LoginFormProps {
+    firebase: any;
+}
+
+interface LoginFormState {
+    isExistingUser: boolean;
+    fname: string;
+    lname: string;
+    username: string;
+    email: string;
+    password: string;
+    auth: boolean;
+    userVerified: boolean;
+    invalidFirstName: boolean;
+    invalidLastName: boolean;
+    invalidUsername: boolean;
+    invalidEmail: boolean;
+    invalidPassword: boolean;
+    invalidLogin: boolean;
+    emailSent: boolean;
+}
+
+class LoginForm extends Component<LoginFormProps, LoginFormState> {
+    private textUnverifiedEmail: string = 'email is not verified';
+    private textBlankField: string = 'field cannot be blank';
+    private textInvalidEmail: string = 'enter a valid email';
+    private textInvalidUsername: string = 'must be unique and at least 4 characters';
+    private textInvalidPassword: string = 'must be at least 8 characters with uppercase';
+    private textInvalidLogin: string = 'invalid email/password combination';
+
+    constructor(props: any) {
         super(props);
         this.state = {
             isExistingUser: true,  // Displays login tab or sign up tab
@@ -61,7 +94,7 @@ class LoginForm extends Component {
             emailSent: false
         };
 
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleSubmitClick = this.handleSubmitClick.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.getCurrentForm = this.getCurrentForm.bind(this);
@@ -69,17 +102,10 @@ class LoginForm extends Component {
         this.validateAllFields = this.validateAllFields.bind(this);
         this.loginUser = this.loginUser.bind(this);
         this.createUser = this.createUser.bind(this);
-
-        this.textUnverifiedEmail = 'email is not verified';
-        this.textBlankField = 'field cannot be blank';
-        this.textInvalidEmail = 'enter a valid email';
-        this.textInvalidUsername = 'must be unique and at least 4 characters';
-        this.textInvalidPassword = 'must be at least 8 characters with uppercase';
-        this.textInvalidLogin = 'invalid email/password combination';
     }
 
     componentDidMount() {
-        this.props.firebase.auth().onAuthStateChanged((user) => {
+        this.props.firebase.auth().onAuthStateChanged((user: any) => {
             if (user) {
                 if (!user.emailVerified) {
                     console.error('(ME01) User email is not verified');
@@ -91,28 +117,28 @@ class LoginForm extends Component {
         });
     }
 
-    isValidEmail(email) {
+    isValidEmail(email: string): boolean {
         return email.length > 3
             && (/@/.test(email))
             && (email.split('@')[0].length > 2)
             && (email.split('@')[1].length > 2);
     }
 
-    isValidName(name) {
+    isValidName(name: string): boolean {
         return name.length > 0;
     }
 
-    isValidUsername(username) {
+    isValidUsername(username: string): boolean {
         return username.length > 3;
     }
 
-    isValidPassword(password) {
+    isValidPassword(password: string): boolean {
         return password.length > 7
             && (/[a-z]/.test(password))
             && (/[A-Z]/.test(password));
     }
 
-    validateAllFields() {
+    validateAllFields(): boolean {
         const invalidFirstName = !this.isValidName(this.state.fname);
         const invalidLastName = !this.isValidName(this.state.lname);
         const invalidUsername = !this.isValidUsername(this.state.username);
@@ -132,9 +158,9 @@ class LoginForm extends Component {
         return true;
     }
 
-    loginUser() {
+    loginUser(): void {
         this.props.firebase.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password)
-            .then((userCredential) => {
+            .then((userCredential: any) => {
                     const user = userCredential.user;
                     console.log('(LS01) Successfully authenticated in user ' + user.email);
                     if (!user.emailVerified) {
@@ -149,14 +175,14 @@ class LoginForm extends Component {
                     }
                 }
             )
-            .catch((error) => {
+            .catch((error: any) => {
                 console.error('(LE02) Failed to authenticate user');
                 console.error(error.message);
                 this.setState({invalidLogin: true});
             });
     }
 
-    createUser() {
+    createUser(): void {
         if (!this.validateAllFields()) {
             console.error('(SUE01) Invalid sign-up fields');
             return;
@@ -164,7 +190,7 @@ class LoginForm extends Component {
 
         // TODO: Add Username validation
 
-        this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email.trim(), this.state.password).then((userCredential) => {
+        this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email.trim(), this.state.password).then((userCredential: any) => {
                 this.setState({userVerified: false});
                 const user = userCredential.user;
                 if (user) {
@@ -185,7 +211,7 @@ class LoginForm extends Component {
                     }).then(() => {
                         console.log('(SUS02) Successfully sent verification email');
                         this.setState({emailSent: true});
-                    }).catch((error) => {
+                    }).catch((error: any) => {
                         console.error('(SUE02) Failed to update display name and send verification email');
                         console.error(error);
                     });
@@ -195,10 +221,10 @@ class LoginForm extends Component {
                         .doc(user.uid)
                         .collection(DbConstants.PROFILE)
                         .add(userProfile)
-                        .then((docRef) => {
+                        .then((docRef: any) => {
                             console.log('(SUS03) Successfully created user profile');
                         })
-                        .catch((error) => {
+                        .catch((error: any) => {
                             console.error('(SUE03) Failed to create profile');
                         });
                 }
@@ -206,32 +232,41 @@ class LoginForm extends Component {
         );
     }
 
-    handleSubmit(event) {
-        if (event.target.id === 'submit-login') {
+    handleSubmitClick(event: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLElement>) {
+        // TODO:??
+        event.preventDefault();
+        if (event.currentTarget.id === 'submit-login') {
             this.loginUser();
         } else {
             this.createUser();
         }
     }
 
-    handleChange(event) {
-        const name = event.target.name;
-        const value = event.target.value;
-        this.setState({[name]: value});
+    handleChange(event: React.MouseEvent<HTMLInputElement>) {
+        const name: string = event.currentTarget.name;
+        const value: string = event.currentTarget.value;
+
+        this.setState((prevState: LoginFormState) => {
+            return {
+                ...prevState,
+                [name]: value
+            }
+        });
     }
 
-    handleClick(event) {
-        if (event.target.id === 'login') {
+    handleClick(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+        if (event.currentTarget.id === 'login') {
             this.setState({isExistingUser: true});
         } else {
             this.setState({isExistingUser: false});
         }
     }
 
-    handleKeyPress(event) {
+    handleKeyPress(event: React.KeyboardEvent) {
         if (event.keyCode === 13) {
             // Submit the login form when the 'enter' key is pressed on the input field
-            this.submit('submit-login');
+            this.loginUser();
         }
     }
 
@@ -259,14 +294,14 @@ class LoginForm extends Component {
                         {/* TODO: make this another page */}
                     </div>
                     <div className={'login-btn-container'}>
-                        <button id={'submit-login'} className={'login-submit'} onClick={this.handleSubmit}>login</button>
+                        <button id={'submit-login'} className={'login-submit'} onClick={this.handleSubmitClick}>login</button>
                     </div>
                 </div>
             );
         } else {
             return (
                 // The sign up form; displays fields for first name, last name, email and password
-                <div className={'login-form'} onSubmit={this.handleSubmit}>
+                <div className={'login-form'} onSubmit={this.handleSubmitClick}>
                     <form>
                         <InputField className={'login-input'} type={'text'} autocomplete={'given-name'} name={'fname'} placeholder={'first name'}
                                     value={this.state.fname}
@@ -295,7 +330,7 @@ class LoginForm extends Component {
                                     onChange={this.handleChange}/>
                     </form>
                     <div className={'login-btn-container'}>
-                        <button id={'submit-register'} className={'login-submit'} onClick={this.handleSubmit}>register</button>
+                        <button id={'submit-register'} className={'login-submit'} onClick={this.handleSubmitClick}>register</button>
                     </div>
                     {this.state.emailSent && <p>A verification email has been sent!</p>}
                 </div>
@@ -326,5 +361,3 @@ class LoginForm extends Component {
         );
     }
 }
-
-export default Login;

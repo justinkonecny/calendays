@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
-import MainRoutes from '../../mainRoutes.js';
+import {MainRoutes} from '../../MainRoutes';
 import '../../css/main/App.css';
 
-class App extends Component {
+export interface AppProps {
+  firebase: any;
+}
+
+export class App extends Component<AppProps, {}> {
   render() {
     return (
       <div className={'App'}>
@@ -11,5 +15,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;

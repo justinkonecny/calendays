@@ -8,7 +8,7 @@ Web application used for shared event planning. Uses Firebase for user authentic
 ### src/
 * `index.css`: css for the index page
 * `index.js`: Javascript for the index page; initializes and configures Firebase for the application; renders the main `App` component in a `BrowserRouter`
-* `mainRoutes.js`: configures the routes for the application
+* `MainRoutes.tsx`: configures the routes for the application
   * `https://calendays.jkonecny.com/`->`Login`
   * `https://calendays.jkonecny.com/home`->`Home`
   * `https://calendays.jkonecny.com/reset`->`Reset`
@@ -21,10 +21,10 @@ Web application used for shared event planning. Uses Firebase for user authentic
 * `DropdownTime.js`
 * `InputField.js`
 ### src/components/main/...
-* `App.js`
+* `App.tsx`
 * `Constants.js`
 * `Home.js`
-* `Login.js`
+* `Login.tsx`
 * `NavBar.js`
 * `Reset.js`
 * `User.js`

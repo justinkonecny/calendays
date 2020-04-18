@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {BrowserRouter} from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
-import { BrowserRouter } from 'react-router-dom';
-import App from './components/main/App';
+import {App} from './components/main/App';
+import {Config} from './config';
 import './index.css';
-import { Config } from './config';
 
 const firebase = require('firebase/app');
 require('firebase/auth');
@@ -12,25 +12,27 @@ require("firebase/firestore");
 firebase.initializeApp(Config);
 
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
-    .then(function() {
+    .then(function () {
         // Existing and future Auth states are now persisted in the current
         // session only. Closing the window would clear any existing state even
         // if a user forgets to sign out.
         // ...
         // New sign-in will be persisted with session persistence.
     })
-    .catch(function(error) {
+    .catch(function (error: any) {
         // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
+        const errorCode = error.code;
+        const errorMessage = error.message;
         console.error(errorCode);
         console.error(errorMessage);
     });
 
 const routerApp = (
-    <BrowserRouter>
-        <App firebase={firebase} />
-    </BrowserRouter>
+    <React.StrictMode>
+        <BrowserRouter>
+            <App firebase={firebase}/>
+        </BrowserRouter>
+    </React.StrictMode>
 );
 ReactDOM.render(routerApp, document.getElementById('root'));
 
