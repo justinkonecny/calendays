@@ -1,4 +1,4 @@
-export const DbConstants = {
+export const DbConstants: { [key: string]: string } = {
     USERS: 'users',
     EVENTS: 'events',
     PROFILE: 'profile',

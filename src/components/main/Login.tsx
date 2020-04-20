@@ -5,7 +5,7 @@ import InputField from '../common/InputField';
 import logo from '../../resources/logo.svg';
 import '../../css/main/Login.scss';
 
-export interface LoginProps {
+interface LoginProps {
     firebase: any;
 }
 
@@ -74,7 +74,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
     private textInvalidPassword: string = 'must be at least 8 characters with uppercase';
     private textInvalidLogin: string = 'invalid email/password combination';
 
-    constructor(props: any) {
+    constructor(props: LoginFormProps) {
         super(props);
         this.state = {
             isExistingUser: true,  // Displays login tab or sign up tab
@@ -95,6 +95,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
         };
 
         this.handleSubmitClick = this.handleSubmitClick.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.getCurrentForm = this.getCurrentForm.bind(this);
@@ -245,7 +246,17 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
     handleChange(event: React.MouseEvent<HTMLInputElement>) {
         const name: string = event.currentTarget.name;
         const value: string = event.currentTarget.value;
+        this.setState((prevState: LoginFormState) => {
+            return {
+                ...prevState,
+                [name]: value
+            }
+        });
+    }
 
+    handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const name: string = event.currentTarget.name;
+        const value: string = event.currentTarget.value;
         this.setState((prevState: LoginFormState) => {
             return {
                 ...prevState,
@@ -280,13 +291,13 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                                     value={this.state.email}
                                     isInvalid={!this.state.userVerified}
                                     invalidText={this.textUnverifiedEmail}
-                                    onChange={this.handleChange}
+                                    onChange={this.handleInputChange}
                                     onKeyDown={this.handleKeyPress}/>
                         <InputField className={'login-input'} type={'password'} autocomplete={'current-password'} name={'password'} placeholder={'password'}
                                     value={this.state.password}
                                     isInvalid={this.state.invalidLogin}
                                     invalidText={this.textInvalidLogin}
-                                    onChange={this.handleChange}
+                                    onChange={this.handleInputChange}
                                     onKeyDown={this.handleKeyPress}/>
                     </form>
                     <div className={'forgot-container'}>
@@ -307,27 +318,27 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                                     value={this.state.fname}
                                     isInvalid={this.state.invalidFirstName}
                                     invalidText={this.textBlankField}
-                                    onChange={this.handleChange}/>
+                                    onChange={this.handleInputChange}/>
                         <InputField className={'login-input'} type={'text'} autocomplete={'family-name'} name={'lname'} placeholder={'last name'}
                                     value={this.state.lname}
                                     isInvalid={this.state.invalidLastName}
                                     invalidText={this.textBlankField}
-                                    onChange={this.handleChange}/>
+                                    onChange={this.handleInputChange}/>
                         <InputField className={'login-input'} type={'username'} autocomplete={'username'} name={'username'} placeholder={'username'}
                                     value={this.state.username}
                                     isInvalid={this.state.invalidUsername}
                                     invalidText={this.textInvalidUsername}
-                                    onChange={this.handleChange}/>
+                                    onChange={this.handleInputChange}/>
                         <InputField className={'login-input'} type={'email'} autocomplete={'email'} name={'email'} placeholder={'email'}
                                     value={this.state.email}
                                     isInvalid={this.state.invalidEmail}
                                     invalidText={this.textInvalidEmail}
-                                    onChange={this.handleChange}/>
+                                    onChange={this.handleInputChange}/>
                         <InputField className={'login-input'} type={'password'} autocomplete={'new-password'} name={'password'} placeholder={'password'}
                                     value={this.state.password}
                                     isInvalid={this.state.invalidPassword}
                                     invalidText={this.textInvalidPassword}
-                                    onChange={this.handleChange}/>
+                                    onChange={this.handleInputChange}/>
                     </form>
                     <div className={'login-btn-container'}>
                         <button id={'submit-register'} className={'login-submit'} onClick={this.handleSubmitClick}>register</button>

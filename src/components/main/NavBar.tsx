@@ -5,7 +5,11 @@ import notification from "../../resources/notification.svg";
 import profile from "../../resources/profile.svg";
 import {MonthNames} from "./Constants";
 
-class NavBar extends Component {
+interface NavBarProps {
+    onClick: (event: React.MouseEvent<HTMLElement>) => void;
+}
+
+export class NavBar extends Component<NavBarProps, {}> {
     render() {
         const date = new Date();  // The current date to render at bottom of side nav
 
@@ -13,17 +17,17 @@ class NavBar extends Component {
             <div className={'navbar'}>
                 <div className={'nav-btn-container'}>
                     <div className={'nav-icon'}>
-                        <button className={'btn-invisible btn-nav'} onClick={this.props.onClick}>
+                        <button id={'nav-btn-home'} className={'btn-invisible btn-nav'} onClick={this.props.onClick}>
                             <img id={'icon-home'} className={'logo'} src={home} alt={'home'}/>
                         </button>
                     </div>
                     <div className={'nav-icon'}>
-                        <button className={'btn-invisible btn-nav'} onClick={this.props.onClick}>
+                        <button id={'nav-btn-notifications'} className={'btn-invisible btn-nav'} onClick={this.props.onClick}>
                             <img className={'logo'} src={notification} alt={'notification'}/>
                         </button>
                     </div>
                     <div className={'nav-icon'}>
-                        <button className={'btn-invisible btn-nav'} onClick={this.props.onClick}>
+                        <button id={'nav-btn-user'} className={'btn-invisible btn-nav'} onClick={this.props.onClick}>
                             <img id={'icon-user'} className={'logo'} src={profile} alt={'profile'}/>
                         </button>
                     </div>
@@ -51,5 +55,3 @@ class NavBar extends Component {
         );
     }
 }
-
-export default NavBar;

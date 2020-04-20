@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {MainRoutes} from '../../MainRoutes';
 import '../../css/main/App.css';
 
-export interface AppProps {
+interface AppProps {
   firebase: any;
 }
 

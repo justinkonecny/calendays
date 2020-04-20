@@ -6,12 +6,12 @@ import {App} from './components/main/App';
 import {Config} from './config';
 import './index.css';
 
-const firebase = require('firebase/app');
+const firebaseApp = require('firebase/app');
 require('firebase/auth');
 require("firebase/firestore");
-firebase.initializeApp(Config);
+firebaseApp.initializeApp(Config);
 
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+firebaseApp.auth().setPersistence(firebaseApp.auth.Auth.Persistence.SESSION)
     .then(function () {
         // Existing and future Auth states are now persisted in the current
         // session only. Closing the window would clear any existing state even
@@ -30,7 +30,7 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
 const routerApp = (
     <React.StrictMode>
         <BrowserRouter>
-            <App firebase={firebase}/>
+            <App firebase={firebaseApp}/>
         </BrowserRouter>
     </React.StrictMode>
 );

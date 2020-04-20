@@ -2,13 +2,36 @@ import React, {Component} from 'react';
 import '../../css/common/Dropdown.scss';
 import {TimeOfDay} from '../main/Constants';
 
-class DropdownTime extends Component {
-    constructor(props) {
+interface DropdownTimeProps {
+    setTime: (timeList: any[]) => void;
+    startTime: any[];
+}
+
+interface DropdownTimeState {
+    displayTime: any[];
+    showHourPicker: boolean;
+    showMinutePicker: boolean;
+    showTimeOfDayPicker: boolean;
+}
+
+class DropdownTime extends Component<DropdownTimeProps, DropdownTimeState> {
+    private timesHours: any[];
+    private timesMinutes: any[];
+    private timesOfDay: any[];
+
+    private btnHours: any[];
+    private btnMinutes: any[];
+    private btnTimesOfDay: any[];
+
+    constructor(props: DropdownTimeProps) {
         super(props);
-        this.setTime = this.props.setTime;
         this.timesHours = [];
         this.timesMinutes = [];
         this.timesOfDay = [];
+        this.btnHours = [];
+        this.btnMinutes = [];
+        this.btnTimesOfDay = [];
+
         this.state = {
             displayTime: this.props.startTime,
             showHourPicker: false,
@@ -22,10 +45,6 @@ class DropdownTime extends Component {
         this.selectHourFromMenu = this.selectHourFromMenu.bind(this);
         this.selectMinuteFromMenu = this.selectMinuteFromMenu.bind(this);
         this.selectTimeOfDayFromMenu = this.selectTimeOfDayFromMenu.bind(this);
-
-        this.btnHours = [];
-        this.btnMinutes = [];
-        this.btnTimesOfDay = [];
 
         for (let i = 1; i < 13; i++) {
             const min = (i - 1) * 5;
@@ -69,7 +88,7 @@ class DropdownTime extends Component {
         });
     }
 
-    selectHourFromMenu(event) {
+    selectHourFromMenu(event: any) {
         const displayTime = [
             parseInt(event.target.innerText),
             this.state.displayTime[1],
@@ -79,10 +98,10 @@ class DropdownTime extends Component {
             displayTime,
             showHourPicker: false
         });
-        this.setTime(displayTime);
+        this.props.setTime(displayTime);
     }
 
-    selectMinuteFromMenu(event) {
+    selectMinuteFromMenu(event: any) {
         const displayTime = [
             this.state.displayTime[0],
             parseInt(event.target.innerText),
@@ -92,10 +111,10 @@ class DropdownTime extends Component {
             displayTime,
             showMinutePicker: false
         });
-        this.setTime(displayTime);
+        this.props.setTime(displayTime);
     }
 
-    selectTimeOfDayFromMenu(event) {
+    selectTimeOfDayFromMenu(event: any) {
         const displayTime = [
             this.state.displayTime[0],
             this.state.displayTime[1],
@@ -105,10 +124,10 @@ class DropdownTime extends Component {
             displayTime,
             showTimeOfDayPicker: false
         });
-        this.setTime(displayTime);
+        this.props.setTime(displayTime);
     }
 
-    getPickerContainer(onOpenCloseMenu, btnText, menuOptions, showPicker) {
+    getPickerContainer(onOpenCloseMenu: () => void, btnText: string, menuOptions: any, showPicker: boolean) {
         return (
             <div className={'date-time time-container'}>
                 <button className={'btn-date-time btn-time'} onClick={onOpenCloseMenu}>
@@ -121,7 +140,7 @@ class DropdownTime extends Component {
         );
     }
 
-    getPickerOptionsHtml(text, onClickOption) {
+    getPickerOptionsHtml(text: string, onClickOption: (event: any) => void) {
         return (
             <button className={'picker-inner'} onClick={onClickOption} key={text}>
                 {text}

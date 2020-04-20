@@ -2,7 +2,19 @@ import React, {Component} from 'react';
 import {ColumnPos, TimeOfDay, WeekDayNames} from '../main/Constants';
 
 export class CalendarDay {
-    constructor(weekDayIndex, columnPos) {
+
+    private weekDay: string[];
+    private name: string;
+    private displayName: string;
+    private columnPos: string;
+    private isToday: boolean;
+    private dateMonth: number;
+    private dateDay: number;
+    private date: Date;
+    private events: any[];
+    private timesCount: number;
+
+    constructor(weekDayIndex: number, columnPos: string) {
         this.weekDay = WeekDayNames[weekDayIndex];
         // TODO: Assert weekDayIndex in range
         this.name = this.weekDay[0];
@@ -13,31 +25,32 @@ export class CalendarDay {
         this.dateDay = -1;
         this.date = new Date();
         this.events = [];
+        this.timesCount = -1; // TODO FIX?
     }
 
-    setDate(date) {
+    setDate(date: Date) {
         this.date = date;
         this.dateMonth = date.getMonth();
         this.dateDay = date.getDate();
         return this;
     }
 
-    setDayMonth(num) {
+    setDayMonth(num: number) {
         this.dateDay = num;
         return this;
     }
 
-    setTimesCount(count) {
+    setTimesCount(count: number) {
         this.timesCount = count;
         return this;
     }
 
-    setToday(bool) {
+    setToday(bool: boolean) {
         this.isToday = bool;
         return this;
     }
 
-    renderEvent(event) {
+    renderEvent(event: any) {
         this.events.push(event);
     }
 
@@ -49,7 +62,7 @@ export class CalendarDay {
         return this.columnPos == null ? 'calendar-column' : 'calendar-column ' + this.columnPos;
     }
 
-    getHeaderComponent(showNewEvent) {
+    getHeaderComponent(showNewEvent: boolean) {
         return (
             <Header key={this.dateDay}
                     columnPos={this.columnPos}
@@ -57,22 +70,24 @@ export class CalendarDay {
                     isToday={this.isToday}
                     displayName={this.displayName}
                     dateDay={this.dateDay}
-                    name={this.name}/>
+                // name={this.name}
+            />
         );
     }
 
-    getDayComponent(showNewEvent) {
+    getDayComponent(showNewEvent: boolean) {
         return (
             <Day key={this.dateDay}
                  columnPos={this.columnPos}
-                 showNewEvent={showNewEvent}
+                // showNewEvent={showNewEvent}
                  timesCount={this.timesCount}
                  events={this.events}
-                 name={this.name}/>
+                // name={this.name}
+            />
         );
     }
 
-    getComponent(showNewEvent) {
+    getComponent(showNewEvent: boolean) {
         // TODO: Fix ids and keys
         const columnClass = this.columnPos == null ? 'calendar-column' : 'calendar-column ' + this.columnPos;
         return (
@@ -83,20 +98,30 @@ export class CalendarDay {
                         isToday={this.isToday}
                         displayName={this.displayName}
                         dateDay={this.dateDay}
-                        name={this.name}/>
+                    // name={this.name}
+                />
                 <Day key={this.dateDay}
                      columnPos={this.columnPos}
-                     showNewEvent={showNewEvent}
+                    // showNewEvent={showNewEvent}
                      timesCount={this.timesCount}
                      events={this.events}
-                     name={this.name}/>
+                    // name={this.name}
+                />
             </div>
         );
     }
 
 }
 
-class Header extends Component {
+interface HeaderProps {
+    isToday: boolean;
+    showNewEvent: boolean;
+    columnPos: string;
+    displayName: string;
+    dateDay: number;
+}
+
+class Header extends Component<HeaderProps, {}> {
     render() {
         let weekdayClass = this.props.isToday ? 'weekday column-header-today' : 'weekday';
         weekdayClass = this.props.showNewEvent ? weekdayClass + ' weekday-half' : weekdayClass;
@@ -121,14 +146,24 @@ class Header extends Component {
     }
 }
 
-class Day extends Component {
+interface DayProps {
+    events: null | any[];
+    timesCount: number;
+    columnPos: string;
+}
+
+class Day extends Component<DayProps, {}> {
     render() {
+        if (this.props.events === null) {
+            return; // TODO REMOVE??
+        }
+
         const renderedEvents = this.props.events.map(event => {
             const hour = parseInt(event.time.hour);
             const duration = parseInt(event.duration.hours) + (parseInt(event.duration.minutes) / 60);
 
-            const eventStyle = {
-                height: 'calc((' + (100 / this.props.timesCount) + '% - 2px) * ' + duration + ' - 8px)'
+            const eventStyle: { [style: string]: any } = {
+                height: 'calc((' + (100 / this.props.timesCount) + '%) * ' + duration + ' - 18px)'
             };
 
             if (event.time.timeOfDay === TimeOfDay.AM) {

@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {Login} from './components/main/Login';
-import Home from './components/main/Home';
-import Reset from './components/main/Reset';
+import {Home} from './components/main/Home';
+import {Reset} from './components/main/Reset';
 
 export interface MainRoutesProps {
     firebase: any;

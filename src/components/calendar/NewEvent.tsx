@@ -1,19 +1,42 @@
 import React, {Component} from 'react';
 import '../../css/calendar/NewEvent.scss';
-import {MonthNames, TimeOfDay, WeekDayNames} from '../main/Constants';
+import {TimeOfDay} from '../main/Constants';
 import {DbConstants} from '../../data/DbConstants';
 import InputField from '../common/InputField';
 import DropdownTime from '../common/DropdownTime';
-import DropdownDate from '../common/DropdownDate';
+import {DropdownDate} from '../common/DropdownDate';
+import {UserProfile} from '../../data/UserProfile';
+import * as firebase from 'firebase/app';
 
-class NewEvent extends Component {
-    constructor(props) {
+interface NewEventProps {
+    db: firebase.firestore.Firestore;
+    monthLengths: number[];
+    userProfile: null | UserProfile;
+    handleFailure: (error: any) => void;
+    handleSuccess: (event: any) => void;
+}
+
+interface NewEventState {
+    showEventDatePicker: boolean;
+    eventName: string;
+    eventDateMonth: number;
+    eventDate: number;
+    eventDateYear: number;
+    eventDateWeekDay: number;
+    eventStartTime: any[];
+    eventEndTime: any;
+    eventLocation: string;
+    eventMessage: string;
+}
+
+export class NewEvent extends Component<NewEventProps, NewEventState> {
+    private date: Date;
+
+    constructor(props: NewEventProps) {
         super(props);
         this.date = new Date();
-        this.months = MonthNames;
-        this.monthLengths = this.props.monthLengths;
-        this.weekDays = WeekDayNames;
         this.state = {
+            showEventDatePicker: false,
             eventName: '',
             eventDateMonth: this.date.getMonth(),
             eventDate: this.date.getDate(),
@@ -26,6 +49,7 @@ class NewEvent extends Component {
         };
 
         this.handleChange = this.handleChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
         this.populateEventParameters = this.populateEventParameters.bind(this);
         this.submitEvent = this.submitEvent.bind(this);
         this.parseDateTime = this.parseDateTime.bind(this);
@@ -35,10 +59,26 @@ class NewEvent extends Component {
         this.setEventEndTime = this.setEventEndTime.bind(this);
     }
 
-    handleChange(event) {
-        const name = event.target.name;
-        const value = event.target.value;
-        this.setState({[name]: value});
+    handleChange(event: React.MouseEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) {
+        const name: string = event.currentTarget.name;
+        const value: string = event.currentTarget.value;
+        this.setState((prevState: NewEventState) => {
+            return {
+                ...prevState,
+                [name]: value
+            }
+        });
+    }
+
+    handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const name: string = event.currentTarget.name;
+        const value: string = event.currentTarget.value;
+        this.setState((prevState: NewEventState) => {
+            return {
+                ...prevState,
+                [name]: value
+            }
+        });
     }
 
     populateEventParameters() {
@@ -95,11 +135,11 @@ class NewEvent extends Component {
             .doc(this.props.userProfile.getUid())
             .collection(DbConstants.EVENTS)
             .add(newEvent)
-            .then(docRef => {
+            .then((docRef: any) => {
                 console.log('Successfully created a new event');
                 this.props.handleSuccess(newEvent);
             })
-            .catch(error => {
+            .catch((error: any) => {
                 console.error('Failed to create a new event!');
                 this.props.handleFailure(error);
             });
@@ -159,7 +199,7 @@ class NewEvent extends Component {
         this.setState({showEventDatePicker: !showing});
     }
 
-    setEventDate(date) {
+    setEventDate(date: Date) {
         this.setState({
             eventDate: date.getDate(),
             eventDateMonth: date.getMonth(),
@@ -168,11 +208,11 @@ class NewEvent extends Component {
         });
     }
 
-    setEventStartTime(timeList) {
+    setEventStartTime(timeList: any[]) {
         this.setState({eventStartTime: timeList});
     }
 
-    setEventEndTime(timeList) {
+    setEventEndTime(timeList: any[]) {
         this.setState({eventEndTime: timeList});
     }
 
@@ -180,16 +220,14 @@ class NewEvent extends Component {
         return (
             <div className={'create-new-event'}>
                 <h3>title</h3>
-                <InputField className={'input-event-name'} type={'text'} name={'eventName'} placeholder={'new event'} value={this.state.eventName} onChange={this.handleChange}/>
+                <InputField className={'input-event-name'} type={'text'} name={'eventName'} placeholder={'new event'} value={this.state.eventName} onChange={this.handleInputChange}/>
 
                 <h3>date + time</h3>
                 <div>
                     <h4>date</h4>
                     <DropdownDate startDate={this.date}
                                   setDate={this.setEventDate}
-                                  months={this.months}
-                                  monthLengths={this.monthLengths}
-                                  weekDays={this.weekDays}
+                                  monthLengths={this.props.monthLengths}
                                   length={200}/>
                 </div>
                 <div className={'display-flex space-between-wrap'}>
@@ -207,7 +245,7 @@ class NewEvent extends Component {
                 </div>
 
                 <h3>location</h3>
-                <InputField className={'input-event-location'} type={'text'} name={'eventLocation'} placeholder={'add location'} value={this.state.eventLocation} onChange={this.handleChange}/>
+                <InputField className={'input-event-location'} type={'text'} name={'eventLocation'} placeholder={'add location'} value={this.state.eventLocation} onChange={this.handleInputChange}/>
 
                 <h3>message</h3>
                 <textarea className={'new-event-message'} name={'eventMessage'} value={this.state.eventMessage} onChange={this.handleChange} onFocus={this.populateEventParameters}/>
@@ -217,5 +255,3 @@ class NewEvent extends Component {
         );
     }
 }
-
-export default NewEvent;

@@ -1,10 +1,25 @@
 import React, {Component} from 'react';
 import '../../css/networks/NewNetwork.scss';
-import {DbConstants} from "../../data/DbConstants";
-import InputField from "../common/InputField";
+import {DbConstants} from '../../data/DbConstants';
+import InputField from '../common/InputField';
+import {NetworkGroup} from '../../data/NetworkGroup';
+import {UserProfile} from '../../data/UserProfile';
+import * as firebase from 'firebase';
 
-class NewNetwork extends Component {
-    constructor(props) {
+interface NewNetworkProps {
+    db: firebase.firestore.Firestore;
+    userProfile: UserProfile;
+    handleFailure: (error: any) => void;
+    handleSuccess: (networkGroup: NetworkGroup) => void;
+}
+
+interface NewNetworkState {
+    netName: string;
+    memberId: string;
+}
+
+export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
+    constructor(props: NewNetworkProps) {
         super(props);
 
         this.state = {
@@ -17,10 +32,15 @@ class NewNetwork extends Component {
         this.addNetworkToUsers = this.addNetworkToUsers.bind(this);
     }
 
-    handleInputChange(event) {
-        const name = event.target.name;
-        const value = event.target.value;
-        this.setState({[name]: value});
+    handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const name: string = event.currentTarget.name;
+        const value: string = event.currentTarget.value;
+        this.setState((prevState: NewNetworkState) => {
+            return {
+                ...prevState,
+                [name]: value
+            }
+        });
     }
 
     submitNetwork() {
@@ -39,12 +59,19 @@ class NewNetwork extends Component {
             return member.trim()
         });
 
-        const newNetwork = {
-            name: this.state.netName,
-            timestamp: (new Date()).toString(),
-            members: members,  // TODO: Fix this to be a proper list
-            owner: this.props.userProfile.getUid()
-        };
+        const newNetwork: NetworkGroup = new NetworkGroup(
+            this.props.db,
+            this.state.netName,
+            (new Date()).toString(),
+            members,
+            this.props.userProfile.getUid());
+
+        // const newNetwork = {
+        //     name: this.state.netName,
+        //     timestamp: (new Date()).toString(),
+        //     members: members,  // TODO: Fix this to be a proper list
+        //     owner: this.props.userProfile.getUid()
+        // };
 
         this.props.db.collection(DbConstants.NETWORKS)
             .add(newNetwork)
@@ -59,10 +86,10 @@ class NewNetwork extends Component {
             });
     }
 
-    addNetworkToUsers(networkId, network) {
+    addNetworkToUsers(networkId: string, network: NetworkGroup) {
         // TODO: Validate MemberIDs before adding network to user
 
-        for (const userId of network.members) {
+        for (const userId of network.getMembers()) {
             // First get the user's list of current networks
             this.props.db.collection(DbConstants.USERS)
                 .doc(userId)
@@ -77,7 +104,8 @@ class NewNetwork extends Component {
                             .add(newNetworksList)
                             .then(docRef => {
                                 if (userId === this.props.userProfile.getUid()) {
-                                    this.props.handleSuccess(networkId);
+                                    // this.props.handleSuccess(networkId);
+                                    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 }
                             })
                             .catch(error => {
@@ -128,5 +156,3 @@ class NewNetwork extends Component {
         );
     }
 }
-
-export default NewNetwork;

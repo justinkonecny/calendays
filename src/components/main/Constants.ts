@@ -1,9 +1,9 @@
-export const TimeOfDay = {
+export const TimeOfDay: {[time: string]: string}  = {
     AM: 'AM',
     PM: 'PM'
 };
 
-export const MonthNames = [
+export const MonthNames: string[] = [
     'January',
     'February',
     'March',
@@ -18,7 +18,7 @@ export const MonthNames = [
     'December'
 ];
 
-export const WeekDayNames = [
+export const WeekDayNames: string[][] = [
     ['Sunday', 'Sun'],
     ['Monday', 'Mon'],
     ['Tuesday', 'Tues'],
@@ -28,7 +28,7 @@ export const WeekDayNames = [
     ['Saturday', 'Sat']
 ];
 
-export const ColumnPos = {
+export const ColumnPos: {[position: string]: string} = {
     LEFT: 'calendar-column-left',  // Indicates the left column of a calendar
     MIDDLE: 'calendar-column-middle', // Indicates a center column of a calendar
     RIGHT: 'calendar-column-right'  // Indicates the right column of a calendar

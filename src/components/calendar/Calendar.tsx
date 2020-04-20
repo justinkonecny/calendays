@@ -1,11 +1,33 @@
 import React, {Component} from 'react';
-import NewEvent from './NewEvent';
+import {NewEvent} from './NewEvent';
 import '../../css/calendar/Calendar.scss'
 import {CalendarDay} from "./CalendayDay";
-import {ColumnPos, MonthNames, WeekDayNames} from '../main/Constants';
+import {ColumnPos, MonthNames} from '../main/Constants';
+import * as firebase from 'firebase/app';
+import {UserProfile} from "../../data/UserProfile";
 
-class Calendar extends Component {
-    constructor(props) {
+
+interface CalendarProps {
+    db: firebase.firestore.Firestore;
+    handleNewEvent: (event: any) => void;
+    userProfile: null | UserProfile;
+    events: null | any[];
+}
+
+interface CalendarState {
+    events: null | any[];
+    dayClasses: CalendarDay[];
+    showNewEvent: boolean;
+    displayedWeek: number;
+    displayedDate: Date;
+}
+
+export class Calendar extends Component<CalendarProps, CalendarState> {
+    private readonly date: Date;
+    private readonly monthLengths: number[];
+    private readonly times: JSX.Element[];
+
+    constructor(props: CalendarProps) {
         super(props);
 
         this.renderEventsForWeek = this.renderEventsForWeek.bind(this);
@@ -18,16 +40,6 @@ class Calendar extends Component {
 
         this.date = new Date();  // Today's dateDay
 
-        this.state = {
-            events: null,
-            dayClasses: [],  // The list of Calendar days
-            showNewEvent: false,  // Don't show the new event creator after load
-            displayedWeek: 0, // Index of first day of the week being displayed
-            displayedDate: this.date, // Date of first day of the week being displayed
-        };
-
-        this.weekNames = WeekDayNames;  // List of days of the week (full and abbreviated names)
-        this.monthNames = MonthNames;  // List of months (full names)
 
         // Populate the first week with seven CalendarDays
         const firstWeek = [];
@@ -40,7 +52,6 @@ class Calendar extends Component {
             }
             firstWeek.push(new CalendarDay(i, pos));
         }
-        this.state.dayClasses = firstWeek;
 
         this.monthLengths = [];  // The number of days in each dateMonth (by index)
         for (let i = 1; i <= 12; i++) {
@@ -50,26 +61,36 @@ class Calendar extends Component {
 
         const dayDate = this.date.getDate();
         const weekIndex = this.date.getDay();
-        this.state.dayClasses[weekIndex].setDayMonth(dayDate).setToday(true);  // Sets this dateDay as 'today'
+        firstWeek[weekIndex].setDayMonth(dayDate).setToday(true);  // Sets this dateDay as 'today'
 
-        this.state.dayClasses = this.getPopulatedDates(this.date, 0);
-        this.state.displayedDate = this.state.dayClasses[0].getDate();
+        this.state = {
+            events: null,
+            dayClasses: firstWeek,  // The list of Calendar days
+            showNewEvent: false,  // Don't show the new event creator after load
+            displayedWeek: 0,  // Index of first day of the week being displayed
+            displayedDate: this.date,  // Date of first day of the week being displayed
+        };
 
-        this.times = [];  // List of times displayed on the side of the calendar
+        this.setState({
+            dayClasses: this.getPopulatedDates(this.date, 0),
+            displayedDate: this.state.dayClasses[0].getDate()
+        });
+
+        const timesTemp: string[] = [];  // List of times displayed on the side of the calendar
         for (let i = 0; i < 24; i++) {
             if (i === 0) {
-                this.times.push('');
+                timesTemp.push('');
             } else if (i === 12) {
-                this.times.push('12 pm');
+                timesTemp.push('12 pm');
             } else if (i > 12) {
-                this.times.push((i - 12) + ' pm');
+                timesTemp.push((i - 12) + ' pm');
             } else {
-                this.times.push(i + ' am');
+                timesTemp.push(i + ' am');
             }
         }
 
         const rowHeight = {height: 'calc(' + (100 / 12) + '% - 2px)'};  // Height of each row in the calendar
-        this.times = this.times.map(time => {
+        this.times = timesTemp.map(time => {
             const idArr = time.split(' ');
             const id = idArr[0] + idArr[1];
             return (
@@ -80,7 +101,7 @@ class Calendar extends Component {
         });
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate(prevProps: CalendarProps, prevState: CalendarState, snapshot: any) {
         if (prevProps.events == null && this.props.events != null) {
             this.setState({events: this.props.events.slice()});
         } else if (prevState.events == null && this.state.events != null) {
@@ -89,21 +110,24 @@ class Calendar extends Component {
     }
 
     componentDidMount() {
-        document.getElementById('12pm').scrollIntoView({block: 'center'});
+        const noon = document.getElementById('12pm');
+        if (noon !== null) {
+            noon.scrollIntoView({block: 'center'});
+        }
         if (this.props.events != null && this.state.events == null) {
             this.setState({events: this.props.events.slice()});
         }
     }
 
-    getPopulatedDates(theDate, startOffset) {
+    getPopulatedDates(theDate: Date, startOffset: number) {
         const currDate = theDate.getDate();
         const currDayOfWeek = theDate.getDay();
         if (isNaN(currDate) || isNaN(currDayOfWeek)) {
             // TODO: Show error to the user
         }
 
-        const populatedDays = this.state.dayClasses;
-        if (startOffset >= this.state.dayClasses.length) {
+        const populatedDays: CalendarDay[] = this.state.dayClasses;
+        if (startOffset >= populatedDays.length) {
             // Adding a week in the future
             for (let i = 0; i < 7; i++) {
                 let pos = ColumnPos.MIDDLE;
@@ -144,23 +168,32 @@ class Calendar extends Component {
         this.setState({showNewEvent: !isShowing});
     }
 
-    handleSuccess(event) {
-        const events = this.state.events;
+    handleSuccess(event: any) {
+        let events = this.state.events;
+        if (events === null) {
+            events = [];
+        }
         events.push(event);
         this.setState({showNewEvent: false, events});
         this.renderEventsForWeek(this.state.displayedWeek);
         this.props.handleNewEvent(event);
     }
 
-    handleFailure(error) {
+    handleFailure(error: any) {
         console.error('Error creating event');
         console.error(error);
     }
 
-    renderEventsForWeek(displayedWeek) {
+    renderEventsForWeek(displayedWeek: number) {
         const startDate = this.state.displayedDate;
         const events = this.state.events;
         const toRemove = [];
+
+        if (events === null) {
+            return
+            // TODO Remove this statement?
+        }
+
         for (let i = 0; i < events.length; i++) {
             const event = events[i];
             const dbDate = event.date;
@@ -222,7 +255,7 @@ class Calendar extends Component {
     }
 
     render() {
-        const columnBodies = [];
+        const columnBodies: JSX.Element[] = [];
         const columnHeaders = this.state.dayClasses.slice(this.state.displayedWeek, this.state.displayedWeek + 7).map(day => {
             day.setTimesCount(12);
             columnBodies.push(day.getDayComponent(this.state.showNewEvent));
@@ -240,7 +273,7 @@ class Calendar extends Component {
                     <div className={'calendar-header'}>
                         <button className={'left-arrow'} onClick={this.showPrevWeek}/>
                         <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
-                            {this.monthNames[this.state.displayedDate.getMonth()]} {this.state.displayedDate.getFullYear()}
+                            {MonthNames[this.state.displayedDate.getMonth()]} {this.state.displayedDate.getFullYear()}
                         </h2>
                         <div className={'calendar-header-right'}>
                             <button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>new event</button>
@@ -264,5 +297,3 @@ class Calendar extends Component {
         );
     }
 }
-
-export default Calendar;

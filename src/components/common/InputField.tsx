@@ -1,7 +1,20 @@
 import React, {Component} from 'react';
 import '../../css/common/InputField.scss';
 
-class InputField extends Component {
+interface InputFieldProps {
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+    autocomplete?: string;
+    invalidText?: string;
+    className?: string;
+    isInvalid?: boolean;
+    placeholder: string;
+    value: string;
+    type: string;
+    name: string;
+}
+
+class InputField extends Component<InputFieldProps, {}> {
     render() {
         const divClass = this.props.className ? 'input-container ' + this.props.className : 'input-container';
         const autocomplete = this.props.autocomplete || 'off';

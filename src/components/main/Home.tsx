@@ -2,20 +2,35 @@ import React, {Component} from 'react';
 import {Redirect} from 'react-router';
 import '../../css/main/Home.scss';
 import logo from '../../resources/logo.svg';
-import UserProfile from '../../data/UserProfile';
+import {UserProfile} from '../../data/UserProfile';
 import {DbConstants} from '../../data/DbConstants';
-import NetworkGroup from '../../data/NetworkGroup';
-import User from './User';
-import Calendar from '../calendar/Calendar';
-import NavBar from './NavBar';
+import {NetworkGroup} from '../../data/NetworkGroup';
+import {User} from './User';
+import {Calendar} from '../calendar/Calendar';
+import {NavBar} from './NavBar';
+import * as firebase from 'firebase/app';
 
 const HomePages = {
-    HOME: 'icon-home',
-    USER: 'icon-user'
+    HOME: 'nav-btn-home',
+    USER: 'nav-btn-user'
 };
 
-class Home extends Component {
-    constructor(props) {
+interface HomeProps {
+    firebase: any;
+}
+
+interface HomeState {
+    currentPage: string;
+    userProfile: null | UserProfile;
+    networkGroups: NetworkGroup[];
+    events: null | any[];  // (List): the current user's events
+}
+
+export class Home extends Component<HomeProps, HomeState> {
+    private readonly user: firebase.User;
+    private readonly db: firebase.firestore.Firestore;
+
+    constructor(props: HomeProps) {
         super(props);
 
         this.user = this.props.firebase.auth().currentUser;  // The authenticated user; null if none is authenticated
@@ -58,7 +73,7 @@ class Home extends Component {
                         console.error('No user events found!');
                         this.setState({events: []});
                     } else {
-                        const events = [];
+                        const events: any[] = [];
                         doc.docs.forEach(docQuery => {
                             events.push(docQuery.data());
                         });
@@ -92,7 +107,7 @@ class Home extends Component {
         }
     }
 
-    queryUserNetworks(firstName, lastName, email, uid, username) {
+    queryUserNetworks(firstName: string, lastName: string, email: string | null, uid: string, username: string) {
         /**
          * Queries the Firestore for the current user's networks and saves
          * them to the user's profile as a list of network IDs.
@@ -120,7 +135,7 @@ class Home extends Component {
         }
     }
 
-    queryNetworkGroups(networkListUid) {
+    queryNetworkGroups(networkListUid: string) {
         /**
          * Queries the Firestore for all networks and saves those which the current user is in.
          */
@@ -142,7 +157,7 @@ class Home extends Component {
             });
     }
 
-    queryUserProfileFromId(group) {
+    queryUserProfileFromId(group: NetworkGroup) {
         /**
          * Queries the Firestore for user profiles for all users in a given NetworkGroup.
          */
@@ -168,13 +183,14 @@ class Home extends Component {
         }
     }
 
-    onAddUserNetwork(network) {
-        const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
+    onAddUserNetwork(networkGroup: NetworkGroup) {
+        // const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
         this.queryUserProfileFromId(networkGroup);
     }
 
-    handlePageChange(event) {
-        const id = event.target.id;
+    handlePageChange(event: React.MouseEvent<HTMLElement>) {
+        const id = event.currentTarget.id;
+
         if (id === HomePages.USER) {
             this.setState({currentPage: HomePages.USER});
         } else if (id === HomePages.HOME) {
@@ -182,8 +198,12 @@ class Home extends Component {
         }
     }
 
-    handleNewEvent(event) {
+    handleNewEvent(event: any) {
         const events = this.state.events;
+        if (events === null) {
+            console.error("HE01: null events list");
+            return;
+        }
         events.push(event);
         this.setState({events});
     }
@@ -197,9 +217,17 @@ class Home extends Component {
 
         let currentPage = (<h3>Loading...</h3>);
         if (this.state.currentPage === HomePages.HOME) {
-            currentPage = (<Calendar userProfile={this.state.userProfile} events={this.state.events} db={this.db} handleNewEvent={this.handleNewEvent}/>);
+            currentPage = (<Calendar userProfile={this.state.userProfile}
+                                     events={this.state.events}
+                                     db={this.db}
+                                     handleNewEvent={this.handleNewEvent}/>);
         } else if (this.state.currentPage === HomePages.USER) {
-            currentPage = (<User userProfile={this.state.userProfile} networkGroups={this.state.networkGroups} events={this.state.events} db={this.db} handleNewEvent={this.handleNewEvent} firebase={this.props.firebase}/>);
+            currentPage = (<User userProfile={this.state.userProfile}
+                                 firebase={this.props.firebase}
+                                 networkGroups={this.state.networkGroups}
+                                 events={this.state.events} db={this.db}
+                                 handleNewEvent={this.handleNewEvent}
+                                 onAddUserNetwork={this.onAddUserNetwork}/>);
         }
 
         return (
@@ -220,5 +248,3 @@ class Home extends Component {
         );
     }
 }
-
-export default Home;

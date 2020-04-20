@@ -1,13 +1,19 @@
 import React, {Component} from 'react';
 import '../../css/networks/Group.scss'
+import {NetworkGroup} from '../../data/NetworkGroup';
+import {UserProfile} from '../../data/UserProfile';
 
-class Group extends Component {
+interface GroupProps {
+    networkGroup: NetworkGroup;
+}
+
+class Group extends Component<GroupProps, {}> {
     render() {
         const networkGroup = this.props.networkGroup;
         const name = networkGroup.getName();
         const users = networkGroup.getUsers();
 
-        const memberNames = users.map(userProfile => {
+        const memberNames = users.map((userProfile: UserProfile) => {
             return userProfile.getFirstName();
         });
 

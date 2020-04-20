@@ -1,10 +1,24 @@
 import React, {Component} from 'react';
 import Group from './Group';
 import '../../css/networks/Networks.scss'
-import NewNetwork from './NewNetwork';
+import {NewNetwork} from './NewNetwork';
+import {NetworkGroup} from '../../data/NetworkGroup';
+import {UserProfile} from '../../data/UserProfile';
+import * as firebase from 'firebase';
 
-class Networks extends Component {
-    constructor(props) {
+interface NetworksProps {
+    db: firebase.firestore.Firestore;
+    addNewNetwork: (networkGroup: NetworkGroup) => void;
+    userProfile: null | UserProfile;
+    networkGroups: NetworkGroup[];
+}
+
+interface NetworksState {
+    showNewNetwork: boolean;
+}
+
+class Networks extends Component<NetworksProps, NetworksState> {
+    constructor(props: NetworksProps) {
         super(props);
 
         this.handleNewNetworkSuccess = this.handleNewNetworkSuccess.bind(this);
@@ -21,13 +35,13 @@ class Networks extends Component {
         this.setState({showNewNetwork: !showing});
     }
 
-    handleNewNetworkSuccess(network) {
+    handleNewNetworkSuccess(networkGroup: NetworkGroup) {
         console.log('Successfully added network');
         this.setState({showNewNetwork: false});
-        this.props.addNewNetwork(network);
+        this.props.addNewNetwork(networkGroup);
     }
 
-    handleNewNetworkFailure(error) {
+    handleNewNetworkFailure(error: any) {
         console.error('Error creating new network!');
         console.error(error);
     }
