@@ -150,7 +150,7 @@ class DropdownTime extends Component<DropdownTimeProps, DropdownTimeState> {
 
     render() {
         return (
-            <div className={'display-flex'}>
+            <div className={'display-flex display-container'}>
                 {this.getPickerContainer(this.clickHourPicker, this.state.displayTime[0].toString().padStart(2, '0'), this.btnHours, this.state.showHourPicker)}
                 {this.getPickerContainer(this.clickMinutePicker, this.state.displayTime[1].toString().padStart(2, '0'), this.btnMinutes, this.state.showMinutePicker)}
                 {this.getPickerContainer(this.clickTimeOfDayPicker, this.state.displayTime[2], this.btnTimesOfDay, this.state.showTimeOfDayPicker)}

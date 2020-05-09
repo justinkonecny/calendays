@@ -51,11 +51,12 @@ export class Home extends Component<HomeProps, HomeState> {
         this.onAddUserNetwork = this.onAddUserNetwork.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.handleNewEvent = this.handleNewEvent.bind(this);
+    }
 
+    componentDidMount(): void {
         this.queryUserEvents();
         this.queryUserProfile();
     }
-
 
     queryUserEvents() {
         /**

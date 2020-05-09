@@ -71,10 +71,16 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
             displayedDate: this.date,  // Date of first day of the week being displayed
         };
 
-        this.setState({
+        this.state = {
+            ...this.state,
             dayClasses: this.getPopulatedDates(this.date, 0),
             displayedDate: this.state.dayClasses[0].getDate()
-        });
+        };
+
+        // this.setState({
+        //     dayClasses: this.getPopulatedDates(this.date, 0),
+        //     displayedDate: this.state.dayClasses[0].getDate()
+        // });
 
         const timesTemp: string[] = [];  // List of times displayed on the side of the calendar
         for (let i = 0; i < 24; i++) {

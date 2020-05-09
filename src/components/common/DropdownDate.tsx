@@ -55,7 +55,7 @@ export class DropdownDate extends Component<DropdownDateProps, DropdownDateState
 
     render() {
         return (
-            <div className={'date-time'}>
+            <div className={'date-time display-container'}>
                 <button className={'btn-date-time'} onClick={this.clickEventDate}>
                     {WeekDayNames[this.displayDate.getDay()][1]}. {MonthNames[this.displayDate.getMonth()]} {this.displayDate.getDate()} {this.displayDate.getFullYear()}
                 </button>
