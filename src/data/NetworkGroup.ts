@@ -7,6 +7,8 @@ export class NetworkGroup {
     private members: string[];
     private users: UserProfile[];
     private owner: null | string;
+    private color: string;
+    private id: string;
 
     constructor(db: any, name: string, timestamp: string, members: string[], owner?: string) {
         this.db = db;  // Firebase Firestore
@@ -15,6 +17,8 @@ export class NetworkGroup {
         this.members = members;  // (list of UID): list of group members
         this.users = [];  // (list of UserProfile): list of group members
         this.owner = owner ? owner : null;
+        this.color = '#467c95';
+        this.id = '';
     }
 
     getName(): string {
@@ -39,5 +43,30 @@ export class NetworkGroup {
 
     addUser(user: UserProfile): void {
         this.users.push(user);
+    }
+
+    setColor(color: string) {
+        this.color = color;
+    }
+
+    getColor() {
+        return this.color;
+    }
+
+    getId() {
+        return this.id;
+    }
+
+    setId(id: string) {
+        this.id = id;
+    }
+
+    toDictionary() {
+        return {
+            name: this.name,
+            timestamp: this.timestamp,
+            members: this.members,
+            owner: this.owner
+        };
     }
 }

@@ -74,7 +74,7 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
         // };
 
         this.props.db.collection(DbConstants.NETWORKS)
-            .add(newNetwork)
+            .add(newNetwork.toDictionary())
             .then(docRef => {
                 console.log('Successfully created a new network');
                 this.addNetworkToUsers(docRef.id, newNetwork);
@@ -97,7 +97,7 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
                 .then(col => {
                     if (col.empty) {
                         // CASE: User has no networks yet, so create the first document
-                        const newNetworksList = {[DbConstants.MEMBER_OF]: [networkId]};
+                        const newNetworksList = {[DbConstants.MEMBER_OF]: [{[networkId]: '#f48a84'}]};
                         this.props.db.collection(DbConstants.USERS)
                             .doc(userId)
                             .collection(DbConstants.NETWORKS)
@@ -116,7 +116,7 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
                         // CASE: User has a list of networks already, so update it
                         const doc = col.docs[0];
                         const networkList = doc.data()[DbConstants.MEMBER_OF];
-                        networkList.push(networkId);
+                        networkList.push({[networkId]: '#f48a84'});
 
                         const updatedNetworksList = {[DbConstants.MEMBER_OF]: networkList};
                         this.props.db.collection(DbConstants.USERS)

@@ -9,11 +9,7 @@ import {User} from './User';
 import {Calendar} from '../calendar/Calendar';
 import {NavBar} from './NavBar';
 import * as firebase from 'firebase/app';
-
-const HomePages = {
-    HOME: 'nav-btn-home',
-    USER: 'nav-btn-user'
-};
+import {Pages} from "../../data/Pages";
 
 interface HomeProps {
     firebase: any;
@@ -37,7 +33,7 @@ export class Home extends Component<HomeProps, HomeState> {
         this.db = this.props.firebase.firestore();  // The Firebase Firestore (used as user database)
 
         this.state = {
-            currentPage: HomePages.HOME,  // The active page selected by the use
+            currentPage: Pages.HOME,  // The active page selected by the use
             userProfile: null,  // (UserProfile): The current user's profile
             networkGroups: [],  // (List of NetworkGroup): the current user's networks,
             events: null  // (List): the current user's events
@@ -136,10 +132,11 @@ export class Home extends Component<HomeProps, HomeState> {
         }
     }
 
-    queryNetworkGroups(networkListUid: string) {
+    queryNetworkGroups(networkListUid: any) {
         /**
          * Queries the Firestore for all networks and saves those which the current user is in.
          */
+
         this.db.collection(DbConstants.NETWORKS).get()
             .then(col => {
                 if (col.empty) {
@@ -148,10 +145,20 @@ export class Home extends Component<HomeProps, HomeState> {
                 } else {
                     console.log(col.docs.length + ' networks found');
                     for (const doc of col.docs) {
-                        if (networkListUid.includes(doc.id)) {
-                            const network = doc.data();
-                            const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
-                            this.queryUserProfileFromId(networkGroup);
+                        let found = false;
+                        let i = 0;
+                        while (!found && i < networkListUid.length) {
+                            const networkMap = networkListUid[i];
+                            if (doc.id in networkMap) {
+                            const networkColor = networkMap[doc.id];
+                                found = true;
+                                const network = doc.data();
+                                const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
+                                networkGroup.setColor(networkColor);
+                                networkGroup.setId(doc.id);
+                                this.queryUserProfileFromId(networkGroup);
+                            }
+                            i++;
                         }
                     }
                 }
@@ -192,10 +199,10 @@ export class Home extends Component<HomeProps, HomeState> {
     handlePageChange(event: React.MouseEvent<HTMLElement>) {
         const id = event.currentTarget.id;
 
-        if (id === HomePages.USER) {
-            this.setState({currentPage: HomePages.USER});
-        } else if (id === HomePages.HOME) {
-            this.setState({currentPage: HomePages.HOME});
+        if (id === Pages.USER) {
+            this.setState({currentPage: Pages.USER});
+        } else if (id === Pages.HOME) {
+            this.setState({currentPage: Pages.HOME});
         }
     }
 
@@ -217,12 +224,14 @@ export class Home extends Component<HomeProps, HomeState> {
         }
 
         let currentPage = (<h3>Loading...</h3>);
-        if (this.state.currentPage === HomePages.HOME) {
+        if (this.state.currentPage === Pages.HOME) {
             currentPage = (<Calendar userProfile={this.state.userProfile}
                                      events={this.state.events}
                                      db={this.db}
-                                     handleNewEvent={this.handleNewEvent}/>);
-        } else if (this.state.currentPage === HomePages.USER) {
+                                     handleNewEvent={this.handleNewEvent}
+                                     page={Pages.HOME}
+                                    networkGroups={this.state.networkGroups}/>);
+        } else if (this.state.currentPage === Pages.USER) {
             currentPage = (<User userProfile={this.state.userProfile}
                                  firebase={this.props.firebase}
                                  networkGroups={this.state.networkGroups}

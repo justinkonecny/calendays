@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {ColumnPos, TimeOfDay, WeekDayNames} from '../main/Constants';
+import {NetworkGroup} from '../../data/NetworkGroup';
 
 export class CalendarDay {
 
@@ -13,6 +14,7 @@ export class CalendarDay {
     private date: Date;
     private events: any[];
     private timesCount: number;
+    private networkGroups: NetworkGroup[] | null;
 
     constructor(weekDayIndex: number, columnPos: string) {
         this.weekDay = WeekDayNames[weekDayIndex];
@@ -26,6 +28,11 @@ export class CalendarDay {
         this.date = new Date();
         this.events = [];
         this.timesCount = -1; // TODO FIX?
+        this.networkGroups = null;
+    }
+
+    setNetworkGroups(groups: NetworkGroup[]) {
+        this.networkGroups = groups;
     }
 
     setDate(date: Date) {
@@ -82,6 +89,7 @@ export class CalendarDay {
                 // showNewEvent={showNewEvent}
                  timesCount={this.timesCount}
                  events={this.events}
+                 networkGroups={this.networkGroups}
                 // name={this.name}
             />
         );
@@ -105,6 +113,7 @@ export class CalendarDay {
                     // showNewEvent={showNewEvent}
                      timesCount={this.timesCount}
                      events={this.events}
+                     networkGroups={this.networkGroups}
                     // name={this.name}
                 />
             </div>
@@ -150,39 +159,60 @@ interface DayProps {
     events: null | any[];
     timesCount: number;
     columnPos: string;
+    networkGroups: NetworkGroup[] | null;
 }
 
 class Day extends Component<DayProps, {}> {
-    render() {
-        if (this.props.events === null) {
-            return; // TODO REMOVE??
+    constructor(props: DayProps) {
+        super(props);
+        this.getRenderedEvent = this.getRenderedEvent.bind(this);
+    }
+
+    getRenderedEvent(event: any) {
+        const hour = parseInt(event.time.hour);
+        const duration = parseInt(event.duration.hours) + (parseInt(event.duration.minutes) / 60);
+
+        let color = '#f48a84';
+        if (event.network != null && this.props.networkGroups !== null) {
+            for (const group of this.props.networkGroups) {
+                if (group.getId() === event.network) {
+                    color = group.getColor();
+                    break;
+                }
+            }
         }
 
-        const renderedEvents = this.props.events.map(event => {
-            const hour = parseInt(event.time.hour);
-            const duration = parseInt(event.duration.hours) + (parseInt(event.duration.minutes) / 60);
+        const eventStyle: { [style: string]: any } = {
+            height: 'calc((' + (100 / this.props.timesCount) + '%) * ' + duration + ' - 18px)',
+            backgroundColor: color
+        };
 
-            const eventStyle: { [style: string]: any } = {
-                height: 'calc((' + (100 / this.props.timesCount) + '%) * ' + duration + ' - 18px)'
-            };
+        if (event.time.timeOfDay === TimeOfDay.AM) {
+            eventStyle.top = 'calc(' + ((hour) * (100 / this.props.timesCount)) + '% + 2px)';
+        } else {
+            eventStyle.top = 'calc(' + ((hour + 12) * (100 / this.props.timesCount)) + '% + 2px)';
+        }
 
-            if (event.time.timeOfDay === TimeOfDay.AM) {
-                eventStyle.top = 'calc(' + ((hour) * (100 / this.props.timesCount)) + '% + 2px)';
-            } else {
-                eventStyle.top = 'calc(' + ((hour + 12) * (100 / this.props.timesCount)) + '% + 2px)';
-            }
-
-            return (
-                // TODO: Change key to unique value
-                <div className={'calendar-event'} style={eventStyle} key={event.name}>
-                    <h5>{event.name}</h5>
-                    <div className={'event-description'}>
-                        <p>{event.location}</p>
-                        {/*<p>{event.message}</p>*/}
-                    </div>
+        return (
+            // TODO: Change key to unique value
+            <div className={'calendar-event'} style={eventStyle} key={event.name}>
+                <h5>{event.name}</h5>
+                <div className={'event-description'}>
+                    <p>{event.location}</p>
+                    {/*<p>{event.message}</p>*/}
                 </div>
-            );
-        });
+            </div>
+        );
+    }
+
+    render() {
+
+        let renderedEvents: any[] = [];
+        if (this.props.networkGroups !== null && this.props.events !== null) {
+            renderedEvents = this.props.events.map(event => {
+                return this.getRenderedEvent(event);
+            });
+        }
 
         const rowHeightStyle = {height: 'calc(' + (100 / this.props.timesCount) + '% - 2px)'};
         const columnGrid = [];

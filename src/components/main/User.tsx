@@ -6,6 +6,7 @@ import Networks from '../networks/Networks';
 import * as firebase from 'firebase';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
+import {Pages} from "../../data/Pages";
 
 const UserPages = {  // The main tabs that a user can view; the value is the 'id' of the tab <button>
     CALENDAR: 'my-calendar',
@@ -32,7 +33,7 @@ export class User extends Component<UserProps, UserState> {
         super(props);
 
         this.state = {
-            currentTab: UserPages.CALENDAR,  // The active tab selected by the user (this is the starting tab)
+            currentTab: UserPages.CALENDAR  // The active tab selected by the user (this is the starting tab)
         };
 
         this.setActiveTab = this.setActiveTab.bind(this);
@@ -66,9 +67,17 @@ export class User extends Component<UserProps, UserState> {
     render() {
         let currentPage = (<h3>Loading...</h3>);
         if (this.state.currentTab === UserPages.CALENDAR) {
-            currentPage = (<Calendar userProfile={this.props.userProfile} events={this.props.events} db={this.props.db} handleNewEvent={this.props.handleNewEvent}/>);
+            currentPage = (<Calendar userProfile={this.props.userProfile}
+                                     events={this.props.events}
+                                     db={this.props.db}
+                                     handleNewEvent={this.props.handleNewEvent}
+                                     page={Pages.USER}
+                                     networkGroups={this.props.networkGroups}/>);
         } else if (this.state.currentTab === UserPages.NETWORKS) {
-            currentPage = (<Networks userProfile={this.props.userProfile} networkGroups={this.props.networkGroups} db={this.props.db} addNewNetwork={this.props.onAddUserNetwork}/>);
+            currentPage = (<Networks userProfile={this.props.userProfile}
+                                     networkGroups={this.props.networkGroups}
+                                     db={this.props.db}
+                                     addNewNetwork={this.props.onAddUserNetwork}/>);
         } else if (this.state.currentTab === UserPages.PROFILE && this.props.userProfile) {
             currentPage = (<Profile userProfile={this.props.userProfile}/>);
         }

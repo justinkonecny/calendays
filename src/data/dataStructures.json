@@ -19,7 +19,8 @@
             "hour": 5,
             "minute": 45,
             "timeOfDay": "AM"
-          }
+          },
+          "network": "dqDJC6RRF99LgZGRAa6V"
         }
       },
       "profile": {

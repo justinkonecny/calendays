@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {NewEvent} from './NewEvent';
 import '../../css/calendar/Calendar.scss'
-import {CalendarDay} from "./CalendayDay";
+import {CalendarDay} from './CalendayDay';
 import {ColumnPos, MonthNames} from '../main/Constants';
 import * as firebase from 'firebase/app';
-import {UserProfile} from "../../data/UserProfile";
+import {UserProfile} from '../../data/UserProfile';
+import {NetworkGroup} from '../../data/NetworkGroup';
 
 
 interface CalendarProps {
@@ -12,6 +13,8 @@ interface CalendarProps {
     handleNewEvent: (event: any) => void;
     userProfile: null | UserProfile;
     events: null | any[];
+    page: string;
+    networkGroups: NetworkGroup[];
 }
 
 interface CalendarState {
@@ -39,7 +42,6 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         this.showPrevWeek = this.showPrevWeek.bind(this);
 
         this.date = new Date();  // Today's dateDay
-
 
         // Populate the first week with seven CalendarDays
         const firstWeek = [];
@@ -76,11 +78,6 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
             dayClasses: this.getPopulatedDates(this.date, 0),
             displayedDate: this.state.dayClasses[0].getDate()
         };
-
-        // this.setState({
-        //     dayClasses: this.getPopulatedDates(this.date, 0),
-        //     displayedDate: this.state.dayClasses[0].getDate()
-        // });
 
         const timesTemp: string[] = [];  // List of times displayed on the side of the calendar
         for (let i = 0; i < 24; i++) {
@@ -196,8 +193,7 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         const toRemove = [];
 
         if (events === null) {
-            return
-            // TODO Remove this statement?
+            return;  // TODO Remove this statement?
         }
 
         for (let i = 0; i < events.length; i++) {
@@ -218,6 +214,7 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
                 const eventIndex = eventDayOfWeek + displayedWeek;
 
                 this.state.dayClasses[eventIndex].renderEvent(event);
+                this.state.dayClasses[eventIndex].setNetworkGroups(this.props.networkGroups);
             }
         }
 
@@ -274,7 +271,8 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
                                                       db={this.props.db}
                                                       handleSuccess={this.handleSuccess}
                                                       handleFailure={this.handleFailure}
-                                                      monthLengths={this.monthLengths}/>}
+                                                      monthLengths={this.monthLengths}
+                                                      networkGroups={this.props.networkGroups}/>}
                 <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
                     <div className={'calendar-header'}>
                         <button className={'left-arrow'} onClick={this.showPrevWeek}/>

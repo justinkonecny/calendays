@@ -129,7 +129,7 @@ class DropdownTime extends Component<DropdownTimeProps, DropdownTimeState> {
 
     getPickerContainer(onOpenCloseMenu: () => void, btnText: string, menuOptions: any, showPicker: boolean) {
         return (
-            <div className={'date-time time-container'}>
+            <div className={'dropdown-container time-container'}>
                 <button className={'btn-date-time btn-time'} onClick={onOpenCloseMenu}>
                     {btnText}
                 </button>

@@ -7,6 +7,8 @@ import DropdownTime from '../common/DropdownTime';
 import {DropdownDate} from '../common/DropdownDate';
 import {UserProfile} from '../../data/UserProfile';
 import * as firebase from 'firebase/app';
+import {DropdownNetwork} from '../common/DropdownNetwork';
+import {NetworkGroup} from '../../data/NetworkGroup';
 
 interface NewEventProps {
     db: firebase.firestore.Firestore;
@@ -14,6 +16,7 @@ interface NewEventProps {
     userProfile: null | UserProfile;
     handleFailure: (error: any) => void;
     handleSuccess: (event: any) => void;
+    networkGroups: NetworkGroup[];
 }
 
 interface NewEventState {
@@ -27,6 +30,7 @@ interface NewEventState {
     eventEndTime: any;
     eventLocation: string;
     eventMessage: string;
+    eventNetwork: NetworkGroup | null;
 }
 
 export class NewEvent extends Component<NewEventProps, NewEventState> {
@@ -44,6 +48,7 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
             eventDateWeekDay: this.date.getDay(),
             eventStartTime: [5, 0, TimeOfDay.PM],
             eventEndTime: [8, 0, TimeOfDay.PM],
+            eventNetwork: null,
             eventLocation: '',
             eventMessage: 'Hey! Are you free for [title] on [date] from [start] to [end] at [location]?'
         };
@@ -57,6 +62,7 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
         this.setEventDate = this.setEventDate.bind(this);
         this.setEventStartTime = this.setEventStartTime.bind(this);
         this.setEventEndTime = this.setEventEndTime.bind(this);
+        this.setEventNetwork = this.setEventNetwork.bind(this);
     }
 
     handleChange(event: React.MouseEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) {
@@ -128,7 +134,8 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
             message: this.state.eventMessage,
             duration: dateTime['duration'],
             date: dateTime['date'],
-            time: dateTime['time']
+            time: dateTime['time'],
+            network: this.state.eventNetwork ? this.state.eventNetwork.getId() : null
         };
 
         this.props.db.collection(DbConstants.USERS)
@@ -216,6 +223,10 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
         this.setState({eventEndTime: timeList});
     }
 
+    setEventNetwork(network: NetworkGroup) {
+        this.setState({eventNetwork: network});
+    }
+
     render() {
         return (
             <div className={'create-new-event'}>
@@ -249,6 +260,9 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
 
                 <h3>message</h3>
                 <textarea className={'new-event-message'} name={'eventMessage'} value={this.state.eventMessage} onChange={this.handleChange} onFocus={this.populateEventParameters}/>
+
+                <h3>Network</h3>
+                <DropdownNetwork networkList={this.props.networkGroups} setEventNetwork={this.setEventNetwork}/>
 
                 <button className={'btn-primary btn-create-event'} onClick={this.submitEvent}>create event</button>
             </div>
