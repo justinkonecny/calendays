@@ -6,19 +6,20 @@ import {ColumnPos, MonthNames} from '../main/Constants';
 import * as firebase from 'firebase/app';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
+import {NetworkEvent} from '../../data/NetworkEvent';
 
 
 interface CalendarProps {
     db: firebase.firestore.Firestore;
     handleNewEvent: (event: any) => void;
     userProfile: null | UserProfile;
-    events: null | any[];
+    events: null | NetworkEvent[];
     page: string;
     networkGroups: NetworkGroup[];
 }
 
 interface CalendarState {
-    events: null | any[];
+    events: null | NetworkEvent[];
     dayClasses: CalendarDay[];
     showNewEvent: boolean;
     displayedWeek: number;
@@ -70,7 +71,7 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
             dayClasses: firstWeek,  // The list of Calendar days
             showNewEvent: false,  // Don't show the new event creator after load
             displayedWeek: 0,  // Index of first day of the week being displayed
-            displayedDate: this.date,  // Date of first day of the week being displayed
+            displayedDate: this.date  // Date of first day of the week being displayed
         };
 
         this.state = {
@@ -197,10 +198,8 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         }
 
         for (let i = 0; i < events.length; i++) {
-            const event = events[i];
-            const dbDate = event.date;
-            const dateStr = parseInt(dbDate.month) + '/' + parseInt(dbDate.day) + '/' + parseInt(dbDate.year);
-            const date = new Date(dateStr);
+            const event: NetworkEvent = events[i];
+            const date = event.getStartDate();
 
             if (date.getFullYear() === startDate.getFullYear()
                 && date.getMonth() === startDate.getMonth()

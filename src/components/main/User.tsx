@@ -7,6 +7,7 @@ import * as firebase from 'firebase';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {Pages} from "../../data/Pages";
+import {NetworkEvent} from '../../data/NetworkEvent';
 
 const UserPages = {  // The main tabs that a user can view; the value is the 'id' of the tab <button>
     CALENDAR: 'my-calendar',
@@ -18,7 +19,7 @@ interface UserProps {
     firebase: any;
     db: firebase.firestore.Firestore;
     userProfile: null | UserProfile;
-    events: null | any[];
+    events: null | NetworkEvent[];
     networkGroups: NetworkGroup[];
     handleNewEvent: (event: any) => void;
     onAddUserNetwork: (networkGroup: NetworkGroup) => void;

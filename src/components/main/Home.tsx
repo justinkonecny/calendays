@@ -10,6 +10,9 @@ import {Calendar} from '../calendar/Calendar';
 import {NavBar} from './NavBar';
 import * as firebase from 'firebase/app';
 import {Pages} from "../../data/Pages";
+import {Api} from '../../api';
+import {NetworkEvent} from '../../data/NetworkEvent';
+import {NetworkUser} from '../../data/NetworkUser';
 
 interface HomeProps {
     firebase: any;
@@ -19,7 +22,7 @@ interface HomeState {
     currentPage: string;
     userProfile: null | UserProfile;
     networkGroups: NetworkGroup[];
-    events: null | any[];  // (List): the current user's events
+    events: null | NetworkEvent[];
 }
 
 export class Home extends Component<HomeProps, HomeState> {
@@ -39,19 +42,49 @@ export class Home extends Component<HomeProps, HomeState> {
             events: null  // (List): the current user's events
         };
 
-        this.queryUserNetworks = this.queryUserNetworks.bind(this);
-        this.queryUserProfileFromId = this.queryUserProfileFromId.bind(this);
-        this.queryNetworkGroups = this.queryNetworkGroups.bind(this);
-        this.queryUserEvents = this.queryUserEvents.bind(this);
-        this.queryUserProfile = this.queryUserProfile.bind(this);
+        // this.queryUserNetworks = this.queryUserNetworks.bind(this);
+        // this.queryUserProfileFromId = this.queryUserProfileFromId.bind(this);
+        // this.queryNetworkGroups = this.queryNetworkGroups.bind(this);
+        // this.queryUserEvents = this.queryUserEvents.bind(this);
+        // this.queryUserProfile = this.queryUserProfile.bind(this);
         this.onAddUserNetwork = this.onAddUserNetwork.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.handleNewEvent = this.handleNewEvent.bind(this);
     }
 
-    componentDidMount(): void {
-        this.queryUserEvents();
-        this.queryUserProfile();
+    async componentDidMount() {
+        if (this.user) {
+            const responseNetworks = await Api.queryUserNetworks();
+            const responseEvents = await Api.queryUserEvents();
+
+            if (responseNetworks.status === 200 && responseNetworks.data) {
+                const networks = responseEvents.data.map((e: any) => {
+                    const members = e.Members.map((m: any) => {
+                        return new NetworkUser(m.ID, m.FirstName, m.LastName, m.Email);
+                    });
+                    return new NetworkGroup(e.ID, e.Name, e.OwnerId, e.ColorHex, members);
+                });
+                this.setState({networkGroups: networks});
+                console.log("(HCM01) Found", responseNetworks.data.length, "user networks!");
+            } else {
+                this.setState({networkGroups: []});
+                console.error("(HCM02) Error querying user networks:", responseNetworks.status);
+            }
+
+            console.log(responseEvents.data);
+
+            if (responseEvents.status === 200 && responseEvents.data) {
+                const events = responseEvents.data.map((e: any) => {
+                    return new NetworkEvent(e.ID, e.Name, e.StartDate, e.EndDate, e.Location, e.Message, e.NetworkId)
+                });
+                this.setState({events: events});
+                console.log("(HCM03) Found", responseEvents.data.length, "user events!");
+            } else {
+                this.setState({events: []});
+                console.error("(HCM04) Error querying user events:", responseEvents.status);
+            }
+
+        }
     }
 
     queryUserEvents() {
@@ -81,119 +114,118 @@ export class Home extends Component<HomeProps, HomeState> {
         }
     }
 
-    queryUserProfile() {
-        /**
-         * Queries the Firestore for the current user's information and
-         * saves the user's first name, last name, email, and uid.
-         */
-        if (this.user == null) {
-            return null;  // There is no authenticated user
-        } else {  // Create the UserProfile from query result
-            this.db.collection(DbConstants.USERS)
-                .doc(this.user.uid)
-                .collection(DbConstants.PROFILE).get()
-                .then(doc => {
-                    if (doc.empty) {
-                        // TODO: Display error to user
-                        console.error('No user profile found!');
-                    } else {
-                        const profile = doc.docs[0].data();
-                        this.queryUserNetworks(profile.firstName, profile.lastName, this.user.email, this.user.uid, profile.username);
-                    }
-                });
-        }
-    }
+    // queryUserProfile() {
+    //     /**
+    //      * Queries the Firestore for the current user's information and
+    //      * saves the user's first name, last name, email, and uid.
+    //      */
+    //     if (this.user == null) {
+    //         return null;  // There is no authenticated user
+    //     } else {  // Create the UserProfile from query result
+    //         this.db.collection(DbConstants.USERS)
+    //             .doc(this.user.uid)
+    //             .collection(DbConstants.PROFILE).get()
+    //             .then(doc => {
+    //                 if (doc.empty) {
+    //                     // TODO: Display error to user
+    //                     console.error('No user profile found!');
+    //                 } else {
+    //                     const profile = doc.docs[0].data();
+    //                     this.queryUserNetworks(profile.firstName, profile.lastName, this.user.email, this.user.uid, profile.username);
+    //                 }
+    //             });
+    //     }
+    // }
 
-    queryUserNetworks(firstName: string, lastName: string, email: string | null, uid: string, username: string) {
-        /**
-         * Queries the Firestore for the current user's networks and saves
-         * them to the user's profile as a list of network IDs.
-         */
-        if (this.user == null) {
-            return null;  // There is no authenticated user
-        } else {  // Get the user's networks
-            this.db.collection(DbConstants.USERS)
-                .doc(this.user.uid)
-                .collection(DbConstants.NETWORKS).get()
-                .then(doc => {
-                    if (doc.empty) {
-                        // TODO: Display error to user
-                        console.error('No user networks found!');
-                        const userProfile = new UserProfile(firstName, lastName, email, uid, username, []);
-                        this.setState({userProfile});
-                    } else {
-                        const networkData = doc.docs[0].data();
-                        const networkList = networkData[DbConstants.MEMBER_OF];
-                        const userProfile = new UserProfile(firstName, lastName, email, uid, username, networkList);
-                        this.setState({userProfile});
-                        this.queryNetworkGroups(networkList);
-                    }
-                });
-        }
-    }
+    // queryUserNetworks(firstName: string, lastName: string, email: string | null, uid: string, username: string) {
+    //     /**
+    //      * Queries the Firestore for the current user's networks and saves
+    //      * them to the user's profile as a list of network IDs.
+    //      */
+    //     if (this.user == null) {
+    //         return null;  // There is no authenticated user
+    //     } else {  // Get the user's networks
+    //         this.db.collection(DbConstants.USERS)
+    //             .doc(this.user.uid)
+    //             .collection(DbConstants.NETWORKS).get()
+    //             .then(doc => {
+    //                 if (doc.empty) {
+    //                     // TODO: Display error to user
+    //                     console.error('No user networks found!');
+    //                     const userProfile = new UserProfile(firstName, lastName, email, uid, username, []);
+    //                     this.setState({userProfile});
+    //                 } else {
+    //                     const networkData = doc.docs[0].data();
+    //                     const networkList = networkData[DbConstants.MEMBER_OF];
+    //                     const userProfile = new UserProfile(firstName, lastName, email, uid, username, networkList);
+    //                     this.setState({userProfile});
+    //                     this.queryNetworkGroups(networkList);
+    //                 }
+    //             });
+    //     }
+    // }
 
-    queryNetworkGroups(networkListUid: any) {
-        /**
-         * Queries the Firestore for all networks and saves those which the current user is in.
-         */
+    // queryNetworkGroups(networkListUid: any) {
+    //     /**
+    //      * Queries the Firestore for all networks and saves those which the current user is in.
+    //      */
+    //
+    //     this.db.collection(DbConstants.NETWORKS).get()
+    //         .then(col => {
+    //             if (col.empty) {
+    //                 // TODO: Display error to user
+    //                 console.error('No networks found!');
+    //             } else {
+    //                 console.log(col.docs.length + ' networks found');
+    //                 for (const doc of col.docs) {
+    //                     let found = false;
+    //                     let i = 0;
+    //                     while (!found && i < networkListUid.length) {
+    //                         const networkMap = networkListUid[i];
+    //                         if (doc.id in networkMap) {
+    //                             const networkColor = networkMap[doc.id];
+    //                             found = true;
+    //                             const network = doc.data();
+    //                             const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
+    //                             networkGroup.setColor(networkColor);
+    //                             networkGroup.setId(doc.id);
+    //                             this.queryUserProfileFromId(networkGroup);
+    //                         }
+    //                         i++;
+    //                     }
+    //                 }
+    //             }
+    //         });
+    // }
 
-        this.db.collection(DbConstants.NETWORKS).get()
-            .then(col => {
-                if (col.empty) {
-                    // TODO: Display error to user
-                    console.error('No networks found!');
-                } else {
-                    console.log(col.docs.length + ' networks found');
-                    for (const doc of col.docs) {
-                        let found = false;
-                        let i = 0;
-                        while (!found && i < networkListUid.length) {
-                            const networkMap = networkListUid[i];
-                            if (doc.id in networkMap) {
-                            const networkColor = networkMap[doc.id];
-                                found = true;
-                                const network = doc.data();
-                                const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
-                                networkGroup.setColor(networkColor);
-                                networkGroup.setId(doc.id);
-                                this.queryUserProfileFromId(networkGroup);
-                            }
-                            i++;
-                        }
-                    }
-                }
-            });
-    }
-
-    queryUserProfileFromId(group: NetworkGroup) {
-        /**
-         * Queries the Firestore for user profiles for all users in a given NetworkGroup.
-         */
-        const networkGroups = this.state.networkGroups;
-        networkGroups.push(group);
-        this.setState({networkGroups});
-
-        for (const uid of group.getMembers()) {
-            this.db.collection(DbConstants.USERS)
-                .doc(uid)
-                .collection(DbConstants.PROFILE).get()
-                .then(doc => {
-                    if (doc.empty) {
-                        // TODO: Display error to user
-                        console.error('No user profile found!');
-                    } else {
-                        const prof = doc.docs[0].data();
-                        const networkUser = new UserProfile(prof.firstName, prof.lastName, prof.email, prof.uid, prof.username, null);
-                        group.addUser(networkUser);
-                        this.setState({networkGroups});
-                    }
-                });
-        }
-    }
+    // queryUserProfileFromId(group: NetworkGroup) {
+    //     /**
+    //      * Queries the Firestore for user profiles for all users in a given NetworkGroup.
+    //      */
+    //     const networkGroups = this.state.networkGroups;
+    //     networkGroups.push(group);
+    //     this.setState({networkGroups});
+    //
+    //     for (const uid of group.getMembers()) {
+    //         this.db.collection(DbConstants.USERS)
+    //             .doc(uid)
+    //             .collection(DbConstants.PROFILE).get()
+    //             .then(doc => {
+    //                 if (doc.empty) {
+    //                     // TODO: Display error to user
+    //                     console.error('No user profile found!');
+    //                 } else {
+    //                     const prof = doc.docs[0].data();
+    //                     const networkUser = new UserProfile(prof.firstName, prof.lastName, prof.email, prof.uid, prof.username, null);
+    //                     group.addUser(networkUser);
+    //                     this.setState({networkGroups});
+    //                 }
+    //             });
+    //     }
+    // }
 
     onAddUserNetwork(networkGroup: NetworkGroup) {
-        // const networkGroup = new NetworkGroup(this.db, network.name, network.timestamp, network.members);
-        this.queryUserProfileFromId(networkGroup);
+        // this.queryUserProfileFromId(networkGroup);
     }
 
     handlePageChange(event: React.MouseEvent<HTMLElement>) {
@@ -230,7 +262,7 @@ export class Home extends Component<HomeProps, HomeState> {
                                      db={this.db}
                                      handleNewEvent={this.handleNewEvent}
                                      page={Pages.HOME}
-                                    networkGroups={this.state.networkGroups}/>);
+                                     networkGroups={this.state.networkGroups}/>);
         } else if (this.state.currentPage === Pages.USER) {
             currentPage = (<User userProfile={this.state.userProfile}
                                  firebase={this.props.firebase}

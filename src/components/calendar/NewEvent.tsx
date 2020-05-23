@@ -9,6 +9,8 @@ import {UserProfile} from '../../data/UserProfile';
 import * as firebase from 'firebase/app';
 import {DropdownNetwork} from '../common/DropdownNetwork';
 import {NetworkGroup} from '../../data/NetworkGroup';
+import {NetworkEvent} from '../../data/NetworkEvent';
+import {Api} from '../../api';
 
 interface NewEventProps {
     db: firebase.firestore.Firestore;
@@ -116,7 +118,7 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
         this.setState({eventMessage: newMessage});
     }
 
-    submitEvent() {
+    async submitEvent() {
         if (!this.props.userProfile) {
             this.props.handleFailure('User is not authenticated');
             return;
@@ -128,28 +130,48 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
             return;
         }
 
-        const newEvent = {
-            name: this.state.eventName,
-            location: this.state.eventLocation,
-            message: this.state.eventMessage,
-            duration: dateTime['duration'],
-            date: dateTime['date'],
-            time: dateTime['time'],
-            network: this.state.eventNetwork ? this.state.eventNetwork.getId() : null
+        // const newEvent = {
+        //     name: this.state.eventName,
+        //     location: this.state.eventLocation,
+        //     message: this.state.eventMessage,
+        //     duration: dateTime['duration'],
+        //     date: dateTime['date'],
+        //     time: dateTime['time'],
+        //     network: this.state.eventNetwork ? this.state.eventNetwork.getId() : null
+        // };
+
+        const newEventDTO = {
+            ID: null,
+            Name: this.state.eventName,
+            Location: this.state.eventLocation,
+            Message: this.state.eventMessage,
+            StartDate: new Date().toISOString(),
+            EndDate: new Date().toISOString(),
+            NetworkId: this.state.eventNetwork ? this.state.eventNetwork.getId() : null  // TODO: SHOULD NOT BE NULL
         };
 
-        this.props.db.collection(DbConstants.USERS)
-            .doc(this.props.userProfile.getUid())
-            .collection(DbConstants.EVENTS)
-            .add(newEvent)
-            .then((docRef: any) => {
-                console.log('Successfully created a new event');
-                this.props.handleSuccess(newEvent);
-            })
-            .catch((error: any) => {
-                console.error('Failed to create a new event!');
-                this.props.handleFailure(error);
-            });
+        const response = await Api.postUserEvent(newEventDTO);
+        if (response.status === 201) {
+            console.log('(NE01) Successfully created new event');
+            const e = response.data;
+            const newEvent = new NetworkEvent(e.ID, e.Name, e.StartDate, e.EndDate, e.Location, e.Message, e.NetworkId);
+            this.props.handleSuccess(newEvent);
+        } else {
+            console.error('(NE02) Failed to create new event:', response.status);
+        }
+
+        // this.props.db.collection(DbConstants.USERS)
+        //     .doc(this.props.userProfile.getUid())
+        //     .collection(DbConstants.EVENTS)
+        //     .add(newEvent)
+        //     .then((docRef: any) => {
+        //         console.log('Successfully created a new event');
+        //         this.props.handleSuccess(newEvent);
+        //     })
+        //     .catch((error: any) => {
+        //         console.error('Failed to create a new event!');
+        //         this.props.handleFailure(error);
+        //     });
     }
 
     parseDateTime() {
@@ -206,7 +228,10 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
         this.setState({showEventDatePicker: !showing});
     }
 
-    setEventDate(date: Date) {
+    setEventDate(date
+                     :
+                     Date
+    ) {
         this.setState({
             eventDate: date.getDate(),
             eventDateMonth: date.getMonth(),
@@ -215,15 +240,24 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
         });
     }
 
-    setEventStartTime(timeList: any[]) {
+    setEventStartTime(timeList
+                          :
+                          any[]
+    ) {
         this.setState({eventStartTime: timeList});
     }
 
-    setEventEndTime(timeList: any[]) {
+    setEventEndTime(timeList
+                        :
+                        any[]
+    ) {
         this.setState({eventEndTime: timeList});
     }
 
-    setEventNetwork(network: NetworkGroup) {
+    setEventNetwork(network
+                        :
+                        NetworkGroup
+    ) {
         this.setState({eventNetwork: network});
     }
 

@@ -4,6 +4,7 @@ import {DbConstants} from '../../data/DbConstants';
 import InputField from '../common/InputField';
 import logo from '../../resources/logo.svg';
 import '../../css/main/Login.scss';
+import {Api} from '../../api';
 
 interface LoginProps {
     firebase: any;
@@ -168,6 +169,9 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                         console.error('(LE01) User email is not verified');
                         this.setState({userVerified: false});
                     } else {
+                        Api.setFirebaseId(user.uid);
+                        Api.refreshSession();
+
                         this.setState({
                             userVerified: true,
                             auth: true,

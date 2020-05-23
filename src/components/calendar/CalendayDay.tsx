@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {ColumnPos, TimeOfDay, WeekDayNames} from '../main/Constants';
 import {NetworkGroup} from '../../data/NetworkGroup';
+import {NetworkEvent} from '../../data/NetworkEvent';
 
 export class CalendarDay {
 
@@ -168,37 +169,38 @@ class Day extends Component<DayProps, {}> {
         this.getRenderedEvent = this.getRenderedEvent.bind(this);
     }
 
-    getRenderedEvent(event: any) {
-        const hour = parseInt(event.time.hour);
-        const duration = parseInt(event.duration.hours) + (parseInt(event.duration.minutes) / 60);
+    getRenderedEvent(event: NetworkEvent) {
+        const durationHours = event.getEndDate().getTime() - event.getStartDate().getTime();
+
 
         let color = '#f48a84';
-        if (event.network != null && this.props.networkGroups !== null) {
+        if (this.props.networkGroups !== null) {
             for (const group of this.props.networkGroups) {
-                if (group.getId() === event.network) {
-                    color = group.getColor();
+                if (group.getId() === event.getNetworkId()) {
+                    color = group.getColorHex();
                     break;
                 }
             }
         }
 
         const eventStyle: { [style: string]: any } = {
-            height: 'calc((' + (100 / this.props.timesCount) + '%) * ' + duration + ' - 18px)',
+            height: 'calc((' + (100 / this.props.timesCount) + '%) * ' + durationHours + ' - 18px)',
             backgroundColor: color
         };
 
-        if (event.time.timeOfDay === TimeOfDay.AM) {
-            eventStyle.top = 'calc(' + ((hour) * (100 / this.props.timesCount)) + '% + 2px)';
-        } else {
-            eventStyle.top = 'calc(' + ((hour + 12) * (100 / this.props.timesCount)) + '% + 2px)';
-        }
+        eventStyle.top = 'calc(' + ((event.getStartDate().getHours()) * (100 / this.props.timesCount)) + '% + 2px)';
+        // if (event.time.timeOfDay === TimeOfDay.AM) {
+        //     eventStyle.top = 'calc(' + ((hour) * (100 / this.props.timesCount)) + '% + 2px)';
+        // } else {
+        //     eventStyle.top = 'calc(' + ((hour + 12) * (100 / this.props.timesCount)) + '% + 2px)';
+        // }
 
         return (
             // TODO: Change key to unique value
-            <div className={'calendar-event'} style={eventStyle} key={event.name}>
-                <h5>{event.name}</h5>
+            <div className={'calendar-event'} style={eventStyle} key={event.getId()}>
+                <h5>{event.getName()}</h5>
                 <div className={'event-description'}>
-                    <p>{event.location}</p>
+                    <p>{event.getLocation()}</p>
                     {/*<p>{event.message}</p>*/}
                 </div>
             </div>

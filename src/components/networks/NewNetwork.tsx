@@ -60,86 +60,80 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
         });
 
         const newNetwork: NetworkGroup = new NetworkGroup(
-            this.props.db,
+            -1,
             this.state.netName,
-            (new Date()).toString(),
-            members,
-            this.props.userProfile.getUid());
+            -1, //this.props.userProfile.getUid());
+            "#2e2e2e",
+            []);
 
-        // const newNetwork = {
-        //     name: this.state.netName,
-        //     timestamp: (new Date()).toString(),
-        //     members: members,  // TODO: Fix this to be a proper list
-        //     owner: this.props.userProfile.getUid()
-        // };
-
-        this.props.db.collection(DbConstants.NETWORKS)
-            .add(newNetwork.toDictionary())
-            .then(docRef => {
-                console.log('Successfully created a new network');
-                this.addNetworkToUsers(docRef.id, newNetwork);
-            })
-            .catch(error => {
-                console.error('Failed to create a new network!');
-                console.error(error);
-                this.props.handleFailure(error);
-            });
+        // TODO: POST NETWORK
+        // this.props.db.collection(DbConstants.NETWORKS)
+        //     .add(newNetwork.toDictionary())
+        //     .then(docRef => {
+        //         console.log('Successfully created a new network');
+        //         this.addNetworkToUsers(docRef.id, newNetwork);
+        //     })
+        //     .catch(error => {
+        //         console.error('Failed to create a new network!');
+        //         console.error(error);
+        //         this.props.handleFailure(error);
+        //     });
     }
 
     addNetworkToUsers(networkId: string, network: NetworkGroup) {
         // TODO: Validate MemberIDs before adding network to user
 
-        for (const userId of network.getMembers()) {
-            // First get the user's list of current networks
-            this.props.db.collection(DbConstants.USERS)
-                .doc(userId)
-                .collection(DbConstants.NETWORKS).get()
-                .then(col => {
-                    if (col.empty) {
-                        // CASE: User has no networks yet, so create the first document
-                        const newNetworksList = {[DbConstants.MEMBER_OF]: [{[networkId]: '#f48a84'}]};
-                        this.props.db.collection(DbConstants.USERS)
-                            .doc(userId)
-                            .collection(DbConstants.NETWORKS)
-                            .add(newNetworksList)
-                            .then(docRef => {
-                                if (userId === this.props.userProfile.getUid()) {
-                                    // this.props.handleSuccess(networkId);
-                                    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error adding network to user');
-                                this.props.handleFailure(error);
-                            });
-                    } else {
-                        // CASE: User has a list of networks already, so update it
-                        const doc = col.docs[0];
-                        const networkList = doc.data()[DbConstants.MEMBER_OF];
-                        networkList.push({[networkId]: '#f48a84'});
-
-                        const updatedNetworksList = {[DbConstants.MEMBER_OF]: networkList};
-                        this.props.db.collection(DbConstants.USERS)
-                            .doc(userId)
-                            .collection(DbConstants.NETWORKS)
-                            .doc(doc.id)
-                            .update(updatedNetworksList)
-                            .then(docRef => {
-                                if (userId === this.props.userProfile.getUid()) {
-                                    this.props.handleSuccess(network);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error adding network to user');
-                                this.props.handleFailure(error);
-                            });
-                    }
-                })
-                .catch(error => {
-                    console.error('Failed to get user networks');
-                    console.error(error);
-                });
-        }
+        // for (const userId of network.getMembers()) {
+        //     // First get the user's list of current networks
+        //     this.props.db.collection(DbConstants.USERS)
+        //         .doc(userId)
+        //         .collection(DbConstants.NETWORKS).get()
+        //         .then(col => {
+        //             if (col.empty) {
+        //                 // CASE: User has no networks yet, so create the first document
+        //                 const newNetworksList = {[DbConstants.MEMBER_OF]: [{[networkId]: '#f48a84'}]};
+        //                 this.props.db.collection(DbConstants.USERS)
+        //                     .doc(userId)
+        //                     .collection(DbConstants.NETWORKS)
+        //                     .add(newNetworksList)
+        //                     .then(docRef => {
+        //                         if (userId === this.props.userProfile.getUid()) {
+        //                             // this.props.handleSuccess(networkId);
+        //                             // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //                         }
+        //                     })
+        //                     .catch(error => {
+        //                         console.error('Error adding network to user');
+        //                         this.props.handleFailure(error);
+        //                     });
+        //             } else {
+        //                 // CASE: User has a list of networks already, so update it
+        //                 const doc = col.docs[0];
+        //                 const networkList = doc.data()[DbConstants.MEMBER_OF];
+        //                 networkList.push({[networkId]: '#f48a84'});
+        //
+        //                 const updatedNetworksList = {[DbConstants.MEMBER_OF]: networkList};
+        //                 this.props.db.collection(DbConstants.USERS)
+        //                     .doc(userId)
+        //                     .collection(DbConstants.NETWORKS)
+        //                     .doc(doc.id)
+        //                     .update(updatedNetworksList)
+        //                     .then(docRef => {
+        //                         if (userId === this.props.userProfile.getUid()) {
+        //                             this.props.handleSuccess(network);
+        //                         }
+        //                     })
+        //                     .catch(error => {
+        //                         console.error('Error adding network to user');
+        //                         this.props.handleFailure(error);
+        //                     });
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Failed to get user networks');
+        //             console.error(error);
+        //         });
+        // }
     }
 
     render() {

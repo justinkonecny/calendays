@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import '../../css/networks/Group.scss'
 import {NetworkGroup} from '../../data/NetworkGroup';
-import {UserProfile} from '../../data/UserProfile';
 
 interface GroupProps {
     networkGroup: NetworkGroup;
@@ -11,10 +10,10 @@ class Group extends Component<GroupProps, {}> {
     render() {
         const networkGroup = this.props.networkGroup;
         const name = networkGroup.getName();
-        const users = networkGroup.getUsers();
+        const users = networkGroup.getMembers();
 
-        const memberNames = users.map((userProfile: UserProfile) => {
-            return userProfile.getFirstName();
+        const memberNames = users.map((member) => {
+            return member.getFirstName();
         });
 
         return (

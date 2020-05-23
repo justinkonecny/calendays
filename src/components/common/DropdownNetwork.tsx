@@ -51,13 +51,13 @@ export class DropdownNetwork extends Component<DropdownNetworkProps, DropdownNet
 
         return (
             <div className={'dropdown-container'}>
-                <button className={'btn-date-time'} onClick={this.clickDropdown} style={{color: this.state.selection?.getColor()}}>
+                <button className={'btn-date-time'} onClick={this.clickDropdown} style={{color: this.state.selection?.getColorHex()}}>
                     {this.state.selection?.getName()}
                 </button>
                 {this.state.showPicker && <div className={'picker'}>
                     {this.props.networkList.map((network: NetworkGroup, index: number) => {
                         return (
-                            <button id={'ng-' + index} className={'picker-inner'} onClick={this.clickNetwork} key={index} style={{color: network.getColor()}}>
+                            <button id={'ng-' + index} className={'picker-inner'} onClick={this.clickNetwork} key={index} style={{color: network.getColorHex()}}>
                                 {network.getName()}
                             </button>
                         );
