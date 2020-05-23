@@ -170,7 +170,9 @@ class Day extends Component<DayProps, {}> {
     }
 
     getRenderedEvent(event: NetworkEvent) {
-        const durationHours = event.getEndDate().getTime() - event.getStartDate().getTime();
+        // TODO: Handle events that are on different days
+
+        const durationHours = (event.getEndDate().getTime() - event.getStartDate().getTime()) / 1000.0 / 60.0 / 60.0;
 
 
         let color = '#f48a84';
@@ -189,14 +191,8 @@ class Day extends Component<DayProps, {}> {
         };
 
         eventStyle.top = 'calc(' + ((event.getStartDate().getHours()) * (100 / this.props.timesCount)) + '% + 2px)';
-        // if (event.time.timeOfDay === TimeOfDay.AM) {
-        //     eventStyle.top = 'calc(' + ((hour) * (100 / this.props.timesCount)) + '% + 2px)';
-        // } else {
-        //     eventStyle.top = 'calc(' + ((hour + 12) * (100 / this.props.timesCount)) + '% + 2px)';
-        // }
 
         return (
-            // TODO: Change key to unique value
             <div className={'calendar-event'} style={eventStyle} key={event.getId()}>
                 <h5>{event.getName()}</h5>
                 <div className={'event-description'}>

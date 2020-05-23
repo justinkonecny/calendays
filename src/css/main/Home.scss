@@ -95,10 +95,25 @@ textarea:focus {
     border-color: var(--light-blue);
 }
 
+p {
+    text-align: left;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 0;
+    margin: 0;
+}
+
 .btn-primary {
     margin: auto;
     color: white;
     background-color: var(--blush);
+}
+
+.btn-secondary {
+    margin: auto;
+    color: white;
+    padding: 6px 20px;
+    background-color: var(--light-blue);
 }
 
 .btn-open {

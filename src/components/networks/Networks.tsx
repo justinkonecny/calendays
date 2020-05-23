@@ -36,7 +36,6 @@ class Networks extends Component<NetworksProps, NetworksState> {
     }
 
     handleNewNetworkSuccess(networkGroup: NetworkGroup) {
-        console.log('Successfully added network');
         this.setState({showNewNetwork: false});
         this.props.addNewNetwork(networkGroup);
     }

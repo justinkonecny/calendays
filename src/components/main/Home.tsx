@@ -3,7 +3,6 @@ import {Redirect} from 'react-router';
 import '../../css/main/Home.scss';
 import logo from '../../resources/logo.svg';
 import {UserProfile} from '../../data/UserProfile';
-import {DbConstants} from '../../data/DbConstants';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {User} from './User';
 import {Calendar} from '../calendar/Calendar';
@@ -13,6 +12,7 @@ import {Pages} from "../../data/Pages";
 import {Api} from '../../api';
 import {NetworkEvent} from '../../data/NetworkEvent';
 import {NetworkUser} from '../../data/NetworkUser';
+import {AxiosResponse} from 'axios';
 
 interface HomeProps {
     firebase: any;
@@ -47,6 +47,7 @@ export class Home extends Component<HomeProps, HomeState> {
         // this.queryNetworkGroups = this.queryNetworkGroups.bind(this);
         // this.queryUserEvents = this.queryUserEvents.bind(this);
         // this.queryUserProfile = this.queryUserProfile.bind(this);
+        this.processUserProfile = this.processUserProfile.bind(this);
         this.onAddUserNetwork = this.onAddUserNetwork.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.handleNewEvent = this.handleNewEvent.bind(this);
@@ -54,15 +55,18 @@ export class Home extends Component<HomeProps, HomeState> {
 
     async componentDidMount() {
         if (this.user) {
+            Api.setFirebaseId(this.user.uid);
             const responseNetworks = await Api.queryUserNetworks();
             const responseEvents = await Api.queryUserEvents();
 
+            this.processUserProfile(await Api.queryUserProfile());
+
             if (responseNetworks.status === 200 && responseNetworks.data) {
-                const networks = responseEvents.data.map((e: any) => {
-                    const members = e.Members.map((m: any) => {
+                const networks = responseNetworks.data.map((n: any) => {
+                    const members = n.Members.map((m: any) => {
                         return new NetworkUser(m.ID, m.FirstName, m.LastName, m.Email);
                     });
-                    return new NetworkGroup(e.ID, e.Name, e.OwnerId, e.ColorHex, members);
+                    return new NetworkGroup(n.ID, n.Name, n.OwnerId, n.ColorHex, members);
                 });
                 this.setState({networkGroups: networks});
                 console.log("(HCM01) Found", responseNetworks.data.length, "user networks!");
@@ -70,8 +74,6 @@ export class Home extends Component<HomeProps, HomeState> {
                 this.setState({networkGroups: []});
                 console.error("(HCM02) Error querying user networks:", responseNetworks.status);
             }
-
-            console.log(responseEvents.data);
 
             if (responseEvents.status === 200 && responseEvents.data) {
                 const events = responseEvents.data.map((e: any) => {
@@ -84,35 +86,49 @@ export class Home extends Component<HomeProps, HomeState> {
                 console.error("(HCM04) Error querying user events:", responseEvents.status);
             }
 
+
         }
     }
 
-    queryUserEvents() {
-        /**
-         * Queries the Firestore for the current user's events
-         */
-        if (this.user == null) {
-            return null;  // There is no authenticated user
+    processUserProfile(responseUser: AxiosResponse) {
+        if (responseUser.status === 200 && responseUser.data) {
+            const u = responseUser.data;
+            this.setState({
+                userProfile: new UserProfile(u.ID, u.FirstName, u.LastName, u.Email)
+            });
+            console.log("(HCM03) Successfully found user profile!");
         } else {
-            this.db.collection(DbConstants.USERS)
-                .doc(this.user.uid)
-                .collection(DbConstants.EVENTS).get()
-                .then(doc => {
-                    if (doc.empty) {
-                        // TODO: Display error to user
-                        console.error('No user events found!');
-                        this.setState({events: []});
-                    } else {
-                        const events: any[] = [];
-                        doc.docs.forEach(docQuery => {
-                            events.push(docQuery.data());
-                        });
-                        this.setState({events});
-                        console.log(events.length + ' events found!');
-                    }
-                });
+            this.setState({userProfile: null});
+            console.error("(HCM04) Error querying user profile:", responseUser.status);
         }
     }
+
+    // queryUserEvents() {
+    //     /**
+    //      * Queries the Firestore for the current user's events
+    //      */
+    //     if (this.user == null) {
+    //         return null;  // There is no authenticated user
+    //     } else {
+    //         this.db.collection(DbConstants.USERS)
+    //             .doc(this.user.uid)
+    //             .collection(DbConstants.EVENTS).get()
+    //             .then(doc => {
+    //                 if (doc.empty) {
+    //                     // TODO: Display error to user
+    //                     console.error('No user events found!');
+    //                     this.setState({events: []});
+    //                 } else {
+    //                     const events: any[] = [];
+    //                     doc.docs.forEach(docQuery => {
+    //                         events.push(docQuery.data());
+    //                     });
+    //                     this.setState({events});
+    //                     console.log(events.length + ' events found!');
+    //                 }
+    //             });
+    //     }
+    // }
 
     // queryUserProfile() {
     //     /**
@@ -225,7 +241,9 @@ export class Home extends Component<HomeProps, HomeState> {
     // }
 
     onAddUserNetwork(networkGroup: NetworkGroup) {
-        // this.queryUserProfileFromId(networkGroup);
+        const networkGroups = [...this.state.networkGroups, networkGroup];
+        this.setState({networkGroups});
+        console.log(networkGroup);
     }
 
     handlePageChange(event: React.MouseEvent<HTMLElement>) {

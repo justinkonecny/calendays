@@ -33,7 +33,7 @@ Web application used for shared event planning. Uses Firebase for user authentic
 * `Networks.tsx`
 * `NewNetwork.tsx`
 ### src/components/profile/...
-* `Profile.js`
+* `Profile.tsx`
 ### src/data/...
 * `dataStructures.json`
 * `DbConstants.ts`

@@ -1,51 +1,33 @@
-import {NetworkGroup} from './NetworkGroup';
-
 export class UserProfile {
-    private firstName: string;
-    private lastName: string;
-    private email: null | string;
-    private uid: string;
-    private username: string;
-    private networks: null | NetworkGroup[];
+    private readonly id: number;
+    private readonly firstName: string;
+    private readonly lastName: string;
+    private readonly email: string;
 
-    constructor(firstName: string, lastName: string, email: null | string, uid: string, username: string, networks: null | NetworkGroup[]) {
+    constructor(id: number, firstName: string, lastName: string, email: string) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.uid = uid;
-        this.username = username;
-        this.networks = networks;
     }
 
-    getFullName(): string {
+    getId() {
+        return this.id;
+    }
+
+    getFullName() {
         return this.firstName + ' ' + this.lastName;
     }
 
-    getFirstName(): string {
+    getFirstName() {
         return this.firstName;
     }
 
-    getLastName(): string {
+    getLastName() {
         return this.lastName;
     }
 
     getEmail(): null | string {
         return this.email;
-    }
-
-    getUid(): string {
-        return this.uid;
-    }
-
-    getUsername(): string {
-        return this.username;
-    }
-
-    getNetworks(): null | NetworkGroup[] {
-        return this.networks;
-    }
-
-    setNetworks(networkList: NetworkGroup[]): void {
-        this.networks = networkList;
     }
 }

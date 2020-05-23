@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import '../../css/main/User.scss';
 import {Calendar} from '../calendar/Calendar';
-import Profile from '../profile/Profile';
 import Networks from '../networks/Networks';
 import * as firebase from 'firebase';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {Pages} from "../../data/Pages";
 import {NetworkEvent} from '../../data/NetworkEvent';
+import {Profile} from '../profile/Profile';
 
 const UserPages = {  // The main tabs that a user can view; the value is the 'id' of the tab <button>
     CALENDAR: 'my-calendar',
@@ -93,7 +93,7 @@ export class User extends Component<UserProps, UserState> {
                     <button id={'my-calendar'} className={classCalendar} onClick={this.setActiveTab}>my calendar</button>
                     <button id={'my-networks'} className={classNetworks} onClick={this.setActiveTab}>my networks</button>
                     <button id={'my-profile'} className={classProfile} onClick={this.setActiveTab}>my profile</button>
-                    <button id={'sign-out'} className={classProfile} onClick={this.signOut}>sign out</button>
+                    <button id={'sign-out'} className={'btn-home btn-open'} onClick={this.signOut}>sign out</button>
                 </div>
                 <div className={'user-content'}>
                     {currentPage}

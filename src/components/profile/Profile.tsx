@@ -1,10 +1,17 @@
 import React, {Component} from 'react';
 import '../../css/profile/Profile.scss'
+import {UserProfile} from '../../data/UserProfile';
 
-class Profile extends Component {
+interface ProfileProps {
+    userProfile: null | UserProfile;
+}
 
+export class Profile extends Component<ProfileProps, {}> {
     render() {
         const userProfile = this.props.userProfile;
+        if (!userProfile) {
+            return;
+        }
 
         return (
             <div className={'profile-container'}>
@@ -15,15 +22,7 @@ class Profile extends Component {
 
                 <h3>email</h3>
                 <h4>{userProfile.getEmail()}</h4>
-
-                <h3>username</h3>
-                <h4>{userProfile.getUsername()}</h4>
-
-                <h3>user id</h3>
-                <h4>{userProfile.getUid()}</h4>
             </div>
         );
     }
 }
-
-export default Profile;

@@ -1,6 +1,7 @@
 const axios = require('axios').default;
 axios.defaults.withCredentials = true;
 
+
 export class Api {
     private static url: string = 'http://localhost:8081';
     // private static url: string = 'http://18.232.88.251:8081';
@@ -29,16 +30,26 @@ export class Api {
         return await Api.queryEndpoint('events');
     }
 
+    static async queryUserProfile() {
+        return await Api.queryEndpoint('users');
+    }
+
     static async postUserEvent(event: any) {
         return await Api.postBody('events', event);
     }
 
+    static async postUserNetwork(network: any) {
+        return await Api.postBody('networks', network);
+    }
+
     private static async postBody(endpoint: string, body: any) {
-        return await axios.get(`${Api.url}/${endpoint}`, body);
+        return await axios.post(`${Api.url}/${endpoint}`, body);
     }
 
     private static async queryEndpoint(endpoint: string) {
-        let response = await axios.get(`${Api.url}/${endpoint}`);
+        let response = await axios.get(`${Api.url}/${endpoint}`).catch((error: any) => {
+            return error.response;
+        });
         if (response.status === 401 && Api.firebaseId !== '') {
             await Api.refreshSession();
             response = await axios.get(`${Api.url}/${endpoint}`);

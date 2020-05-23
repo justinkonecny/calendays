@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import '../../css/networks/NewNetwork.scss';
-import {DbConstants} from '../../data/DbConstants';
 import InputField from '../common/InputField';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {UserProfile} from '../../data/UserProfile';
 import * as firebase from 'firebase';
+import {Api} from '../../api';
+import {NetworkUser} from '../../data/NetworkUser';
 
 interface NewNetworkProps {
     db: firebase.firestore.Firestore;
@@ -15,7 +16,9 @@ interface NewNetworkProps {
 
 interface NewNetworkState {
     netName: string;
-    memberId: string;
+    netColor: string;
+    memberEmail: string;
+    members: string[];
 }
 
 export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
@@ -24,12 +27,15 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
 
         this.state = {
             netName: '',
-            memberId: ''
+            netColor: '#F48A84',
+            memberEmail: '',
+            members: []
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.submitNetwork = this.submitNetwork.bind(this);
         this.addNetworkToUsers = this.addNetworkToUsers.bind(this);
+        this.addMemberEmail = this.addMemberEmail.bind(this);
     }
 
     handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -43,41 +49,53 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
         });
     }
 
-    submitNetwork() {
+    async submitNetwork() {
         if (!this.props.userProfile) {
-            console.error('User is not authenticated!');
+            console.error('(NNE01) User is not authenticated!');
             return;
         }
-
-        if (this.state.memberId.trim() === '') {
+        if (this.state.netName === '') {
+            console.error('(NNE02) Network must have a name!');
             return;
         }
+        if (this.state.netColor === '') {
+            console.error('(NNE03) Network must have a color!');
+            return;
+        }
+        if (this.state.members.length === 0) {
+            console.error('(NNE04) Network must have at least one other member!');
+            return
+        }
 
-        let members = this.state.memberId.split(',');
-        members.push(this.props.userProfile.getUid());
-        members = members.map(member => {
-            return member.trim()
-        });
+        const newNetwork = {
+            ID: null,
+            OwnerId: null,
+            ColorHex: this.state.netColor,
+            Name: this.state.netName,
+            Members: this.state.members.map((email) => {
+                return {
+                    ID: null,
+                    FirstName: null,
+                    LastName: null,
+                    Email: email
+                }
+            })
+        };
 
-        const newNetwork: NetworkGroup = new NetworkGroup(
-            -1,
-            this.state.netName,
-            -1, //this.props.userProfile.getUid());
-            "#2e2e2e",
-            []);
-
-        // TODO: POST NETWORK
-        // this.props.db.collection(DbConstants.NETWORKS)
-        //     .add(newNetwork.toDictionary())
-        //     .then(docRef => {
-        //         console.log('Successfully created a new network');
-        //         this.addNetworkToUsers(docRef.id, newNetwork);
-        //     })
-        //     .catch(error => {
-        //         console.error('Failed to create a new network!');
-        //         console.error(error);
-        //         this.props.handleFailure(error);
-        //     });
+        const response = await Api.postUserNetwork(newNetwork);
+        if (response.status === 200 && response.data) {
+            const n = response.data;
+            const members = n.Members.map((m: any) => {
+                return new NetworkUser(m.ID, m.FirstName, m.LastName, m.Email);
+            });
+            const networkGroup = new NetworkGroup(n.ID, n.Name, n.OwnerId, n.ColorHex, members);
+            console.log(`(NNS01): Successfully created new network '${n.Name}'!`);
+            this.props.handleSuccess(networkGroup);
+            // this.addNetworkToUsers(docRef.id, newNetwork);
+        } else {
+            console.error(`(NNE05): Failed to create new network '${newNetwork.Name}': ${response.status}!`);
+            // this.props.handleFailure(error);
+        }
     }
 
     addNetworkToUsers(networkId: string, network: NetworkGroup) {
@@ -136,14 +154,38 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
         // }
     }
 
+    addMemberEmail() {
+        // TODO: Add email validation
+        const members = [...this.state.members, this.state.memberEmail];
+        this.setState({
+            memberEmail: '',
+            members
+        });
+    }
+
     render() {
         return (
             <div className={'create-new-network'}>
                 <h3>network name</h3>
                 <InputField type={'text'} name={'netName'} placeholder={'new network'} value={this.state.netName} onChange={this.handleInputChange}/>
 
-                <h3>member id</h3>
-                <InputField type={'text'} name={'memberId'} placeholder={'member id'} value={this.state.memberId} onChange={this.handleInputChange}/>
+                <h3>network color</h3>
+                <InputField type={'text'} name={'netColor'} placeholder={'color'} value={this.state.netColor} onChange={this.handleInputChange}/>
+
+                <h3>members</h3>
+                <div className={'member-add'}>
+                    <InputField type={'email'} name={'memberEmail'} placeholder={'email'} value={this.state.memberEmail} onChange={this.handleInputChange}/>
+                    <button className={'btn-secondary'} onClick={this.addMemberEmail}>add</button>
+                </div>
+
+                <h4>network members</h4>
+                <div className={'member-list'}>
+                    {this.state.members.length > 0
+                        ? this.state.members.map((m) => {
+                            return (<p>{m}</p>)
+                        })
+                        : (<p>no other members yet!</p>)}
+                </div>
 
                 <button className={'btn-primary'} onClick={this.submitNetwork}>create network</button>
             </div>
