@@ -8,17 +8,16 @@ interface GroupProps {
 
 class Group extends Component<GroupProps, {}> {
     render() {
-        const networkGroup = this.props.networkGroup;
-        const name = networkGroup.getName();
-        const users = networkGroup.getMembers();
-
-        const memberNames = users.map((member) => {
+        const memberNames = this.props.networkGroup.getMembers().map((member) => {
             return member.getFirstName();
         });
 
         return (
             <div className={'group-container'}>
-                <h3>{name}</h3>
+                <div className={'flex my-auto'}>
+                    <h3>{this.props.networkGroup.getName()}</h3>
+                    <div className={'color'} style={{backgroundColor: this.props.networkGroup.getColorHex()}}/>
+                </div>
                 <h4>members</h4>
                 <p>{memberNames.join(', ')}</p>
             </div>

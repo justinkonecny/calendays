@@ -130,23 +130,22 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
             return;
         }
 
-        // const newEvent = {
-        //     name: this.state.eventName,
-        //     location: this.state.eventLocation,
-        //     message: this.state.eventMessage,
-        //     duration: dateTime['duration'],
-        //     date: dateTime['date'],
-        //     time: dateTime['time'],
-        //     network: this.state.eventNetwork ? this.state.eventNetwork.getId() : null
-        // };
+        const startDate = new Date(dateTime.date.month.toString().padStart(2, '0') + "/" + dateTime.date.day.toString().padStart(2, '0') + "/" + dateTime.date.year + " "
+            + dateTime.time.hour.toString().padStart(2, '0') + ":" + dateTime.time.minute.toString().padStart(2, '0') + " " + dateTime.time.timeOfDay);
+
+        const endDate = new Date(dateTime.date.month.toString().padStart(2, '0') + "/" + dateTime.date.day.toString().padStart(2, '0') + "/" + dateTime.date.year + " "
+            + (dateTime.time.hour + dateTime.duration.hours).toString().padStart(2, '0') + ":" + (dateTime.time.minute + dateTime.duration.minutes).toString().padStart(2, '0') + " " + dateTime.time.timeOfDay);
+
+        console.log(startDate);
+        console.log(endDate);
 
         const newEventDTO = {
             ID: null,
             Name: this.state.eventName,
             Location: this.state.eventLocation,
             Message: this.state.eventMessage,
-            StartDate: new Date().toISOString(),
-            EndDate: new Date().toISOString(),
+            StartDate: startDate.toISOString(),
+            EndDate: endDate.toISOString(),
             NetworkId: this.state.eventNetwork ? this.state.eventNetwork.getId() : null  // TODO: SHOULD NOT BE NULL
         };
 
@@ -159,19 +158,6 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
         } else {
             console.error('(NE02) Failed to create new event:', response.status);
         }
-
-        // this.props.db.collection(DbConstants.USERS)
-        //     .doc(this.props.userProfile.getUid())
-        //     .collection(DbConstants.EVENTS)
-        //     .add(newEvent)
-        //     .then((docRef: any) => {
-        //         console.log('Successfully created a new event');
-        //         this.props.handleSuccess(newEvent);
-        //     })
-        //     .catch((error: any) => {
-        //         console.error('Failed to create a new event!');
-        //         this.props.handleFailure(error);
-        //     });
     }
 
     parseDateTime() {
@@ -228,10 +214,7 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
         this.setState({showEventDatePicker: !showing});
     }
 
-    setEventDate(date
-                     :
-                     Date
-    ) {
+    setEventDate(date: Date) {
         this.setState({
             eventDate: date.getDate(),
             eventDateMonth: date.getMonth(),
@@ -240,24 +223,15 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
         });
     }
 
-    setEventStartTime(timeList
-                          :
-                          any[]
-    ) {
+    setEventStartTime(timeList: any[]) {
         this.setState({eventStartTime: timeList});
     }
 
-    setEventEndTime(timeList
-                        :
-                        any[]
-    ) {
+    setEventEndTime(timeList: any[]) {
         this.setState({eventEndTime: timeList});
     }
 
-    setEventNetwork(network
-                        :
-                        NetworkGroup
-    ) {
+    setEventNetwork(network: NetworkGroup) {
         this.setState({eventNetwork: network});
     }
 

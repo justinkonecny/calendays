@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {MainRoutes} from '../../MainRoutes';
-import '../../css/main/App.css';
+import '../../css/main/App.scss';
 
 interface AppProps {
   firebase: any;

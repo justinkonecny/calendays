@@ -259,7 +259,7 @@ export class Home extends Component<HomeProps, HomeState> {
     handleNewEvent(event: any) {
         const events = this.state.events;
         if (events === null) {
-            console.error("HE01: null events list");
+            console.error("(HE01): null events list");
             return;
         }
         events.push(event);
