@@ -12,6 +12,11 @@ export class Api {
         Api.firebaseId = firebaseId;
     }
 
+    static async refreshSessionWithId(firebaseUUID: string) {
+        Api.setFirebaseId(firebaseUUID);
+        return await Api.refreshSession();
+    }
+
     static async refreshSession() {
         const response = await axios.post(`${Api.url}/login`, {}, {
             headers: {

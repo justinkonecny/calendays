@@ -55,7 +55,7 @@ export class Home extends Component<HomeProps, HomeState> {
 
     async componentDidMount() {
         if (this.user) {
-            Api.setFirebaseId(this.user.uid);
+            await Api.refreshSessionWithId(this.user.uid);
             const responseNetworks = await Api.queryUserNetworks();
             const responseEvents = await Api.queryUserEvents();
 

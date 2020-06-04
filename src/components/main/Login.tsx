@@ -173,8 +173,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                 console.error('(LE01) User email is not verified');
                 this.setState({userVerified: false});
             } else {
-                Api.setFirebaseId(user.uid);
-                Api.refreshSession();
+                await Api.refreshSessionWithId(user.uid);
 
                 this.setState({
                     userVerified: true,
