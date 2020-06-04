@@ -60,3 +60,6 @@ create table if not exists network_user
         foreign key (user_id) references user (id)
             on delete cascade
 );
+
+alter table user
+	add username varchar(31) not null;

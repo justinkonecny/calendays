@@ -149,7 +149,7 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
             NetworkId: this.state.eventNetwork ? this.state.eventNetwork.getId() : null  // TODO: SHOULD NOT BE NULL
         };
 
-        const response = await Api.postUserEvent(newEventDTO);
+        const response = await Api.createUserEvent(newEventDTO);
         if (response.status === 201) {
             console.log('(NE01) Successfully created new event');
             const e = response.data;
@@ -270,7 +270,7 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
                 <textarea className={'new-event-message'} name={'eventMessage'} value={this.state.eventMessage} onChange={this.handleChange} onFocus={this.populateEventParameters}/>
 
                 <h3>Network</h3>
-                <DropdownNetwork networkList={this.props.networkGroups} setEventNetwork={this.setEventNetwork}/>
+                <DropdownNetwork networkList={this.props.networkGroups} setEventNetwork={this.setEventNetwork} direction={'top'}/>
 
                 <button className={'btn-primary btn-create-event'} onClick={this.submitEvent}>create event</button>
             </div>

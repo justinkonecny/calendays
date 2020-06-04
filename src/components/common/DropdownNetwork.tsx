@@ -4,6 +4,7 @@ import {NetworkGroup} from '../../data/NetworkGroup';
 
 interface DropdownNetworkProps {
     networkList: NetworkGroup[];
+    direction: string;
     setEventNetwork: (network: NetworkGroup) => void;
 }
 
@@ -37,7 +38,7 @@ export class DropdownNetwork extends Component<DropdownNetworkProps, DropdownNet
             showPicker: false,
             selection: this.props.networkList[networkIndex]
         });
-        
+
         this.props.setEventNetwork(this.props.networkList[networkIndex]);
     }
 
@@ -50,20 +51,25 @@ export class DropdownNetwork extends Component<DropdownNetworkProps, DropdownNet
 
 
         return (
-            <div className={'dropdown-container'}>
-                <button className={'btn-date-time'} onClick={this.clickDropdown} style={{color: this.state.selection?.getColorHex()}}>
-                    {this.state.selection?.getName()}
+            <div className={this.props.direction === 'top' ? 'dropdown-container container-top' : 'dropdown-container'}>
+                <button className={'btn-date-time'} onClick={this.clickDropdown}>
+                    <div className={'flex'}>
+                        <p className={'net-name'}>{this.state.selection?.getName()}</p>
+                        <div className={'picker-color my-auto'} style={{backgroundColor: this.state.selection?.getColorHex()}}/>
+                    </div>
+
                 </button>
-                {this.state.showPicker && <div className={'picker'}>
+                {this.state.showPicker && <div className={this.props.direction === 'top' ? 'picker picker-top shadow' : 'picker shadow'}>
                     {this.props.networkList.map((network: NetworkGroup, index: number) => {
                         return (
-                            <button id={'ng-' + index} className={'picker-inner'} onClick={this.clickNetwork} key={index} style={{color: network.getColorHex()}}>
-                                {network.getName()}
+                            <button id={'ng-' + index} className={'picker-inner'} onClick={this.clickNetwork} key={index} >
+                                <div className={'flex'}>
+                                    <p className={'net-name'}>{network.getName()}</p>
+                                    <div className={'picker-color my-auto'} style={{backgroundColor: network.getColorHex()}}/>
+                                </div>
                             </button>
                         );
-                    })}
-                </div>
-                }
+                    })}</div>}
             </div>
         );
     }

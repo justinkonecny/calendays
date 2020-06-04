@@ -65,6 +65,8 @@ interface LoginFormState {
     invalidPassword: boolean;
     invalidLogin: boolean;
     emailSent: boolean;
+    duplicateUsername: boolean;
+    duplicateEmail: boolean;
 }
 
 class LoginForm extends Component<LoginFormProps, LoginFormState> {
@@ -74,6 +76,8 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
     private textInvalidUsername: string = 'must be unique and at least 4 characters';
     private textInvalidPassword: string = 'must be at least 8 characters with uppercase';
     private textInvalidLogin: string = 'invalid email/password combination';
+    private textDuplicateUsername: string = 'username already in use';
+    private textDuplicateEmail: string = 'email already in use';
 
     constructor(props: LoginFormProps) {
         super(props);
@@ -81,7 +85,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
             isExistingUser: true,  // Displays login tab or sign up tab
             fname: '',  // The user's first name
             lname: '',  // The user's last name
-            username: '',  // TODO: Add field or remove this
+            username: '',  // The user's username
             email: '',  // The user's email address
             password: '',  // The user's password
             auth: false,  // Whether or not a user is authenticated
@@ -92,7 +96,9 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
             invalidEmail: false,
             invalidPassword: false,
             invalidLogin: false,
-            emailSent: false
+            emailSent: false,
+            duplicateUsername: false,
+            duplicateEmail: false
         };
 
         this.handleSubmitClick = this.handleSubmitClick.bind(this);
@@ -131,7 +137,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
     }
 
     isValidUsername(username: string): boolean {
-        return username.length > 3;
+        return username.length > 4;
     }
 
     isValidPassword(password: string): boolean {
@@ -147,103 +153,120 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
         const invalidEmail = !this.isValidEmail(this.state.email);
         const invalidPassword = !this.isValidPassword(this.state.password);
 
-        if (invalidFirstName || invalidLastName || invalidUsername || invalidEmail || invalidPassword) {
-            this.setState({
-                invalidFirstName,
-                invalidLastName,
-                invalidUsername,
-                invalidEmail,
-                invalidPassword
-            });
-            return false;
+        this.setState({
+            invalidFirstName,
+            invalidLastName,
+            invalidUsername,
+            invalidEmail,
+            invalidPassword
+        });
+
+        return !(invalidFirstName || invalidLastName || invalidUsername || invalidEmail || invalidPassword);
+    }
+
+    async loginUser() {
+        try {
+            const userCredential = await this.props.firebase.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password);
+            const user = userCredential.user;
+            console.log('(LS01) Successfully authenticated in user ' + user.email);
+            if (!user.emailVerified) {
+                console.error('(LE01) User email is not verified');
+                this.setState({userVerified: false});
+            } else {
+                Api.setFirebaseId(user.uid);
+                Api.refreshSession();
+
+                this.setState({
+                    userVerified: true,
+                    auth: true,
+                    password: ''
+                });
+            }
+        } catch (error) {
+            console.error('(LE02) Failed to authenticate user');
+            console.error(error.message);
+            this.setState({invalidLogin: true});
         }
-        return true;
     }
 
-    loginUser(): void {
-        this.props.firebase.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password)
-            .then((userCredential: any) => {
-                    const user = userCredential.user;
-                    console.log('(LS01) Successfully authenticated in user ' + user.email);
-                    if (!user.emailVerified) {
-                        console.error('(LE01) User email is not verified');
-                        this.setState({userVerified: false});
-                    } else {
-                        Api.setFirebaseId(user.uid);
-                        Api.refreshSession();
-
-                        this.setState({
-                            userVerified: true,
-                            auth: true,
-                            password: ''
-                        });
-                    }
-                }
-            )
-            .catch((error: any) => {
-                console.error('(LE02) Failed to authenticate user');
-                console.error(error.message);
-                this.setState({invalidLogin: true});
-            });
-    }
-
-    createUser(): void {
+    async createUser() {
         if (!this.validateAllFields()) {
             console.error('(SUE01) Invalid sign-up fields');
             return;
         }
 
-        // TODO: Add Username validation
+        try {
+            const username = this.state.username.trim();
+            const email = this.state.email.trim();
 
-        this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email.trim(), this.state.password).then((userCredential: any) => {
-                this.setState({userVerified: false});
-                const user = userCredential.user;
-                if (user) {
-                    const userProfile = {
-                        uid: user.uid,
-                        email: this.state.email.trim(),
-                        fname: this.state.fname.trim(),
-                        lname: this.state.lname.trim(),
-                        username: this.state.username.trim()
-                    };
+            const usernameResponse = await Api.checkUserStatus(username, email);
+            const existingUsername = usernameResponse.data.ExistingUsername;
+            const existingEmail = usernameResponse.data.ExistingEmail;
 
-                    // Update the user's display name in Firebase
-                    user.updateProfile({
-                        displayName: userProfile.fname
-                    }).then(() => {
-                        console.log('(SUS01) Successfully updated display name');
-                        return user.sendEmailVerification();
-                    }).then(() => {
-                        console.log('(SUS02) Successfully sent verification email');
-                        this.setState({emailSent: true});
-                    }).catch((error: any) => {
-                        console.error('(SUE02) Failed to update display name and send verification email');
-                        console.error(error);
-                    });
-
-                    // Populate the user's profile in the Firestore
-                    this.props.firebase.firestore().collection(DbConstants.USERS)
-                        .doc(user.uid)
-                        .collection(DbConstants.PROFILE)
-                        .add(userProfile)
-                        .then((docRef: any) => {
-                            console.log('(SUS03) Successfully created user profile');
-                        })
-                        .catch((error: any) => {
-                            console.error('(SUE03) Failed to create profile');
-                        });
-                }
+            if (existingUsername || existingEmail) {
+                this.setState({
+                    duplicateUsername: existingUsername,
+                    duplicateEmail: existingEmail
+                });
+                return;
+            } else if (this.state.duplicateUsername) {
+                this.setState({
+                    duplicateUsername: false,
+                    duplicateEmail: false
+                });
             }
-        );
+
+
+            const userCredential = await this.props.firebase.auth().createUserWithEmailAndPassword(this.state.email.trim(), this.state.password);
+            this.setState({userVerified: false});
+            const user = userCredential.user;
+            if (!user) {
+                console.error('(SUE05) Something went wrong creating new user');
+                return;
+            }
+
+            const userProfile = {
+                FirstName: this.state.fname.trim(),
+                LastName: this.state.lname.trim(),
+                Email: email,
+                Username: username,
+                FirebaseUUID: user.uid
+            };
+
+            // Update the user's display name in Firebase
+            user.updateProfile({
+                displayName: userProfile.FirstName
+            }).then(() => {
+                console.log('(SUS01) Successfully updated display name');
+                return user.sendEmailVerification();
+            }).then(() => {
+                console.log('(SUS02) Successfully sent verification email');
+                this.setState({emailSent: true});
+            }).catch((error: any) => {
+                console.error('(SUE02) Failed to update display name and send verification email');
+                console.error(error);
+            });
+
+            // Populate the user's profile in the Firestore
+            const response = await Api.createUser(userProfile);
+            if (response.status === 201) {
+                console.log('(SUE03) Successfully created new user:', userProfile.Username);
+            } else {
+                console.error('(SUS04) Non-201 response when creating new user');
+            }
+        } catch (error) {
+            console.error('(SUE04) Error occurred when creating new user');
+            console.error(error);
+        }
     }
 
-    handleSubmitClick(event: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLElement>) {
+    async handleSubmitClick(event: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLElement>) {
         // TODO:??
         event.preventDefault();
         if (event.currentTarget.id === 'submit-login') {
-            this.loginUser();
+            await this.loginUser();
         } else {
-            this.createUser();
+            await this.createUser();
         }
     }
 
@@ -278,10 +301,10 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
         }
     }
 
-    handleKeyPress(event: React.KeyboardEvent) {
+    async handleKeyPress(event: React.KeyboardEvent) {
         if (event.keyCode === 13) {
             // Submit the login form when the 'enter' key is pressed on the input field
-            this.loginUser();
+            await this.loginUser();
         }
     }
 
@@ -330,13 +353,13 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                                     onChange={this.handleInputChange}/>
                         <InputField className={'login-input'} type={'username'} autocomplete={'username'} name={'username'} placeholder={'username'}
                                     value={this.state.username}
-                                    isInvalid={this.state.invalidUsername}
-                                    invalidText={this.textInvalidUsername}
+                                    isInvalid={this.state.invalidUsername || this.state.duplicateUsername}
+                                    invalidText={this.state.invalidUsername ? this.textInvalidUsername : this.textDuplicateUsername}
                                     onChange={this.handleInputChange}/>
                         <InputField className={'login-input'} type={'email'} autocomplete={'email'} name={'email'} placeholder={'email'}
                                     value={this.state.email}
-                                    isInvalid={this.state.invalidEmail}
-                                    invalidText={this.textInvalidEmail}
+                                    isInvalid={this.state.invalidEmail || this.state.duplicateEmail}
+                                    invalidText={this.state.invalidEmail ? this.textInvalidEmail : this.textDuplicateEmail}
                                     onChange={this.handleInputChange}/>
                         <InputField className={'login-input'} type={'password'} autocomplete={'new-password'} name={'password'} placeholder={'password'}
                                     value={this.state.password}
@@ -347,7 +370,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                     <div className={'login-btn-container'}>
                         <button id={'submit-register'} className={'login-submit'} onClick={this.handleSubmitClick}>register</button>
                     </div>
-                    {this.state.emailSent && <p>A verification email has been sent!</p>}
+                    {this.state.emailSent && <p className={'verification'}>A verification email has been sent!</p>}
                 </div>
             );
         }

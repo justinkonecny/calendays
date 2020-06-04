@@ -8,6 +8,7 @@ import {NetworkGroup} from '../../data/NetworkGroup';
 import {Pages} from "../../data/Pages";
 import {NetworkEvent} from '../../data/NetworkEvent';
 import {Profile} from '../profile/Profile';
+import {Redirect} from 'react-router';
 
 const UserPages = {  // The main tabs that a user can view; the value is the 'id' of the tab <button>
     CALENDAR: 'my-calendar',
@@ -27,6 +28,7 @@ interface UserProps {
 
 interface UserState {
     currentTab: string;
+    signedOut: boolean
 }
 
 export class User extends Component<UserProps, UserState> {
@@ -34,7 +36,8 @@ export class User extends Component<UserProps, UserState> {
         super(props);
 
         this.state = {
-            currentTab: UserPages.CALENDAR  // The active tab selected by the user (this is the starting tab)
+            currentTab: UserPages.CALENDAR,  // The active tab selected by the user (this is the starting tab)
+            signedOut: false
         };
 
         this.setActiveTab = this.setActiveTab.bind(this);
@@ -59,13 +62,18 @@ export class User extends Component<UserProps, UserState> {
 
     signOut() {
         this.props.firebase.auth().signOut().then(() => {
-            console.log('Successfully signed out');
+            this.setState({signedOut: true});
+            console.log('(US01) Successfully signed out');
         }).catch((error: any) => {
-            console.error('Failed to sign out!');
+            console.error('(UE01) Failed to sign out!');
         })
     }
 
     render() {
+        if (this.state.signedOut) {
+            return (<Redirect to={'/login'}/>)
+        }
+
         let currentPage = (<h3>Loading...</h3>);
         if (this.state.currentTab === UserPages.CALENDAR) {
             currentPage = (<Calendar userProfile={this.props.userProfile}

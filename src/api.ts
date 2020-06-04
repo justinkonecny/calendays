@@ -22,6 +22,10 @@ export class Api {
         return response;
     }
 
+    static async logout() {
+
+    }
+
     static async queryUserNetworks() {
         return await Api.queryEndpoint('networks');
     }
@@ -34,12 +38,20 @@ export class Api {
         return await Api.queryEndpoint('users');
     }
 
-    static async postUserEvent(event: any) {
+    static async createUserEvent(event: any) {
         return await Api.postBody('events', event);
     }
 
-    static async postUserNetwork(network: any) {
+    static async createUserNetwork(network: any) {
         return await Api.postBody('networks', network);
+    }
+
+    static async createUser(user: any) {
+        return await Api.postBody('signup', user);
+    }
+
+    static async checkUserStatus(username: string, email: string) {
+        return await Api.postBody('status/user', {Username: username, Email: email});
     }
 
     private static async postBody(endpoint: string, body: any) {

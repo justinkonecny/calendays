@@ -50,9 +50,29 @@ $widthTime: 50px;
     padding: $spacingDateTB $spacingDateLR;
     border-bottom: 1px solid var(--dark-gray);
     margin: 0;
+
+    .net-name {
+      width: calc(100% - 20px);
+    }
   }
+}
+
+.picker-color {
+  width: 10px;
+  height: 10px;
+  margin-left: 10px;
+  border-radius: 3px;
 }
 
 .picker-time {
   width: $widthTime;
+}
+
+.container-top {
+  position: relative;
+
+  .picker-top {
+    position: absolute;
+    bottom: 35px;
+  }
 }

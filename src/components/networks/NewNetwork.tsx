@@ -82,7 +82,7 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
             })
         };
 
-        const response = await Api.postUserNetwork(newNetwork);
+        const response = await Api.createUserNetwork(newNetwork);
         if (response.status === 200 && response.data) {
             const n = response.data;
             const members = n.Members.map((m: any) => {
