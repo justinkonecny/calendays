@@ -22,6 +22,9 @@ export class Profile extends Component<ProfileProps, {}> {
 
                 <h3>email</h3>
                 <h4>{userProfile.getEmail()}</h4>
+
+                <h3>username</h3>
+                <h4>{userProfile.getUsername()}</h4>
             </div>
         );
     }

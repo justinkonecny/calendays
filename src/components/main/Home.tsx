@@ -64,7 +64,7 @@ export class Home extends Component<HomeProps, HomeState> {
             if (responseNetworks.status === 200 && responseNetworks.data) {
                 const networks = responseNetworks.data.map((n: any) => {
                     const members = n.Members.map((m: any) => {
-                        return new NetworkUser(m.ID, m.FirstName, m.LastName, m.Email);
+                        return new NetworkUser(m.ID, m.FirstName, m.LastName, m.Email, m.Username);
                     });
                     return new NetworkGroup(n.ID, n.Name, n.OwnerId, n.ColorHex, members);
                 });
@@ -94,7 +94,7 @@ export class Home extends Component<HomeProps, HomeState> {
         if (responseUser.status === 200 && responseUser.data) {
             const u = responseUser.data;
             this.setState({
-                userProfile: new UserProfile(u.ID, u.FirstName, u.LastName, u.Email)
+                userProfile: new UserProfile(u.ID, u.FirstName, u.LastName, u.Email, u.Username)
             });
             console.log("(HCM03) Successfully found user profile!");
         } else {

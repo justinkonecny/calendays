@@ -17,7 +17,7 @@ interface NewNetworkProps {
 interface NewNetworkState {
     netName: string;
     netColor: string;
-    memberEmail: string;
+    memberUsername: string;
     members: string[];
 }
 
@@ -28,7 +28,7 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
         this.state = {
             netName: '',
             netColor: '#F48A84',
-            memberEmail: '',
+            memberUsername: '',
             members: []
         };
 
@@ -72,21 +72,22 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
             OwnerId: null,
             ColorHex: this.state.netColor,
             Name: this.state.netName,
-            Members: this.state.members.map((email) => {
+            Members: this.state.members.map((username) => {
                 return {
                     ID: null,
                     FirstName: null,
                     LastName: null,
-                    Email: email
+                    Email: null,
+                    Username: username
                 }
             })
         };
 
         const response = await Api.createUserNetwork(newNetwork);
-        if (response.status === 200 && response.data) {
+        if (response.status === 201 && response.data) {
             const n = response.data;
             const members = n.Members.map((m: any) => {
-                return new NetworkUser(m.ID, m.FirstName, m.LastName, m.Email);
+                return new NetworkUser(m.ID, m.FirstName, m.LastName, m.Email, m.Username);
             });
             const networkGroup = new NetworkGroup(n.ID, n.Name, n.OwnerId, n.ColorHex, members);
             console.log(`(NNS01): Successfully created new network '${n.Name}'!`);
@@ -155,10 +156,9 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
     }
 
     addMemberEmail() {
-        // TODO: Add email validation
-        const members = [...this.state.members, this.state.memberEmail];
+        const members = [...this.state.members, this.state.memberUsername];
         this.setState({
-            memberEmail: '',
+            memberUsername: '',
             members
         });
     }
@@ -174,7 +174,7 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
 
                 <h3>members</h3>
                 <div className={'member-add'}>
-                    <InputField type={'email'} name={'memberEmail'} placeholder={'email'} value={this.state.memberEmail} onChange={this.handleInputChange}/>
+                    <InputField type={'text'} name={'memberUsername'} placeholder={'username'} value={this.state.memberUsername} onChange={this.handleInputChange}/>
                     <button className={'btn-secondary'} onClick={this.addMemberEmail}>add</button>
                 </div>
 
@@ -182,7 +182,7 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
                 <div className={'member-list'}>
                     {this.state.members.length > 0
                         ? this.state.members.map((m) => {
-                            return (<p>{m}</p>)
+                            return (<p key={m}>{m}</p>)
                         })
                         : (<p>no other members yet!</p>)}
                 </div>
