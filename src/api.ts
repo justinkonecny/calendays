@@ -1,10 +1,12 @@
-const axios = require('axios').default;
-axios.defaults.withCredentials = true;
+const axios_full = require('axios').default;
+const axiosInstance = axios_full.create({
+    withCredentials: true,
+});
 
 
 export class Api {
-    private static url: string = 'http://localhost:8081';
-    // private static url: string = 'http://18.232.88.251:8081';
+    // private static url: string = 'http://localhost:8080';
+    private static url: string = 'https://api.jkonecny.com:8443';
     private static lastRefresh: number = 0;
     private static firebaseId: string = '';
 
@@ -18,9 +20,9 @@ export class Api {
     }
 
     static async refreshSession() {
-        const response = await axios.post(`${Api.url}/login`, {}, {
+        const response = await axiosInstance.post(`${Api.url}/login`, {}, {
             headers: {
-                FirebaseUUID: Api.firebaseId
+                FirebaseUUID: Api.firebaseId,
             }
         });
         Api.lastRefresh = new Date().getTime().valueOf();
@@ -60,16 +62,16 @@ export class Api {
     }
 
     private static async postBody(endpoint: string, body: any) {
-        return await axios.post(`${Api.url}/${endpoint}`, body);
+        return await axiosInstance.post(`${Api.url}/${endpoint}`, body);
     }
 
     private static async queryEndpoint(endpoint: string) {
-        let response = await axios.get(`${Api.url}/${endpoint}`).catch((error: any) => {
+        let response = await axiosInstance.get(`${Api.url}/${endpoint}`).catch((error: any) => {
             return error.response;
         });
         if (response.status === 401 && Api.firebaseId !== '') {
             await Api.refreshSession();
-            response = await axios.get(`${Api.url}/${endpoint}`);
+            response = await axiosInstance.get(`${Api.url}/${endpoint}`);
         }
         return response;
     }
