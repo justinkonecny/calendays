@@ -27,6 +27,12 @@ export class DropdownNetwork extends Component<DropdownNetworkProps, DropdownNet
         }
     }
 
+    componentDidMount() {
+        if (this.props.networkList.length > 0) {
+            this.props.setEventNetwork(this.props.networkList[0]);
+        }
+    }
+
     clickDropdown() {
         this.setState({showPicker: !this.state.showPicker});
     }
