@@ -94,7 +94,7 @@ export class Home extends Component<HomeProps, HomeState> {
         if (responseUser.status === 200 && responseUser.data) {
             const u = responseUser.data;
             this.setState({
-                userProfile: new UserProfile(u.ID, u.FirstName, u.LastName, u.Email, u.Username)
+                userProfile: new UserProfile(u.ID, u.FirstName, u.LastName, u.Email, u.Username, u.SubscriptionStatusID)
             });
             console.log("(HCM03) Successfully found user profile!");
         } else {
