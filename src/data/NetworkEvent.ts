@@ -40,4 +40,8 @@ export class NetworkEvent {
     public getNetworkId() {
         return this.networkId;
     }
+
+    public getMessage() {
+        return this.message;
+    }
 }
