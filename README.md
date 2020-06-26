@@ -9,9 +9,11 @@ Web application used for shared event planning. Uses Firebase for user authentic
 * `index.css`: css for the index page
 * `index.tsx`: TypeScript for the index page; initializes and configures Firebase for the application; renders the main `App` component in a `BrowserRouter`
 * `MainRoutes.tsx`: configures the routes for the application
-  * `https://calendays.jkonecny.com/`->`Login`
-  * `https://calendays.jkonecny.com/home`->`Home`
-  * `https://calendays.jkonecny.com/reset`->`Reset`
+  * `https://calendays.jkonecny.com/`->`Login` (login screen)
+  * `https://calendays.jkonecny.com/home`->`Home` (shared calendar)
+  * `https://calendays.jkonecny.com/user`->`Home` (user calendar, user profile)
+  * `https://calendays.jkonecny.com/notifications`->`Home` (event notifications)
+  * `https://calendays.jkonecny.com/reset`->`Reset` (password reset)
 ### src/components/calendar/...
 * `Calendar.tsx`: component that given user events, renders the main calendar for the current week of the month; additional weeks are rendered as the user changes the displayed week
 * `CalendarDay.js`: component used by `Calendar`; represents one 'day' in week (one calendar column); renders given list of events at their specified times
@@ -19,6 +21,7 @@ Web application used for shared event planning. Uses Firebase for user authentic
 ### src/components/common/...
 * `DropdownDate.tsx`: dropdown component used for selecting from a list of date
 * `DropdownTime.tsx`
+* `DropdownNetwork.tsx`
 * `InputField.tsx`
 ### src/components/main/...
 * `App.tsx`
@@ -26,6 +29,7 @@ Web application used for shared event planning. Uses Firebase for user authentic
 * `Home.tsx`
 * `Login.tsx`
 * `NavBar.tsx`
+* `Notifications.tsx`
 * `Reset.tsx`
 * `User.tsx`
 ### src/components/networks/...
@@ -35,9 +39,10 @@ Web application used for shared event planning. Uses Firebase for user authentic
 ### src/components/profile/...
 * `Profile.tsx`
 ### src/data/...
-* `dataStructures.json`
-* `DbConstants.ts`
+* `NetworkEvent.ts`
 * `NetworkGroup.ts`
+* `NetworkUser.ts`
+* `Pages.ts`
 * `UserProfile.ts`
 
 
