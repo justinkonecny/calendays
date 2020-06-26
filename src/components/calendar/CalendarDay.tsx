@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ColumnPos, TimeOfDay, WeekDayNames} from '../main/Constants';
+import {ColumnPos, WeekDayNames} from '../main/Constants';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {NetworkEvent} from '../../data/NetworkEvent';
 

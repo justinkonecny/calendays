@@ -1,4 +1,3 @@
-import {UserProfile} from './UserProfile';
 import {NetworkUser} from './NetworkUser';
 
 export class NetworkGroup {

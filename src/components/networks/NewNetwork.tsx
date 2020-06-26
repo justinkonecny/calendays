@@ -3,12 +3,10 @@ import '../../css/networks/NewNetwork.scss';
 import InputField from '../common/InputField';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {UserProfile} from '../../data/UserProfile';
-import * as firebase from 'firebase';
 import {Api} from '../../api';
 import {NetworkUser} from '../../data/NetworkUser';
 
 interface NewNetworkProps {
-    db: firebase.firestore.Firestore;
     userProfile: UserProfile;
     handleFailure: (error: any) => void;
     handleSuccess: (networkGroup: NetworkGroup) => void;

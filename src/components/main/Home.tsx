@@ -13,6 +13,7 @@ import {Api} from '../../api';
 import {NetworkEvent} from '../../data/NetworkEvent';
 import {NetworkUser} from '../../data/NetworkUser';
 import {AxiosResponse} from 'axios';
+import {Notifications} from './Notifications';
 
 interface HomeProps {
     firebase: any;
@@ -27,13 +28,11 @@ interface HomeState {
 
 export class Home extends Component<HomeProps, HomeState> {
     private readonly user: firebase.User;
-    private readonly db: firebase.firestore.Firestore;
 
     constructor(props: HomeProps) {
         super(props);
 
         this.user = this.props.firebase.auth().currentUser;  // The authenticated user; null if none is authenticated
-        this.db = this.props.firebase.firestore();  // The Firebase Firestore (used as user database)
 
         this.state = {
             currentPage: Pages.HOME,  // The active page selected by the use
@@ -253,6 +252,8 @@ export class Home extends Component<HomeProps, HomeState> {
             this.setState({currentPage: Pages.USER});
         } else if (id === Pages.HOME) {
             this.setState({currentPage: Pages.HOME});
+        } else if (id === Pages.NOTIFICATIONS) {
+            this.setState({currentPage: Pages.NOTIFICATIONS});
         }
     }
 
@@ -277,7 +278,6 @@ export class Home extends Component<HomeProps, HomeState> {
         if (this.state.currentPage === Pages.HOME) {
             currentPage = (<Calendar userProfile={this.state.userProfile}
                                      events={this.state.events}
-                                     db={this.db}
                                      handleNewEvent={this.handleNewEvent}
                                      page={Pages.HOME}
                                      networkGroups={this.state.networkGroups}/>);
@@ -285,9 +285,12 @@ export class Home extends Component<HomeProps, HomeState> {
             currentPage = (<User userProfile={this.state.userProfile}
                                  firebase={this.props.firebase}
                                  networkGroups={this.state.networkGroups}
-                                 events={this.state.events} db={this.db}
+                                 events={this.state.events}
                                  handleNewEvent={this.handleNewEvent}
                                  onAddUserNetwork={this.onAddUserNetwork}/>);
+        } else if (this.state.currentPage === Pages.NOTIFICATIONS) {
+            currentPage = (<Notifications events={this.state.events}
+                                          networks={this.state.networkGroups}/>);
         }
 
         return (

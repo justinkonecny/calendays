@@ -1,16 +1,14 @@
 import React, {Component} from 'react';
 import {NewEvent} from './NewEvent';
 import '../../css/calendar/Calendar.scss'
-import {CalendarDay} from './CalendayDay';
+import {CalendarDay} from './CalendarDay';
 import {ColumnPos, MonthNames} from '../main/Constants';
-import * as firebase from 'firebase/app';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {NetworkEvent} from '../../data/NetworkEvent';
 
 
 interface CalendarProps {
-    db: firebase.firestore.Firestore;
     handleNewEvent: (event: any) => void;
     userProfile: null | UserProfile;
     events: null | NetworkEvent[];
@@ -267,7 +265,6 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         return (
             <div className={'calendar-container-outer'}>
                 {this.state.showNewEvent && <NewEvent userProfile={this.props.userProfile}
-                                                      db={this.props.db}
                                                       handleSuccess={this.handleSuccess}
                                                       handleFailure={this.handleFailure}
                                                       monthLengths={this.monthLengths}

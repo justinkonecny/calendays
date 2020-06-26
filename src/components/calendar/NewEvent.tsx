@@ -1,19 +1,16 @@
 import React, {Component} from 'react';
 import '../../css/calendar/NewEvent.scss';
 import {TimeOfDay} from '../main/Constants';
-import {DbConstants} from '../../data/DbConstants';
 import InputField from '../common/InputField';
 import DropdownTime from '../common/DropdownTime';
 import {DropdownDate} from '../common/DropdownDate';
 import {UserProfile} from '../../data/UserProfile';
-import * as firebase from 'firebase/app';
 import {DropdownNetwork} from '../common/DropdownNetwork';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {NetworkEvent} from '../../data/NetworkEvent';
 import {Api} from '../../api';
 
 interface NewEventProps {
-    db: firebase.firestore.Firestore;
     monthLengths: number[];
     userProfile: null | UserProfile;
     handleFailure: (error: any) => void;

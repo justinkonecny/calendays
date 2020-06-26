@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import '../../css/main/User.scss';
 import {Calendar} from '../calendar/Calendar';
 import Networks from '../networks/Networks';
-import * as firebase from 'firebase';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {Pages} from "../../data/Pages";
@@ -18,7 +17,6 @@ const UserPages = {  // The main tabs that a user can view; the value is the 'id
 
 interface UserProps {
     firebase: any;
-    db: firebase.firestore.Firestore;
     userProfile: null | UserProfile;
     events: null | NetworkEvent[];
     networkGroups: NetworkGroup[];
@@ -78,14 +76,12 @@ export class User extends Component<UserProps, UserState> {
         if (this.state.currentTab === UserPages.CALENDAR) {
             currentPage = (<Calendar userProfile={this.props.userProfile}
                                      events={this.props.events}
-                                     db={this.props.db}
                                      handleNewEvent={this.props.handleNewEvent}
                                      page={Pages.USER}
                                      networkGroups={this.props.networkGroups}/>);
         } else if (this.state.currentTab === UserPages.NETWORKS) {
             currentPage = (<Networks userProfile={this.props.userProfile}
                                      networkGroups={this.props.networkGroups}
-                                     db={this.props.db}
                                      addNewNetwork={this.props.onAddUserNetwork}/>);
         } else if (this.state.currentTab === UserPages.PROFILE && this.props.userProfile) {
             currentPage = (<Profile userProfile={this.props.userProfile}/>);

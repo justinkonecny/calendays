@@ -1,0 +1,17 @@
+@import 'Constants';
+
+.event-notification {
+  padding: 14px;
+  border-style: solid;
+  border-width: 3px;
+  border-radius: 5px;
+  background-color: #fbfbfb;
+  margin: 10px;
+
+  .title {
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--light-blue);
+    margin: 10px;
+  }
+}

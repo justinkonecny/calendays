@@ -4,10 +4,8 @@ import '../../css/networks/Networks.scss'
 import {NewNetwork} from './NewNetwork';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {UserProfile} from '../../data/UserProfile';
-import * as firebase from 'firebase';
 
 interface NetworksProps {
-    db: firebase.firestore.Firestore;
     addNewNetwork: (networkGroup: NetworkGroup) => void;
     userProfile: null | UserProfile;
     networkGroups: NetworkGroup[];
@@ -59,7 +57,6 @@ class Networks extends Component<NetworksProps, NetworksState> {
         return (
             <div className={'networks-container-outer'}>
                 {this.state.showNewNetwork && <NewNetwork userProfile={userProfile}
-                                                          db={this.props.db}
                                                           handleSuccess={this.handleNewNetworkSuccess}
                                                           handleFailure={this.handleNewNetworkFailure}/>}
                 <div className={'network-groups'}>
