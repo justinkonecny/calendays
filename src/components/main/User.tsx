@@ -22,6 +22,7 @@ interface UserProps {
     networkGroups: NetworkGroup[];
     handleNewEvent: (event: any) => void;
     onAddUserNetwork: (networkGroup: NetworkGroup) => void;
+    personalNetworkId: number;
 }
 
 interface UserState {
@@ -78,7 +79,9 @@ export class User extends Component<UserProps, UserState> {
                                      events={this.props.events}
                                      handleNewEvent={this.props.handleNewEvent}
                                      page={Pages.USER}
-                                     networkGroups={this.props.networkGroups}/>);
+                                     networkGroups={this.props.networkGroups}
+                                     showSharedEvents={false}
+                                     personalNetworkId={this.props.personalNetworkId}/>);
         } else if (this.state.currentTab === UserPages.NETWORKS) {
             currentPage = (<Networks userProfile={this.props.userProfile}
                                      networkGroups={this.props.networkGroups}

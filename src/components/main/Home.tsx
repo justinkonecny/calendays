@@ -27,6 +27,7 @@ interface HomeState {
     networkGroups: NetworkGroup[];
     events: null | NetworkEvent[];
     loading: boolean;
+    personalNetworkId: number;
 }
 
 export class Home extends Component<HomeProps, HomeState> {
@@ -40,50 +41,17 @@ export class Home extends Component<HomeProps, HomeState> {
             currentPage: '',  // The active page selected by the user
             userProfile: null,  // (UserProfile): The current user's profile
             networkGroups: [],  // (List of NetworkGroup): the current user's networks,
-            events: null  // (List): the current user's events
+            events: null,  // (List): the current user's events
+            personalNetworkId: -1
         };
 
         this.processUserProfile = this.processUserProfile.bind(this);
+        this.processUserNetworks = this.processUserNetworks.bind(this);
+        this.processUserEvents = this.processUserEvents.bind(this);
         this.onAddUserNetwork = this.onAddUserNetwork.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.handleNewEvent = this.handleNewEvent.bind(this);
         this.loadUserInformation = this.loadUserInformation.bind(this);
-    }
-
-    async loadUserInformation() {
-        console.log("LOAD");
-        if (this.state.user) {
-            await Api.refreshSessionWithId(this.state.user.uid);
-            const responseNetworks = await Api.queryUserNetworks();
-            const responseEvents = await Api.queryUserEvents();
-
-            this.processUserProfile(await Api.queryUserProfile());
-
-            if (responseNetworks.status === 200 && responseNetworks.data) {
-                const networks = responseNetworks.data.map((n: any) => {
-                    const members = n.Members.map((m: any) => {
-                        return new NetworkUser(m.ID, m.FirstName, m.LastName, m.Email, m.Username);
-                    });
-                    return new NetworkGroup(n.ID, n.Name, n.OwnerId, n.ColorHex, members);
-                });
-                this.setState({networkGroups: networks});
-                console.log("(HCM01) Found", responseNetworks.data.length, "user networks!");
-            } else {
-                this.setState({networkGroups: []});
-                console.error("(HCM02) Error querying user networks:", responseNetworks.status);
-            }
-
-            if (responseEvents.status === 200 && responseEvents.data) {
-                const events = responseEvents.data.map((e: any) => {
-                    return new NetworkEvent(e.ID, e.Name, e.StartDate, e.EndDate, e.Location, e.Message, e.NetworkId)
-                });
-                this.setState({events: events});
-                console.log("(HCM03) Found", responseEvents.data.length, "user events!");
-            } else {
-                this.setState({events: []});
-                console.error("(HCM04) Error querying user events:", responseEvents.status);
-            }
-        }
     }
 
     async componentDidMount() {
@@ -94,6 +62,53 @@ export class Home extends Component<HomeProps, HomeState> {
             });
             this.loadUserInformation();
         }, 500);
+    }
+
+    async loadUserInformation() {
+        if (this.state.user) {
+            await Api.refreshSessionWithId(this.state.user.uid);
+
+            this.processUserNetworks(await Api.queryUserNetworks());
+            this.processUserEvents(await Api.queryUserEvents());
+            this.processUserProfile(await Api.queryUserProfile());
+        }
+    }
+
+    processUserNetworks(responseNetworks: AxiosResponse) {
+        if (responseNetworks.status === 200 && responseNetworks.data) {
+            let personalNetworkId = this.state.personalNetworkId;
+            const networks = responseNetworks.data.map((n: any) => {
+                if (n.Name === 'Personal') {
+                    personalNetworkId = n.ID;
+                }
+
+                const members = n.Members.map((m: any) => {
+                    return new NetworkUser(m.ID, m.FirstName, m.LastName, m.Email, m.Username);
+                });
+                return new NetworkGroup(n.ID, n.Name, n.OwnerId, n.ColorHex, members);
+            });
+            console.log("(HCM01) Found", responseNetworks.data.length, "user networks!");
+            this.setState({
+                networkGroups: networks,
+                personalNetworkId
+            });
+        } else {
+            this.setState({networkGroups: []});
+            console.error("(HCM02) Error querying user networks:", responseNetworks.status);
+        }
+    }
+
+    processUserEvents(responseEvents: AxiosResponse) {
+        if (responseEvents.status === 200 && responseEvents.data) {
+            const events = responseEvents.data.map((e: any) => {
+                return new NetworkEvent(e.ID, e.Name, e.StartDate, e.EndDate, e.Location, e.Message, e.NetworkId)
+            });
+            this.setState({events: events});
+            console.log("(HCM03) Found", responseEvents.data.length, "user events!");
+        } else {
+            this.setState({events: []});
+            console.error("(HCM04) Error querying user events:", responseEvents.status);
+        }
     }
 
     processUserProfile(responseUser: AxiosResponse) {
@@ -160,14 +175,17 @@ export class Home extends Component<HomeProps, HomeState> {
                                      events={this.state.events}
                                      handleNewEvent={this.handleNewEvent}
                                      page={Pages.HOME}
-                                     networkGroups={this.state.networkGroups}/>);
+                                     networkGroups={this.state.networkGroups}
+                                     showSharedEvents={true}
+                                     personalNetworkId={this.state.personalNetworkId}/>);
         } else if (this.props.page === Pages.USER) {
             currentPage = (<User userProfile={this.state.userProfile}
                                  firebase={this.props.firebase}
                                  networkGroups={this.state.networkGroups}
                                  events={this.state.events}
                                  handleNewEvent={this.handleNewEvent}
-                                 onAddUserNetwork={this.onAddUserNetwork}/>);
+                                 onAddUserNetwork={this.onAddUserNetwork}
+                                 personalNetworkId={this.state.personalNetworkId}/>);
         } else if (this.props.page === Pages.NOTIFICATIONS) {
             currentPage = (<Notifications events={this.state.events}
                                           networks={this.state.networkGroups}/>);

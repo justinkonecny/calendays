@@ -78,49 +78,22 @@ export class CalendarDay {
                     isToday={this.isToday}
                     displayName={this.displayName}
                     dateDay={this.dateDay}
-                // name={this.name}
             />
         );
     }
 
-    getDayComponent(showNewEvent: boolean) {
+    getDayComponent(personalNetworkId: number, showSharedEvents: boolean) {
         return (
             <Day key={this.dateDay}
                  columnPos={this.columnPos}
-                // showNewEvent={showNewEvent}
                  timesCount={this.timesCount}
                  events={this.events}
                  networkGroups={this.networkGroups}
-                // name={this.name}
+                 personalNetworkId={personalNetworkId}
+                 showSharedEvents={showSharedEvents}
             />
         );
     }
-
-    getComponent(showNewEvent: boolean) {
-        // TODO: Fix ids and keys
-        const columnClass = this.columnPos == null ? 'calendar-column' : 'calendar-column ' + this.columnPos;
-        return (
-            <div className={columnClass} id={this.name} key={this.name}>
-                <Header key={this.dateDay}
-                        columnPos={this.columnPos}
-                        showNewEvent={showNewEvent}
-                        isToday={this.isToday}
-                        displayName={this.displayName}
-                        dateDay={this.dateDay}
-                    // name={this.name}
-                />
-                <Day key={this.dateDay}
-                     columnPos={this.columnPos}
-                    // showNewEvent={showNewEvent}
-                     timesCount={this.timesCount}
-                     events={this.events}
-                     networkGroups={this.networkGroups}
-                    // name={this.name}
-                />
-            </div>
-        );
-    }
-
 }
 
 interface HeaderProps {
@@ -157,10 +130,12 @@ class Header extends Component<HeaderProps, {}> {
 }
 
 interface DayProps {
-    events: null | any[];
+    events: null | NetworkEvent[];
     timesCount: number;
     columnPos: string;
     networkGroups: NetworkGroup[] | null;
+    personalNetworkId: number;
+    showSharedEvents: boolean;
 }
 
 class Day extends Component<DayProps, {}> {
@@ -173,7 +148,6 @@ class Day extends Component<DayProps, {}> {
         // TODO: Handle events that are on different days
 
         const durationHours = (event.getEndDate().getTime() - event.getStartDate().getTime()) / 1000.0 / 60.0 / 60.0;
-
 
         let color = '#f48a84';
         if (this.props.networkGroups !== null) {
@@ -204,12 +178,14 @@ class Day extends Component<DayProps, {}> {
     }
 
     render() {
-
         let renderedEvents: any[] = [];
         if (this.props.networkGroups !== null && this.props.events !== null) {
-            renderedEvents = this.props.events.map(event => {
-                return this.getRenderedEvent(event);
-            });
+            for (const event of this.props.events) {
+                if (!this.props.showSharedEvents && event.getNetworkId() !== this.props.personalNetworkId) {
+                    continue;
+                }
+                renderedEvents.push(this.getRenderedEvent(event));
+            }
         }
 
         const rowHeightStyle = {height: 'calc(' + (100 / this.props.timesCount) + '% - 2px)'};

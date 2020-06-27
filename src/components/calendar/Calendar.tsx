@@ -12,8 +12,10 @@ interface CalendarProps {
     handleNewEvent: (event: any) => void;
     userProfile: null | UserProfile;
     events: null | NetworkEvent[];
-    page: string;
     networkGroups: NetworkGroup[];
+    page: string;
+    showSharedEvents: boolean;
+    personalNetworkId: number;
 }
 
 interface CalendarState {
@@ -258,7 +260,7 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         const columnBodies: JSX.Element[] = [];
         const columnHeaders = this.state.dayClasses.slice(this.state.displayedWeek, this.state.displayedWeek + 7).map(day => {
             day.setTimesCount(12);
-            columnBodies.push(day.getDayComponent(this.state.showNewEvent));
+            columnBodies.push(day.getDayComponent(this.props.personalNetworkId, this.props.showSharedEvents));
             return day.getHeaderComponent(this.state.showNewEvent);
         });
 

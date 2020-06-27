@@ -1,5 +1,5 @@
-const url = 'http://localhost:8080';
-// const url = 'https://api.jkonecny.com:8443';
+// const url = 'http://localhost:8080';
+const url = 'https://api.jkonecny.com:8443';
 
 const axios_full = require('axios').default;
 const axiosInstance = axios_full.create({
