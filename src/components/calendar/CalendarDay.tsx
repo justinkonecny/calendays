@@ -146,14 +146,15 @@ class Day extends Component<DayProps, {}> {
 
     getRenderedEvent(event: NetworkEvent) {
         // TODO: Handle events that are on different days
-
         const durationHours = (event.getEndDate().getTime() - event.getStartDate().getTime()) / 1000.0 / 60.0 / 60.0;
 
         let color = '#f48a84';
         if (this.props.networkGroups !== null) {
             for (const group of this.props.networkGroups) {
                 if (group.getId() === event.getNetworkId()) {
-                    color = group.getColorHex();
+                    if (group.getColorHex()) {
+                        color = group.getColorHex();
+                    }
                     break;
                 }
             }

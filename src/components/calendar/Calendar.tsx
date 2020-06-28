@@ -109,7 +109,7 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         if (prevProps.events == null && this.props.events != null) {
             this.setState({events: this.props.events.slice()});
         } else if (prevState.events == null && this.state.events != null) {
-            this.renderEventsForWeek(0);  // The 'events' prop is null until the Firestore query returns
+            this.renderEventsForWeek(0);  // The 'events' prop is null until the query returns
         }
     }
 
@@ -189,27 +189,27 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
     }
 
     renderEventsForWeek(displayedWeek: number) {
-        const startDate = this.state.displayedDate;
+        if (this.state.events === null) {
+            return;  // TODO Remove this statement?
+        }
         const events = this.state.events;
         const toRemove = [];
 
-        if (events === null) {
-            return;  // TODO Remove this statement?
-        }
+        const weekStartDate = this.state.displayedDate;
+        weekStartDate.setHours(0, 0, 0, 0);
+
+        const weekEndDate = new Date(weekStartDate);
+        weekEndDate.setDate(weekStartDate.getDate() + 7);
 
         for (let i = 0; i < events.length; i++) {
             const event: NetworkEvent = events[i];
-            const date = event.getStartDate();
 
-            if (date.getFullYear() === startDate.getFullYear()
-                && date.getMonth() === startDate.getMonth()
-                && date.getDate() >= startDate.getDate()
-                && date.getDate() <= startDate.getDate() + 7) {
-
+            if (event.getStartDate() < weekEndDate
+                && event.getStartDate() >= weekStartDate) {
                 // Match has been found
                 toRemove.push(i);  // Add this event's index to the list to remove the event
 
-                const eventDayOfWeek = date.getDay();
+                const eventDayOfWeek = event.getStartDate().getDay();
                 const eventIndex = eventDayOfWeek + displayedWeek;
 
                 this.state.dayClasses[eventIndex].renderEvent(event);

@@ -49,7 +49,13 @@ export class Notifications extends Component<NotificationsProps, NotificationsSt
         const eventDetails = new Map<Number, NetworkEvent>();
         const eventBlocks = [];
 
-        for (const event of this.props.events) {
+        const events = this.props.events;
+        events.sort((a, b) => {
+            // Sort the events so that they appear in upcoming Date order
+            return a.getStartDate().getTime() - b.getStartDate().getTime();
+        });
+
+        for (const event of events) {
             if (event.getStartDate() < new Date()) {
                 // Only show upcoming events
                 continue;

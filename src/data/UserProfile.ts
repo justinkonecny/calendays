@@ -45,13 +45,13 @@ export class UserProfile {
 
     getSubscriptionStatus(): string {
         if (this.subscriptionStatusId === 1) {
-            return 'Never Subscribed';
+            return 'never subscribed';
         } else if (this.subscriptionStatusId === 2) {
-            return 'Subscribed';
+            return 'subscribed';
         } else if (this.subscriptionStatusId === 3) {
-            return 'Unsubscribed';
+            return 'unsubscribed';
         } else {
-            return 'Unknown';
+            return 'unknown';
         }
     }
 }
