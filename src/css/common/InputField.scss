@@ -1,3 +1,5 @@
+@import '../main/Constants';
+
 .input-outer-container {
   text-align: left;
 
@@ -9,6 +11,10 @@
     .input-invalid {
       color: var(--error-red);
       border-color: var(--error-red);
+    }
+
+    .input-animated {
+      font-size: 15px;
     }
 
     .input-invalid::placeholder {
@@ -37,7 +43,7 @@
     .label-animated {
       transition: all 0.3s ease-in-out;
       font-size: 17px;
-      color: var(--dull-blue);
+      color: $colorTertiary;
       position: absolute;
       left: 5px;
       top: 5px;

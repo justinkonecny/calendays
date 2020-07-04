@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router';
 import InputField from '../common/InputField';
-import logo from '../../resources/logo.svg';
 import '../../css/main/Login.scss';
 import {Api} from '../../api';
+import {Pages} from '../../data/Pages';
 
 interface LoginProps {
     firebase: any;
+    page: string;
 }
 
 export class Login extends Component<LoginProps, {}> {
@@ -19,25 +20,11 @@ export class Login extends Component<LoginProps, {}> {
         }
 
         return (
-            <div className={'Login'}>
-                <div className={'container'}>
-                    <div className={'info-intro'}>
-                        <div className={'intro-logo-container'}>
-                            <img className={'intro-logo'} src={logo} alt={'logo'}/>
-                        </div>
-                        <h1 id={'greeting'}>hey! let's make plans!</h1>
-                        <p className={'intro-blurb'}>crazy busy and can’t remember your friends’ schedules? calendays is here to help!</p>
-                        <ul className={'intro-blurb bullets'}>
-                            <li>easily see when friends are free</li>
-                            <li>send invitations and polls</li>
-                            <li>connect Google calendar</li>
-                            {/* TODO: ADJUST WHAT THIS SAYS */}
-                        </ul>
-                    </div>
-                    <div className={'user-login'}>
-                        <h1 id={'calendays'}>calendays</h1>
-                        <LoginForm firebase={this.props.firebase}/>
-                    </div>
+            <div className={'login-container'}>
+                <div className={'user-login'}>
+                    <h1 id={'calendays'}>calendays</h1>
+                    <p className={'description'}>a calendar tool for groups of friends</p>
+                    <LoginForm firebase={this.props.firebase} page={this.props.page}/>
                 </div>
             </div>
         );
@@ -46,10 +33,10 @@ export class Login extends Component<LoginProps, {}> {
 
 interface LoginFormProps {
     firebase: any;
+    page: string;
 }
 
 interface LoginFormState {
-    isExistingUser: boolean;
     fname: string;
     lname: string;
     username: string;
@@ -81,7 +68,6 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
     constructor(props: LoginFormProps) {
         super(props);
         this.state = {
-            isExistingUser: true,  // Displays login tab or sign up tab
             fname: '',  // The user's first name
             lname: '',  // The user's last name
             username: '',  // The user's username
@@ -292,11 +278,11 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
 
     handleClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
-        if (event.currentTarget.id === 'login') {
-            this.setState({isExistingUser: true});
-        } else {
-            this.setState({isExistingUser: false});
-        }
+        // if (event.currentTarget.id === 'login') {
+        //     this.setState({isExistingUser: true});
+        // } else {
+        //     this.setState({isExistingUser: false});
+        // }
     }
 
     async handleKeyPress(event: React.KeyboardEvent) {
@@ -307,7 +293,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
     }
 
     getCurrentForm() {
-        if (this.state.isExistingUser) {
+        if (this.props.page === Pages.LOGIN) {
             return (
                 // The login form; displays fields for email and password
                 <div className={'login-form'}>
@@ -325,16 +311,18 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                                     onChange={this.handleInputChange}
                                     onKeyDown={this.handleKeyPress}/>
                     </form>
-                    <div className={'forgot-container'}>
-                        <a className={'forgot'} href={'/reset'}>forgot password?</a>
-                        {/* TODO: make this another page */}
-                    </div>
+                    <a className={'forgot'} href={'/reset'}>forgot password?</a>
                     <div className={'login-btn-container'}>
-                        <button id={'submit-login'} className={'login-submit'} onClick={this.handleSubmitClick}>login</button>
+                        <button id={'submit-login'} className={'btn-primary login-submit'} onClick={this.handleSubmitClick}>login</button>
+                    </div>
+                    <div className={'register-link-container'}>
+                        <p className={'body-1'}>don't have an account?</p>
+                        <a className={'register'} href={'/register'}>REGISTER</a>
                     </div>
                 </div>
             );
         } else {
+            // this.props.page === Pages.SIGN_UP
             return (
                 // The sign up form; displays fields for first name, last name, email and password
                 <div className={'login-form'} onSubmit={this.handleSubmitClick}>
@@ -381,18 +369,10 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
             );
         }
         // Adjusts the style of the 'login' and 'sign up' tabs based on currently selected tab
-        const loginClass = this.state.isExistingUser ? 'login-button btn-open login-active' : 'login-button btn-open';
-        const signUpClass = this.state.isExistingUser ? 'login-button btn-open' : 'login-button btn-open login-active';
 
         return (
-            <div className={'login-main'}>
-                <div>
-                    <button id={'login'} className={loginClass} onClick={this.handleClick}>login</button>
-                    <button id={'sign-up'} className={signUpClass} onClick={this.handleClick}>sign up</button>
-                </div>
-                <div>
-                    {this.getCurrentForm()}
-                </div>
+            <div className={'login-fields-container'}>
+                {this.getCurrentForm()}
             </div>
         );
     }
