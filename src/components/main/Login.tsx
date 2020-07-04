@@ -19,11 +19,14 @@ export class Login extends Component<LoginProps, {}> {
             );
         }
 
+        const minHeight = (this.props.page === Pages.LOGIN) ? '520px' : '670px';
+
         return (
             <div className={'login-container'}>
-                <div className={'user-login'}>
+                <div className={'user-login'} style={{minHeight}}>
                     <h1 id={'calendays'}>calendays</h1>
                     <p className={'description'}>a calendar tool for groups of friends</p>
+                    {this.props.page === Pages.SIGN_UP && <p className={'description-register'}>We'd like to get to know you. Fill out the fields below to get started.</p>}
                     <LoginForm firebase={this.props.firebase} page={this.props.page}/>
                 </div>
             </div>
@@ -89,7 +92,6 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
         this.handleSubmitClick = this.handleSubmitClick.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleClick = this.handleClick.bind(this);
         this.getCurrentForm = this.getCurrentForm.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.validateAllFields = this.validateAllFields.bind(this);
@@ -245,9 +247,8 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
     }
 
     async handleSubmitClick(event: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLElement>) {
-        // TODO:??
         event.preventDefault();
-        if (event.currentTarget.id === 'submit-login') {
+        if (this.props.page === Pages.LOGIN) {
             await this.loginUser();
         } else {
             await this.createUser();
@@ -274,15 +275,6 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                 [name]: value
             }
         });
-    }
-
-    handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-        event.preventDefault();
-        // if (event.currentTarget.id === 'login') {
-        //     this.setState({isExistingUser: true});
-        // } else {
-        //     this.setState({isExistingUser: false});
-        // }
     }
 
     async handleKeyPress(event: React.KeyboardEvent) {
@@ -321,8 +313,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                     </div>
                 </div>
             );
-        } else {
-            // this.props.page === Pages.SIGN_UP
+        } else {  // this.props.page === Pages.SIGN_UP
             return (
                 // The sign up form; displays fields for first name, last name, email and password
                 <div className={'login-form'} onSubmit={this.handleSubmitClick}>
@@ -354,7 +345,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                                     onChange={this.handleInputChange}/>
                     </form>
                     <div className={'login-btn-container'}>
-                        <button id={'submit-register'} className={'login-submit'} onClick={this.handleSubmitClick}>register</button>
+                        <button id={'submit-register'} className={'btn-primary login-submit'} onClick={this.handleSubmitClick}>register</button>
                     </div>
                     {this.state.emailSent && <p className={'verification'}>A verification email has been sent!</p>}
                 </div>
@@ -368,7 +359,6 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                 <Redirect to={'/home'}/>
             );
         }
-        // Adjusts the style of the 'login' and 'sign up' tabs based on currently selected tab
 
         return (
             <div className={'login-fields-container'}>
