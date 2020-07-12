@@ -1,5 +1,11 @@
+@import 'Constants.scss';
+
 h1 {
     margin: 0;
+    font-family: "Avenir Next", sans-serif;
+    font-weight: 600;
+    font-size: 36px;
+    color: $colorPrimary;
 }
 
 h2 { /* Title (Calendar Month) */
@@ -35,7 +41,7 @@ input {
     width: 100%;
     background: none;
     border: none;
-    color: var(--dull-blue);
+    color: $colorTertiary;
     border-bottom: 1px solid;
     font-size: 15px;
     padding: 8px 0;
@@ -43,13 +49,13 @@ input {
 }
 
 input::placeholder {
-    color: var(--dull-blue);
+    color: $colorTertiary;
 }
 
 input:focus {
     outline: none;
     color: var(--light-blue);
-    border-color: var(--dull-blue);
+    border-color: $colorTertiary;
 }
 
 input:focus::placeholder {
@@ -57,21 +63,21 @@ input:focus::placeholder {
 }
 
 button {
-    border-radius: 4px;
+    border-radius: 20px;
     font-size: 16px;
     font-weight: 500;
-    padding: 9px 32px;
+    padding: 9px 52px;
     border: none;
     box-shadow: none;
 }
 
 button:hover {
-    filter: brightness(120%);
+    filter: brightness(95%);
     cursor: pointer;
 }
 
 button:active {
-    filter: brightness(95%);
+    filter: brightness(90%);
 }
 
 button:focus {
@@ -103,10 +109,27 @@ p {
     margin: 0;
 }
 
+.body-1 {
+    font-weight: 300;
+    font-size: 16px;
+    color: $colorNeutral;
+}
+
+a {
+    color: $colorNeutral;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+a:hover {
+    filter: brightness(120%);
+}
+
 .btn-primary {
     margin: auto;
     color: white;
-    background-color: var(--blush);
+    background-color: $colorSecondary;
+    text-transform: uppercase;
 }
 
 .btn-secondary {
