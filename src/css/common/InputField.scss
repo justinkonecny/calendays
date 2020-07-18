@@ -15,6 +15,7 @@
 
     .input-animated {
       font-size: 15px;
+      padding: 12px 0 4px 0;
     }
 
     .input-invalid::placeholder {
@@ -24,7 +25,7 @@
     .input-border {
       position: absolute;
       height: 1px;
-      background: var(--light-blue);
+      background: $colorPrimary;
       transition: all 0.3s ease-in-out;
       width: 0;
       bottom: 0;
@@ -33,7 +34,7 @@
     }
 
     .input-animated:focus {
-      color: var(--light-blue);
+      color: $colorPrimary;
     }
 
     .input-animated:focus ~ .input-border {
@@ -41,17 +42,24 @@
     }
 
     .label-animated {
-      transition: all 0.3s ease-in-out;
-      font-size: 17px;
-      color: $colorTertiary;
+      transition: all 100ms linear;
+      font-size: 15px;
+      color: $colorTextNeutral;
       position: absolute;
-      left: 5px;
-      top: 5px;
+      left: 0;
+      bottom: 8px;
       pointer-events: none;
     }
 
+    .input-animated:valid ~ .label-animated {
+      color: $colorTextNeutral;
+      bottom: 26px;
+      font-size: 10px;
+    }
+
     .input-animated:focus ~ .label-animated {
-      top: -10px;
+      color: $colorPrimary;
+      bottom: 26px;
       font-size: 10px;
     }
   }
@@ -60,6 +68,6 @@
     font-size: 12px;
     margin: 0;
     padding: 0;
-    color: var(--error-red);
+    color: $colorError;
   }
 }

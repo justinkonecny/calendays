@@ -4,6 +4,7 @@ import InputField from '../common/InputField';
 import '../../css/main/Login.scss';
 import {Api} from '../../api';
 import {Pages} from '../../data/Pages';
+import {NavLink} from 'react-router-dom';
 
 interface LoginProps {
     firebase: any;
@@ -11,6 +12,17 @@ interface LoginProps {
 }
 
 export class Login extends Component<LoginProps, {}> {
+
+    constructor(props: LoginFormProps) {
+        super(props);
+
+        this.routeToLogin = this.routeToLogin.bind(this);
+    }
+
+    routeToLogin() {
+
+    }
+
     render() {
         const user = this.props.firebase.auth().currentUser;
         if (user) {
@@ -19,11 +31,12 @@ export class Login extends Component<LoginProps, {}> {
             );
         }
 
-        const minHeight = (this.props.page === Pages.LOGIN) ? '520px' : '670px';
+        const minHeight = (this.props.page === Pages.LOGIN) ? '500px' : '670px';
 
         return (
             <div className={'login-container'}>
                 <div className={'user-login'} style={{minHeight}}>
+                    {this.props.page === Pages.SIGN_UP && <NavLink className={'btn-back'} to={'/login'}/>}
                     <h1 id={'calendays'}>calendays</h1>
                     <p className={'description'}>a calendar tool for groups of friends</p>
                     {this.props.page === Pages.SIGN_UP && <p className={'description-register'}>We'd like to get to know you. Fill out the fields below to get started.</p>}
@@ -290,7 +303,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                 // The login form; displays fields for email and password
                 <div className={'login-form'}>
                     <form>
-                        <InputField className={'login-input'} type={'email'} autocomplete={'email'} name={'email'} placeholder={'email'}
+                        <InputField className={'login-input'} type={'text'} autocomplete={'email'} name={'email'} placeholder={'email'}
                                     value={this.state.email}
                                     isInvalid={!this.state.userVerified}
                                     invalidText={this.textUnverifiedEmail}
@@ -303,13 +316,13 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                                     onChange={this.handleInputChange}
                                     onKeyDown={this.handleKeyPress}/>
                     </form>
-                    <a className={'forgot'} href={'/reset'}>forgot password?</a>
+                    <NavLink className={'btn-link-small'} to={'/reset'}>forgot password?</NavLink>
                     <div className={'login-btn-container'}>
                         <button id={'submit-login'} className={'btn-primary login-submit'} onClick={this.handleSubmitClick}>login</button>
                     </div>
                     <div className={'register-link-container'}>
                         <p className={'body-1'}>don't have an account?</p>
-                        <a className={'register'} href={'/register'}>REGISTER</a>
+                        <NavLink className={'register'} to={'/register'}>REGISTER</NavLink>
                     </div>
                 </div>
             );
@@ -333,7 +346,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                                     isInvalid={this.state.invalidUsername || this.state.duplicateUsername}
                                     invalidText={this.state.invalidUsername ? this.textInvalidUsername : this.textDuplicateUsername}
                                     onChange={this.handleInputChange}/>
-                        <InputField className={'login-input'} type={'email'} autocomplete={'email'} name={'email'} placeholder={'email'}
+                        <InputField className={'login-input'} type={'text'} autocomplete={'email'} name={'email'} placeholder={'email'}
                                     value={this.state.email}
                                     isInvalid={this.state.invalidEmail || this.state.duplicateEmail}
                                     invalidText={this.state.invalidEmail ? this.textInvalidEmail : this.textDuplicateEmail}
