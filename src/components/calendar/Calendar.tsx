@@ -274,9 +274,9 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
                 <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
                     <div className={'calendar-header'}>
                         <button className={'left-arrow'} onClick={this.showPrevWeek}/>
-                        <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
+                        <h1 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
                             {MonthNames[this.state.displayedDate.getMonth()]} {this.state.displayedDate.getFullYear()}
-                        </h2>
+                        </h1>
                         <div className={'calendar-header-right'}>
                             <button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>new event</button>
                         </div>
