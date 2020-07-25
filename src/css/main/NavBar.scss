@@ -1,22 +1,72 @@
+@import 'Constants';
+
+
 .navbar {
   display: flex;
-  flex-direction: column;
-  width: 75px;
-  height: calc(100vh - 50px);
-  background-color: var(--pale-gray);
+  height: 64px;
+  width: 100vw;
+  background-color: $colorTertiary;
+  justify-content: space-between;
 
-  .nav-icon {
-    margin-top: 10px;
+  h1 {
+    color: white;
+    margin: auto 0;
+    padding: 0;
+  }
+
+  .nav-btn-container {
     display: flex;
+    margin-right: 32px;
+    justify-content: center;
 
-    .logo {
-      width: 35px;
-      margin: auto;
-    }
+    .nav-icon {
+      display: flex;
+      margin: auto 12px;
+      height: fit-content;
 
-    .btn-nav {
-      margin: auto;
-      padding: 5px;
+      .logo {
+        width: 32px;
+        margin: auto;
+      }
+
+      .btn-nav {
+        padding: 0;
+      }
     }
+  }
+
+  .container-logo {
+    display: flex;
+    margin-left: 24px;
+    margin-right: 16px;
+  }
+
+  .nav-today-container {
+    background-color: var(--light-blue);
+    height: 20%;
+  }
+
+  .nav-today-header {
+    background-color: var(--dull-blue);
+    height: 30px;
+    color: white;
+    display: flex;
+  }
+
+  .nav-month {
+    color: white;
+    font-size: 25px;
+    text-align: center;
+  }
+
+  .nav-day {
+    color: white;
+    font-size: 40px;
+    text-align: center;
+  }
+
+  .nav-date-container {
+    display: flex;
+    height: calc(100% - 30px);
   }
 }

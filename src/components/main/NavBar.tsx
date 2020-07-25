@@ -3,7 +3,7 @@ import '../../css/main/NavBar.scss';
 import home from "../../resources/home.svg";
 import notification from "../../resources/notification.svg";
 import profile from "../../resources/profile.svg";
-import {MonthNames} from "./Constants";
+import logo from '../../resources/logo.svg';
 
 interface NavBarProps {
     onClick: (event: React.MouseEvent<HTMLElement>) => void;
@@ -11,10 +11,17 @@ interface NavBarProps {
 
 export class NavBar extends Component<NavBarProps, {}> {
     render() {
-        const date = new Date();  // The current date to render at bottom of side nav
+        // const date = new Date();  // The current date to render at bottom of side nav
 
         return (
             <div className={'navbar'}>
+                <div className={'flex'}>
+                    <div className={'container-logo'}>
+                        <img className={'flex-centered'} src={logo} alt={'logo'}/>
+                    </div>
+                    <h1>calendays</h1>
+                </div>
+
                 <div className={'nav-btn-container'}>
                     <div className={'nav-icon'}>
                         <button id={'nav-btn-home'} className={'btn-invisible btn-nav'} onClick={this.props.onClick}>
@@ -32,25 +39,25 @@ export class NavBar extends Component<NavBarProps, {}> {
                         </button>
                     </div>
                 </div>
-                <div className={'nav-today-container'}>
+                {/*<div className={'nav-today-container'}>*/}
 
-                    <div className={'nav-today-header'}>
-                        <div className={'flex-centered'}>
-                            today
-                        </div>
-                    </div>
+                {/*    <div className={'nav-today-header'}>*/}
+                {/*        <div className={'flex-centered'}>*/}
+                {/*            today*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
 
-                    <div className={'nav-date-container'}>
-                        <div className={'flex-centered'}>
-                            <div className={'nav-month'}>
-                                {MonthNames[date.getMonth()].substring(0, 3).toUpperCase()}
-                            </div>
-                            <div className={'nav-day'}>
-                                {date.getDate()}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {/*    <div className={'nav-date-container'}>*/}
+                {/*        <div className={'flex-centered'}>*/}
+                {/*            <div className={'nav-month'}>*/}
+                {/*                {MonthNames[date.getMonth()].substring(0, 3).toUpperCase()}*/}
+                {/*            </div>*/}
+                {/*            <div className={'nav-day'}>*/}
+                {/*                {date.getDate()}*/}
+                {/*            </div>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
             </div>
         );
     }

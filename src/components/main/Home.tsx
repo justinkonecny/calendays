@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router';
 import '../../css/main/Home.scss';
-import logo from '../../resources/logo.svg';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {User} from './User';
@@ -192,20 +191,14 @@ export class Home extends Component<HomeProps, HomeState> {
         }
 
         return (
-            <div>
-                <div className={'header'}>
-                    <div className={'container-logo'}>
-                        <img className={'flex-centered'} src={logo} alt={'logo'}/>
-                    </div>
-                    <h1 id={'title'}>calendays</h1>
-                </div>
+            <>
+                <NavBar onClick={this.handlePageChange}/>
                 <div className={'page'}>
-                    <NavBar onClick={this.handlePageChange}/>
                     <div className={'contents'}>
                         {currentPage}
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }
