@@ -265,33 +265,42 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         });
 
         return (
-            <div className={'calendar-container-outer'}>
-                {this.state.showNewEvent && <NewEvent userProfile={this.props.userProfile}
-                                                      handleSuccess={this.handleSuccess}
-                                                      handleFailure={this.handleFailure}
-                                                      monthLengths={this.monthLengths}
-                                                      networkGroups={this.props.networkGroups}/>}
-                <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
-                    <div className={'calendar-header'}>
-                        <button className={'left-arrow'} onClick={this.showPrevWeek}/>
-                        <h1 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
-                            {MonthNames[this.state.displayedDate.getMonth()]} {this.state.displayedDate.getFullYear()}
-                        </h1>
-                        <div className={'calendar-header-right'}>
-                            <button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>new event</button>
-                        </div>
-                        <button className={'right-arrow'} onClick={this.showNextWeek}/>
+            <div className={'cal-container-outer'}>
+                <div className={'actions-container'}>
+                    <div className={'cal-view-btns'}>
+                        <button className={'btn-flat'}>shared calendar</button>
+                        <button className={'btn-flat'}>my calendar</button>
                     </div>
-                    <div className={'calendar'} id={'calendar'}>
-                        <div style={{width: '100%', display: 'flex'}}>
-                            <div className={'column-header column-time-header'}/>
-                            {columnHeaders}
-                        </div>
-                        <div style={{width: '100%', display: 'flex', height: 'calc(100% - 100px)', overflow: 'scroll'}}>
-                            <div className={'container-times'}>
-                                {this.times}
+                </div>
+
+                <div className={'cal-container-inner'}>
+                    {this.state.showNewEvent && <NewEvent userProfile={this.props.userProfile}
+                                                          handleSuccess={this.handleSuccess}
+                                                          handleFailure={this.handleFailure}
+                                                          monthLengths={this.monthLengths}
+                                                          networkGroups={this.props.networkGroups}/>}
+                    <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
+                        <div className={'calendar-header'}>
+                            <button className={'left-arrow'} onClick={this.showPrevWeek}/>
+                            <h1 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
+                                {MonthNames[this.state.displayedDate.getMonth()]} {this.state.displayedDate.getFullYear()}
+                            </h1>
+                            <div className={'calendar-header-right'}>
+                                <button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>create event</button>
                             </div>
-                            {columnBodies}
+                            <button className={'right-arrow'} onClick={this.showNextWeek}/>
+                        </div>
+                        <div className={'calendar'} id={'calendar'}>
+                            <div style={{width: '100%', display: 'flex'}}>
+                                <div className={'column-header column-time-header'}/>
+                                {columnHeaders}
+                            </div>
+                            <div style={{width: '100%', display: 'flex', height: 'calc(100% - 100px)', overflow: 'scroll'}}>
+                                <div className={'container-times'}>
+                                    {this.times}
+                                </div>
+                                {columnBodies}
+                            </div>
                         </div>
                     </div>
                 </div>

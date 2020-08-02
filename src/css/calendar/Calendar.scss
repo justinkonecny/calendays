@@ -1,9 +1,25 @@
 @import '../main/Constants';
 
-.calendar-container-outer {
+.cal-container-outer {
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
+
+  .cal-container-inner {
+    display: flex;
+    flex: 1;
+  }
+
+  .actions-container {
+    margin-top: 46px;
+    margin-bottom: 32px;
+
+    .cal-view-btns {
+      text-align: left;
+      margin-left: $containerMarginLeft;
+    }
+  }
 }
 
 .calendar-container {
@@ -26,19 +42,19 @@
 }
 
 .column-header {
-  height: 100px;
+  height: 80px;
   width: $calendarColumnWidth;
-  border-top: 2px var(--light-gray) solid;
-  border-right: 2px var(--light-gray) solid;
-  border-bottom: 2px var(--light-gray) solid;
+  border-top: 2px $colorNeutral3 solid;
+  border-right: 2px $colorNeutral3 solid;
+  border-bottom: 2px $colorNeutral3 solid;
 }
 
 .calendar-column {
-  border-right: 2px var(--light-gray) solid;
+  border-right: 2px $colorNeutral3 solid;
 }
 
 .calendar-column-left {
-  border-left: 2px var(--light-gray) solid;
+  border-left: 2px $colorNeutral3 solid;
   border-radius: 5px 0 0 0;
   width: calc(#{$calendarColumnWidth} - 2px);
 }
@@ -53,8 +69,7 @@
 }
 
 .column-header-today {
-  background-color: var(--dull-blue);
-  color: white;
+  color: $colorPrimary;
 }
 
 .column-time {
@@ -92,45 +107,42 @@
 }
 
 .weekday {
-  font-size: 28px;
-  color: var(--light-blue);
+  font-size: 18px;
+  color: $colorTextNeutral;
   text-align: left;
-  margin-left: 30px;
-  padding-top: 5px;
+  margin-left: 14px;
+  margin-top: 8px;
 }
 
 .weekday-half {
-  font-size: 25px;
-  margin: auto;
+  font-size: 16px;
 }
 
 .day {
   font-size: 40px;
-  color: var(--dull-blue);
+  font-weight: bold;
+  color: $colorTextNeutral;
   text-align: left;
-  margin-left: 30px;
+  margin-left: 14px;
 }
 
 .day-half {
-  font-size: 37px;
-  margin: auto;
+  font-size: 38px;
 }
 
 .column-header-today {
-  background-color: var(--dull-blue);
-  color: white;
+  color: $colorPrimary;
 }
 
 .container-times {
-  width: 8%;
+  width: $containerMarginLeft;
   height: 100%;
-  color: var(--dull-blue);
-  font-weight: 400;
+  color: $colorNeutral5;
+  font-weight: 600;
 }
 
 .container-events {
   height: 100%;
-  color: var(--dull-blue);
   font-weight: 400;
   position: relative;
   width: calc(#{$calendarColumnWidth} + 2px);
@@ -157,7 +169,8 @@
 }
 
 .row-grid {
-  border-top: 2px var(--light-gray) solid;
+  border-top: 2px $colorNeutral3 solid;
+  background-color: $colorNeutral1;
 }
 
 .row-time {
@@ -166,11 +179,11 @@
 }
 
 .row-left {
-  border-left: 2px var(--light-gray) solid;
+  border-left: 2px $colorNeutral3 solid;
 }
 
 .row-bottom {
-  border-bottom: 2px var(--light-gray) solid;
+  border-bottom: 2px $colorNeutral3 solid;
 }
 
 .row-bottom-right {
@@ -195,8 +208,8 @@
   width: $arrowWidth;
   height: $arrowWidth;
   background-color: transparent;
-  border-left: 3px var(--dull-blue) solid;
-  border-bottom: 3px var(--dull-blue) solid;
+  border-left: 3px $colorTertiary solid;
+  border-bottom: 3px $colorTertiary solid;
   border-radius: 0;
   transform: rotate(45deg);
   padding: 0;
@@ -209,8 +222,8 @@
   width: $arrowWidth;
   height: $arrowWidth;
   background-color: transparent;
-  border-right: 3px var(--dull-blue) solid;
-  border-bottom: 3px var(--dull-blue) solid;
+  border-right: 3px $colorTertiary solid;
+  border-bottom: 3px $colorTertiary solid;
   border-radius: 0;
   transform: rotate(-45deg);
   padding: 0;

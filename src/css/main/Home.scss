@@ -87,6 +87,7 @@ button:focus {
 }
 
 textarea {
+  font-family: "Avenir Next", sans-serif;
   border-radius: 3px;
   border-color: var(--dull-blue);
   background-color: var(--pale-gray);
@@ -189,4 +190,22 @@ a:hover {
 
 .btn-invisible {
   background-color: transparent;
+}
+
+.btn-flat {
+  color: $colorNeutral3;
+  background-color: transparent;
+  font-size: 16px;
+  font-weight: 500;
+  border-bottom: 3px solid $colorNeutral3;
+  border-radius: 0;
+  padding: 4px 12px;
+  text-transform: uppercase;
+  font-family: "Avenir Next", sans-serif;
+}
+
+.btn-flat-active {
+  color: $colorPrimary;
+  font-weight: 600;
+  border-bottom: 3px solid $colorPrimary;
 }
