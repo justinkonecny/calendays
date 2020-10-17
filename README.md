@@ -2,6 +2,8 @@
 ### React Web App
 Web application used for shared event planning. Uses Firebase for user authentication and storing user data (events, networks, profile). Once authenticated and verified, users can create events to be displayed on their calendar. Users can also create named networks, which consist of groups of two or more users.
 
+See the backend server [here](https://github.com/justinkonecny/webserver_golang)!
+
 ## Project Breakdown
 ### screenshots/
 * This folder contains a series of screenshots taken throughout the development of the application
