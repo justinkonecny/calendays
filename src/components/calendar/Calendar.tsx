@@ -6,6 +6,7 @@ import {ColumnPos, MonthNames} from '../main/Constants';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {NetworkEvent} from '../../data/NetworkEvent';
+import {DropdownNetwork} from '../common/DropdownNetwork';
 
 
 interface CalendarProps {
@@ -24,6 +25,7 @@ interface CalendarState {
     showNewEvent: boolean;
     displayedWeek: number;
     displayedDate: Date;
+    currentNetwork: null | NetworkGroup;
 }
 
 export class Calendar extends Component<CalendarProps, CalendarState> {
@@ -41,6 +43,7 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         this.handleFailure = this.handleFailure.bind(this);
         this.showNextWeek = this.showNextWeek.bind(this);
         this.showPrevWeek = this.showPrevWeek.bind(this);
+        this.setNetworkGroup = this.setNetworkGroup.bind(this);
 
         this.date = new Date();  // Today's dateDay
 
@@ -71,7 +74,8 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
             dayClasses: firstWeek,  // The list of Calendar days
             showNewEvent: false,  // Don't show the new event creator after load
             displayedWeek: 0,  // Index of first day of the week being displayed
-            displayedDate: this.date  // Date of first day of the week being displayed
+            displayedDate: this.date,  // Date of first day of the week being displayed
+            currentNetwork: null
         };
 
         this.state = {
@@ -256,6 +260,10 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         this.renderEventsForWeek(newDisplayedWeek);
     }
 
+    setNetworkGroup(network: NetworkGroup) {
+        console.log(network);
+    }
+
     render() {
         const columnBodies: JSX.Element[] = [];
         const columnHeaders = this.state.dayClasses.slice(this.state.displayedWeek, this.state.displayedWeek + 7).map(day => {
@@ -272,6 +280,8 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
                         <button className={'btn-flat'}>my calendar</button>
                     </div>
                 </div>
+
+                <DropdownNetwork networkList={this.props.networkGroups} setEventNetwork={this.setNetworkGroup} direction={'top'}/>
 
                 <div className={'cal-container-inner'}>
                     {this.state.showNewEvent && <NewEvent userProfile={this.props.userProfile}

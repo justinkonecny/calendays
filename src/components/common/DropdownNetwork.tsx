@@ -28,8 +28,15 @@ export class DropdownNetwork extends Component<DropdownNetworkProps, DropdownNet
     }
 
     componentDidMount() {
-        if (this.props.networkList.length > 0) {
+        if (this.props.networkList?.length > 0) {
             this.props.setEventNetwork(this.props.networkList[0]);
+        }
+    }
+
+    componentDidUpdate(prevProps: Readonly<DropdownNetworkProps>, prevState: Readonly<DropdownNetworkState>, snapshot?: any): void {
+        if (this.props.networkList?.length > 0 && this.state.selection == null) {
+            this.props.setEventNetwork(this.props.networkList[0]);
+            this.setState({selection: this.props.networkList[0]});
         }
     }
 
@@ -68,7 +75,7 @@ export class DropdownNetwork extends Component<DropdownNetworkProps, DropdownNet
                 {this.state.showPicker && <div className={this.props.direction === 'top' ? 'picker picker-top shadow' : 'picker shadow'}>
                     {this.props.networkList.map((network: NetworkGroup, index: number) => {
                         return (
-                            <button id={'ng-' + index} className={'picker-inner'} onClick={this.clickNetwork} key={index} >
+                            <button id={'ng-' + index} className={'picker-inner'} onClick={this.clickNetwork} key={index}>
                                 <div className={'flex'}>
                                     <p className={'net-name'}>{network.getName()}</p>
                                     <div className={'picker-color my-auto'} style={{backgroundColor: network.getColorHex()}}/>

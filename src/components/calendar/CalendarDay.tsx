@@ -161,11 +161,11 @@ class Day extends Component<DayProps, {}> {
         }
 
         const eventStyle: { [style: string]: any } = {
-            height: 'calc((' + (100 / this.props.timesCount) + '%) * ' + durationHours + ' - 18px)',
+            height: 'calc((' + (100 / this.props.timesCount) + '%) * ' + durationHours + ' - 17px)',
             backgroundColor: color
         };
 
-        eventStyle.top = 'calc(' + ((event.getStartDate().getHours()) * (100 / this.props.timesCount)) + '% + 2px)';
+        eventStyle.top = 'calc(' + ((event.getStartDate().getHours()) * (100 / this.props.timesCount)) + '% + 1px)';
 
         return (
             <div className={'calendar-event'} style={eventStyle} key={event.getId()}>

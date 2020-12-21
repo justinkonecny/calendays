@@ -1,10 +1,7 @@
-const url = 'http://localhost:8080';
-// const url = 'https://api.jkonecny.com:8443';
-
 const axios_full = require('axios').default;
 const axiosInstance = axios_full.create({
-    baseURL: url,
-    withCredentials: true,
+    baseURL: process.env.REACT_APP_API_URL,
+    withCredentials: true
 });
 
 
@@ -24,11 +21,15 @@ export class Api {
     static async refreshSession() {
         const response = await axiosInstance.post('/login', {}, {
             headers: {
-                FirebaseUUID: Api.firebaseId,
+                FirebaseUUID: Api.firebaseId
             }
         });
         Api.lastRefresh = new Date().getTime().valueOf();
         return response;
+    }
+
+    static async getHeartbeat() {
+        return await Api.queryEndpoint('/');
     }
 
     static async queryUserNetworks() {
