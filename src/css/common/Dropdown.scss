@@ -1,25 +1,58 @@
-$dropDownHeight: 200px;
-$spacingDateTB: 8px;
-$spacingDateLR: 12px;
-$widthDate: 210px;
-$widthTime: 50px;
+@import '../main/Constants';
+
+$dropDownHeight: 200pt;
+$spacingDateTB: 8pt;
+$spacingDateLR: 12pt;
+$widthTime: 50pt;
 
 .display-container {
-  padding-left: 15px;
+  padding-left: 15pt;
 }
 
 .dropdown-container {
   text-align: left;
 
-  .btn-date-time {
+  .flex-container {
+    display: flex;
+  }
+
+  .btn-dropdown {
     text-align: left;
     background-color: var(--pale-gray);
     color: var(--dull-blue);
     border-radius: 0;
     margin: 0;
     padding: $spacingDateTB $spacingDateLR;
-    border-bottom: 1px solid var(--dark-gray);
-    width: $widthDate;
+    border-bottom: 1pt solid var(--dark-gray);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    border-bottom: none;
+    padding: 0 0 $spacingDateTB 0;
+  }
+
+  .arrow {
+    width: 10pt;
+    height: 10pt;
+    background-color: transparent;
+    border-left: 2pt $colorTertiary solid;
+    border-bottom: 2pt $colorTertiary solid;
+    border-radius: 0;
+    transform: rotate(-45deg);
+    padding: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 8pt;
+    position: relative;
+    bottom: 4pt;
+    transition: transform 100ms ease-in-out;
+  }
+
+  .arrow-open {
+    transform: rotate(-225deg);
+    transition: transform 100ms ease-in-out;
+    bottom: 0;
   }
 }
 
@@ -31,13 +64,12 @@ $widthTime: 50px;
 
 .picker {
   max-height: $dropDownHeight;
-  width: $widthDate;
   overflow: scroll;
   background-color: var(--pale-gray);
   border-radius: 0;
   color: var(--dull-blue);
   position: absolute;
-  border-bottom: 1px solid var(--dark-gray);
+  border-bottom: 1pt solid var(--dark-gray);
   z-index: 2;
 
   .picker-inner {
@@ -48,20 +80,21 @@ $widthTime: 50px;
     text-align: left;
     width: 100%;
     padding: $spacingDateTB $spacingDateLR;
-    border-bottom: 1px solid var(--dark-gray);
+    border-bottom: 1pt solid var(--dark-gray);
     margin: 0;
 
     .net-name {
-      width: calc(100% - 20px);
+      width: calc(100% - 20pt);
     }
   }
 }
 
 .picker-color {
-  width: 10px;
-  height: 10px;
-  margin-left: 10px;
-  border-radius: 3px;
+  width: 10pt;
+  height: 10pt;
+  margin-left: 10pt;
+  margin-right: 10pt;
+  border-radius: 3pt;
 }
 
 .picker-time {
@@ -73,6 +106,6 @@ $widthTime: 50px;
 
   .picker-top {
     position: absolute;
-    bottom: 35px;
+    bottom: 35pt;
   }
 }

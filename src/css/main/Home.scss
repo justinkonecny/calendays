@@ -4,13 +4,13 @@ h1 {
   margin: 0;
   font-family: "Avenir Next", sans-serif;
   font-weight: 600;
-  font-size: 36px;
+  font-size: 24pt;
   color: $colorPrimary;
 }
 
 h2 { /* Title (Calendar Month) */
-  //color: $colorPrimary;
-  font-size: 30px;
+  color: $colorTextNeutral;
+  font-size: 22pt;
   font-weight: 500;
   text-align: left;
 }
@@ -18,22 +18,22 @@ h2 { /* Title (Calendar Month) */
 h3 { /* Heading (date + time) */
   color: var(--dull-blue);
   text-align: left;
-  margin-top: 30px;
-  margin-bottom: 18px;
+  margin-top: 22pt;
+  margin-bottom: 18pt;
 }
 
 h4 { /* Sub-heading (start time) */
   color: var(--dull-blue);
   text-align: left;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  padding-left: 15px;
+  margin-top: 20pt;
+  margin-bottom: 10pt;
+  padding-left: 15pt;
 }
 
 h5 { /* Calendar NetworkEvent Titles */
   font-weight: 600;
   color: white;
-  margin: 5px 0;
+  margin: 5pt 0;
   padding: 0;
 }
 
@@ -42,8 +42,8 @@ input {
   background: none;
   border: none;
   color: $colorTextNeutral;
-  border-bottom: 1px solid;
-  font-size: 15px;
+  border-bottom: 1pt solid;
+  font-size: 15pt;
   padding: 0;
   margin: 0;
 }
@@ -64,10 +64,10 @@ input:focus::placeholder {
 }
 
 button {
-  border-radius: 20px;
-  font-size: 16px;
+  border-radius: 20pt;
+  font-size: 12pt;
   font-weight: 500;
-  padding: 9px 52px;
+  padding: 9pt 52pt;
   border: none;
   box-shadow: none;
 }
@@ -88,13 +88,13 @@ button:focus {
 
 textarea {
   font-family: "Avenir Next", sans-serif;
-  border-radius: 3px;
+  border-radius: 3pt;
   border-color: var(--dull-blue);
   background-color: var(--pale-gray);
   color: var(--dull-blue);
   font-weight: 500;
-  font-size: 13px;
-  padding: 10px;
+  font-size: 13pt;
+  padding: 10pt;
   resize: none;
   outline: none;
 }
@@ -106,21 +106,21 @@ textarea:focus {
 p {
   text-align: left;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 15pt;
   padding: 0;
   margin: 0;
 }
 
 .body-1 {
   font-weight: 300;
-  font-size: 16px;
+  font-size: 16pt;
   color: $colorTextNeutral;
 }
 
 a {
   color: $colorTextNeutral;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 16pt;
 }
 
 a:hover {
@@ -137,8 +137,9 @@ a:hover {
 .btn-secondary {
   margin: auto;
   color: white;
-  padding: 6px 20px;
+  padding: 6pt 20pt;
   background-color: var(--light-blue);
+  text-transform: uppercase;
 }
 
 .btn-open {
@@ -148,11 +149,11 @@ a:hover {
 .btn-home {
   background: none;
   border: none;
-  font-size: 17px;
+  font-size: 17pt;
   font-weight: 600;
   color: var(--dull-blue);
-  border-bottom: 2px solid;
-  padding: 10px 20px 2px 20px;
+  border-bottom: 2pt solid;
+  padding: 10pt 20pt 2pt 20pt;
 }
 
 .btn-active-tab {
@@ -162,17 +163,28 @@ a:hover {
 .btn-link-small {
   color: $colorNeutral3;
   text-decoration: underline;
-  font-size: 13px;
+  font-size: 13pt;
   font-weight: 400;
 }
 
 .page {
   display: flex;
-  height: calc(100vh - 64px);
+  height: calc(100vh - #{$navBarHeight});
 
   .contents {
     width: 100vw;
+
+    .loading {
+      margin-top: 50pt;
+      text-align: center;
+    }
   }
+}
+
+.line {
+  border-bottom: 2pt solid $colorNeutral3;
+  border-radius: 0;
+  flex: 1;
 }
 
 
@@ -195,11 +207,11 @@ a:hover {
 .btn-flat {
   color: $colorNeutral3;
   background-color: transparent;
-  font-size: 16px;
+  font-size: 14pt;
   font-weight: 500;
-  border-bottom: 3px solid $colorNeutral3;
+  border-bottom: 2pt solid $colorNeutral3;
   border-radius: 0;
-  padding: 4px 12px;
+  padding: 4pt 12pt;
   text-transform: uppercase;
   font-family: "Avenir Next", sans-serif;
 }
@@ -207,5 +219,5 @@ a:hover {
 .btn-flat-active {
   color: $colorPrimary;
   font-weight: 600;
-  border-bottom: 3px solid $colorPrimary;
+  border-bottom: 2pt solid $colorPrimary;
 }

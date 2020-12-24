@@ -82,15 +82,14 @@ export class CalendarDay {
         );
     }
 
-    getDayComponent(personalNetworkId: number, showSharedEvents: boolean) {
+    getDayComponent(displayedNetworkId: number | null) {
         return (
             <Day key={this.dateDay}
                  columnPos={this.columnPos}
                  timesCount={this.timesCount}
                  events={this.events}
                  networkGroups={this.networkGroups}
-                 personalNetworkId={personalNetworkId}
-                 showSharedEvents={showSharedEvents}
+                 displayedNetworkId={displayedNetworkId}
             />
         );
     }
@@ -134,8 +133,8 @@ interface DayProps {
     timesCount: number;
     columnPos: string;
     networkGroups: NetworkGroup[] | null;
-    personalNetworkId: number;
-    showSharedEvents: boolean;
+
+    displayedNetworkId: number | null; // The Network ID to show, or null for all events
 }
 
 class Day extends Component<DayProps, {}> {
@@ -161,11 +160,11 @@ class Day extends Component<DayProps, {}> {
         }
 
         const eventStyle: { [style: string]: any } = {
-            height: 'calc((' + (100 / this.props.timesCount) + '%) * ' + durationHours + ' - 17px)',
+            height: 'calc((' + (100 / this.props.timesCount) + '%) * ' + durationHours + ' - 17pt)',
             backgroundColor: color
         };
 
-        eventStyle.top = 'calc(' + ((event.getStartDate().getHours()) * (100 / this.props.timesCount)) + '% + 1px)';
+        eventStyle.top = 'calc(' + ((event.getStartDate().getHours()) * (100 / this.props.timesCount)) + '% + 1pt)';
 
         return (
             <div className={'calendar-event'} style={eventStyle} key={event.getId()}>
@@ -182,14 +181,14 @@ class Day extends Component<DayProps, {}> {
         let renderedEvents: any[] = [];
         if (this.props.networkGroups !== null && this.props.events !== null) {
             for (const event of this.props.events) {
-                if (!this.props.showSharedEvents && event.getNetworkId() !== this.props.personalNetworkId) {
+                if (this.props.displayedNetworkId && event.getNetworkId() !== this.props.displayedNetworkId) {
                     continue;
                 }
                 renderedEvents.push(this.getRenderedEvent(event));
             }
         }
 
-        const rowHeightStyle = {height: 'calc(' + (100 / this.props.timesCount) + '% - 2px)'};
+        const rowHeightStyle = {height: 'calc(' + (100 / this.props.timesCount) + '% - 2pt)'};
         const columnGrid = [];
         for (let i = 0; i < 24; i++) {
             let className = this.props.columnPos === ColumnPos.LEFT ? 'row-grid calendar-column row-left' : 'row-grid calendar-column';

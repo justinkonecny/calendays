@@ -3,7 +3,7 @@
 
 .navbar {
   display: flex;
-  height: 64px;
+  height: $navBarHeight;
   width: 100vw;
   background-color: $colorTertiary;
   justify-content: space-between;
@@ -17,16 +17,16 @@
 
   .nav-btn-container {
     display: flex;
-    margin-right: 32px;
+    margin-right: 32pt;
     justify-content: center;
 
     .nav-icon {
       display: flex;
-      margin: auto 12px;
+      margin: auto 12pt;
       height: fit-content;
 
       .logo {
-        width: 32px;
+        width: 24pt;
         margin: auto;
       }
 
@@ -38,8 +38,8 @@
 
   .container-logo {
     display: flex;
-    margin-left: 24px;
-    margin-right: 16px;
+    margin-left: 24pt;
+    margin-right: 16pt;
   }
 
   .nav-today-container {
@@ -49,25 +49,25 @@
 
   .nav-today-header {
     background-color: var(--dull-blue);
-    height: 30px;
+    height: 30pt;
     color: white;
     display: flex;
   }
 
   .nav-month {
     color: white;
-    font-size: 25px;
+    font-size: 25pt;
     text-align: center;
   }
 
   .nav-day {
     color: white;
-    font-size: 40px;
+    font-size: 40pt;
     text-align: center;
   }
 
   .nav-date-container {
     display: flex;
-    height: calc(100% - 30px);
+    height: calc(100% - 30pt);
   }
 }

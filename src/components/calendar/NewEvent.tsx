@@ -236,7 +236,9 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
         return (
             <div className={'create-new-event'}>
                 <h3>title</h3>
-                <InputField className={'input-event-name'} type={'text'} name={'eventName'} placeholder={'new event'} value={this.state.eventName} onChange={this.handleInputChange}/>
+                <InputField className={'input-event-name'} type={'text'} name={'eventName'} placeholder={'new event'}
+                            value={this.state.eventName}
+                            onChange={this.handleInputChange}/>
 
                 <h3>date + time</h3>
                 <div>
@@ -261,13 +263,19 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
                 </div>
 
                 <h3>location</h3>
-                <InputField className={'input-event-location'} type={'text'} name={'eventLocation'} placeholder={'add location'} value={this.state.eventLocation} onChange={this.handleInputChange}/>
+                <InputField className={'input-event-location'}
+                            type={'text'} name={'eventLocation'} placeholder={'add location'}
+                            value={this.state.eventLocation}
+                            onChange={this.handleInputChange}/>
 
                 <h3>message</h3>
-                <textarea className={'new-event-message'} name={'eventMessage'} value={this.state.eventMessage} onChange={this.handleChange} onFocus={this.populateEventParameters}/>
+                <textarea className={'new-event-message'} name={'eventMessage'} value={this.state.eventMessage}
+                          onChange={this.handleChange}
+                          onFocus={this.populateEventParameters}/>
 
                 <h3>Network</h3>
-                <DropdownNetwork networkList={this.props.networkGroups} setEventNetwork={this.setEventNetwork} direction={'top'}/>
+                <DropdownNetwork networkList={this.props.networkGroups} setEventNetwork={this.setEventNetwork}
+                                 direction={'top'}/>
 
                 <button className={'btn-primary btn-create-event'} onClick={this.submitEvent}>create event</button>
             </div>

@@ -25,9 +25,6 @@ export class Profile extends Component<ProfileProps, {}> {
 
                 <h3>username</h3>
                 <h4>{userProfile.getUsername()}</h4>
-
-                <h3>sms subscription status</h3>
-                <h4>{userProfile.getSubscriptionStatus()}</h4>
             </div>
         );
     }

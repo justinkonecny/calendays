@@ -1,16 +1,13 @@
 import React, {Component} from 'react';
 import '../../css/main/User.scss';
-import {Calendar} from '../calendar/Calendar';
 import Networks from '../networks/Networks';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
-import {Pages} from "../../data/Pages";
 import {NetworkEvent} from '../../data/NetworkEvent';
 import {Profile} from '../profile/Profile';
 import {Redirect} from 'react-router';
 
 const UserPages = {  // The main tabs that a user can view; the value is the 'id' of the tab <button>
-    CALENDAR: 'my-calendar',
     NETWORKS: 'my-networks',
     PROFILE: 'my-profile'
 };
@@ -35,7 +32,7 @@ export class User extends Component<UserProps, UserState> {
         super(props);
 
         this.state = {
-            currentTab: UserPages.CALENDAR,  // The active tab selected by the user (this is the starting tab)
+            currentTab: UserPages.NETWORKS,  // The active tab selected by the user (this is the starting tab)
             signedOut: false
         };
 
@@ -50,9 +47,7 @@ export class User extends Component<UserProps, UserState> {
          */
         event.preventDefault();
         const id = event.currentTarget.id;
-        if (id === UserPages.CALENDAR) {
-            this.setState({currentTab: UserPages.CALENDAR});
-        } else if (id === UserPages.NETWORKS) {
+        if (id === UserPages.NETWORKS) {
             this.setState({currentTab: UserPages.NETWORKS});
         } else if (id === UserPages.PROFILE) {
             this.setState({currentTab: UserPages.PROFILE});
@@ -74,15 +69,7 @@ export class User extends Component<UserProps, UserState> {
         }
 
         let currentPage = (<h3>Loading...</h3>);
-        if (this.state.currentTab === UserPages.CALENDAR) {
-            currentPage = (<Calendar userProfile={this.props.userProfile}
-                                     events={this.props.events}
-                                     handleNewEvent={this.props.handleNewEvent}
-                                     page={Pages.USER}
-                                     networkGroups={this.props.networkGroups}
-                                     showSharedEvents={false}
-                                     personalNetworkId={this.props.personalNetworkId}/>);
-        } else if (this.state.currentTab === UserPages.NETWORKS) {
+        if (this.state.currentTab === UserPages.NETWORKS) {
             currentPage = (<Networks userProfile={this.props.userProfile}
                                      networkGroups={this.props.networkGroups}
                                      addNewNetwork={this.props.onAddUserNetwork}/>);
@@ -90,17 +77,22 @@ export class User extends Component<UserProps, UserState> {
             currentPage = (<Profile userProfile={this.props.userProfile}/>);
         }
 
-        const classCalendar = (this.state.currentTab === UserPages.CALENDAR) ? 'btn-home btn-open btn-active-tab' : 'btn-home btn-open';
-        const classNetworks = (this.state.currentTab === UserPages.NETWORKS) ? 'btn-home btn-open btn-active-tab' : 'btn-home btn-open';
-        const classProfile = (this.state.currentTab === UserPages.PROFILE) ? 'btn-home btn-open btn-active-tab' : 'btn-home btn-open';
+        const classNetworks = (this.state.currentTab === UserPages.NETWORKS) ? 'btn-flat btn-flat-active' : 'btn-flat';
+        const classProfile = (this.state.currentTab === UserPages.PROFILE) ? 'btn-flat btn-flat-active' : 'btn-flat';
 
         return (
             <div className={'user-container'}>
                 <div className={'content-btns'}>
-                    <button id={'my-calendar'} className={classCalendar} onClick={this.setActiveTab}>my calendar</button>
-                    <button id={'my-networks'} className={classNetworks} onClick={this.setActiveTab}>my networks</button>
-                    <button id={'my-profile'} className={classProfile} onClick={this.setActiveTab}>my profile</button>
-                    <button id={'sign-out'} className={'btn-home btn-open'} onClick={this.signOut}>sign out</button>
+                    <button id={'my-networks'} className={classNetworks} onClick={this.setActiveTab}>
+                        my networks
+                    </button>
+                    <button id={'my-profile'} className={classProfile} onClick={this.setActiveTab}>
+                        my profile
+                    </button>
+                    <button id={'sign-out'} className={'btn-flat'} onClick={this.signOut}>
+                        sign out
+                    </button>
+                    <div className={'line'}/>
                 </div>
                 <div className={'user-content'}>
                     {currentPage}

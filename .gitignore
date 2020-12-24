@@ -28,3 +28,4 @@ firebase*
 .firebase/*
 firebase-debug.log
 
+*.lock

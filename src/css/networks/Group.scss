@@ -1,5 +1,7 @@
+@import '../main/Constants';
+
 .group-container {
-  border: 2px solid var(--blush);
+  border: 2px solid $colorNeutral3;
   border-radius: 5px;
   width: 400px;
   padding: 10px;
@@ -8,17 +10,17 @@
   h3 {
     padding: 0;
     margin: 10px 5px;
-    color: var(--light-blue);
+    color: $colorTextNeutral;
   }
 
   h4 {
     margin-top: 15px;
     margin-bottom: 5px;
-    color: var(--slate);
+    color: $colorTextNeutral;
   }
 
   p {
-    color: var(--slate);
+    color: $colorTextNeutral;
     text-align: left;
     margin: 5px 5px 5px 15px;
     font-weight: 300;

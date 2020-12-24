@@ -154,6 +154,10 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
     }
 
     addMemberEmail() {
+        if (this.state.memberUsername === '') {
+            return;
+        }
+
         const members = [...this.state.members, this.state.memberUsername];
         this.setState({
             memberUsername: '',
@@ -165,14 +169,17 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
         return (
             <div className={'create-new-network'}>
                 <h3>network name</h3>
-                <InputField type={'text'} name={'netName'} placeholder={'new network'} value={this.state.netName} onChange={this.handleInputChange}/>
+                <InputField type={'text'} name={'netName'} placeholder={'new network'} value={this.state.netName}
+                            onChange={this.handleInputChange}/>
 
                 <h3>network color</h3>
-                <InputField type={'text'} name={'netColor'} placeholder={'color'} value={this.state.netColor} onChange={this.handleInputChange}/>
+                <InputField type={'text'} name={'netColor'} placeholder={'color'} value={this.state.netColor}
+                            onChange={this.handleInputChange}/>
 
                 <h3>members</h3>
                 <div className={'member-add'}>
-                    <InputField type={'text'} name={'memberUsername'} placeholder={'username'} value={this.state.memberUsername} onChange={this.handleInputChange}/>
+                    <InputField type={'text'} name={'memberUsername'} placeholder={'username'}
+                                value={this.state.memberUsername} onChange={this.handleInputChange}/>
                     <button className={'btn-secondary'} onClick={this.addMemberEmail}>add</button>
                 </div>
 
