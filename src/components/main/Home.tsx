@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router';
 import '../../css/main/Home.scss';
-import logo from '../../resources/logo.svg';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {User} from './User';
@@ -28,6 +27,7 @@ interface HomeState {
     events: null | NetworkEvent[];
     loading: boolean;
     personalNetworkId: number;
+    invalidAuth: boolean;
 }
 
 export class Home extends Component<HomeProps, HomeState> {
@@ -42,7 +42,8 @@ export class Home extends Component<HomeProps, HomeState> {
             userProfile: null,  // (UserProfile): The current user's profile
             networkGroups: [],  // (List of NetworkGroup): the current user's networks,
             events: null,  // (List): the current user's events
-            personalNetworkId: -1
+            personalNetworkId: -1,
+            invalidAuth: false
         };
 
         this.processUserProfile = this.processUserProfile.bind(this);
@@ -58,7 +59,6 @@ export class Home extends Component<HomeProps, HomeState> {
         setTimeout(() => {
             this.setState({
                 user: this.props.firebase.auth().currentUser,
-                loading: false
             });
             this.loadUserInformation();
         }, 500);
@@ -66,11 +66,18 @@ export class Home extends Component<HomeProps, HomeState> {
 
     async loadUserInformation() {
         if (this.state.user) {
-            await Api.refreshSessionWithId(this.state.user.uid);
+
+            try {
+                await Api.refreshSessionWithId(this.state.user.uid);
+            } catch (error) {
+                this.setState({invalidAuth: true});
+                return;
+            }
 
             this.processUserNetworks(await Api.queryUserNetworks());
             this.processUserEvents(await Api.queryUserEvents());
             this.processUserProfile(await Api.queryUserProfile());
+            this.setState({loading: false});
         }
     }
 
@@ -115,7 +122,7 @@ export class Home extends Component<HomeProps, HomeState> {
         if (responseUser.status === 200 && responseUser.data) {
             const u = responseUser.data;
             this.setState({
-                userProfile: new UserProfile(u.ID, u.FirstName, u.LastName, u.Email, u.Username, u.SubscriptionStatusID)
+                userProfile: new UserProfile(u.ID, u.FirstName, u.LastName, u.Email, u.Username)
             });
             console.log("(HCM03) Successfully found user profile!");
         } else {
@@ -153,7 +160,7 @@ export class Home extends Component<HomeProps, HomeState> {
     }
 
     render() {
-        if (!this.state.user && !this.state.loading) {
+        if (this.state.invalidAuth || (!this.state.user && !this.state.loading)) {
             return (  // Redirect back to login page if no user is authenticated
                 <Redirect to={'/'}/>
             );
@@ -169,43 +176,40 @@ export class Home extends Component<HomeProps, HomeState> {
             }
         }
 
-        let currentPage = (<h3>Loading...</h3>);
-        if (this.props.page === Pages.HOME) {
-            currentPage = (<Calendar userProfile={this.state.userProfile}
+        let currentPage = (<h2 className={'loading'}>Loading...</h2>);
+
+        if (!this.state.loading) {
+            if (this.props.page === Pages.HOME) {
+                currentPage = (<Calendar userProfile={this.state.userProfile}
+                                         events={this.state.events}
+                                         handleNewEvent={this.handleNewEvent}
+                                         page={Pages.HOME}
+                                         networkGroups={this.state.networkGroups}
+                                         showSharedEvents={true}
+                                         personalNetworkId={this.state.personalNetworkId}/>);
+            } else if (this.props.page === Pages.USER) {
+                currentPage = (<User userProfile={this.state.userProfile}
+                                     firebase={this.props.firebase}
+                                     networkGroups={this.state.networkGroups}
                                      events={this.state.events}
                                      handleNewEvent={this.handleNewEvent}
-                                     page={Pages.HOME}
-                                     networkGroups={this.state.networkGroups}
-                                     showSharedEvents={true}
+                                     onAddUserNetwork={this.onAddUserNetwork}
                                      personalNetworkId={this.state.personalNetworkId}/>);
-        } else if (this.props.page === Pages.USER) {
-            currentPage = (<User userProfile={this.state.userProfile}
-                                 firebase={this.props.firebase}
-                                 networkGroups={this.state.networkGroups}
-                                 events={this.state.events}
-                                 handleNewEvent={this.handleNewEvent}
-                                 onAddUserNetwork={this.onAddUserNetwork}
-                                 personalNetworkId={this.state.personalNetworkId}/>);
-        } else if (this.props.page === Pages.NOTIFICATIONS) {
-            currentPage = (<Notifications events={this.state.events}
-                                          networks={this.state.networkGroups}/>);
+            } else if (this.props.page === Pages.NOTIFICATIONS) {
+                currentPage = (<Notifications events={this.state.events}
+                                              networks={this.state.networkGroups}/>);
+            }
         }
 
         return (
-            <div>
-                <div className={'header'}>
-                    <div className={'container-logo'}>
-                        <img className={'flex-centered'} src={logo} alt={'logo'}/>
-                    </div>
-                    <h1 id={'title'}>calendays</h1>
-                </div>
+            <>
+                <NavBar onClick={this.handlePageChange}/>
                 <div className={'page'}>
-                    <NavBar onClick={this.handlePageChange}/>
                     <div className={'contents'}>
                         {currentPage}
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

@@ -1,14 +1,12 @@
-const url = 'http://localhost:8080';
-// const url = 'https://api.jkonecny.com:8443';
-
 const axios_full = require('axios').default;
 const axiosInstance = axios_full.create({
-    baseURL: url,
-    withCredentials: true,
+    baseURL: process.env.REACT_APP_API_URL,
+    withCredentials: true
 });
 
 
 export class Api {
+    private static prefix: string = 'c';
     private static lastRefresh: number = 0;
     private static firebaseId: string = '';
 
@@ -22,41 +20,45 @@ export class Api {
     }
 
     static async refreshSession() {
-        const response = await axiosInstance.post('/login', {}, {
+        const response = await axiosInstance.post(`/${Api.prefix}/login`, {}, {
             headers: {
-                FirebaseUUID: Api.firebaseId,
+                FirebaseUUID: Api.firebaseId
             }
         });
         Api.lastRefresh = new Date().getTime().valueOf();
         return response;
     }
 
+    static async getHeartbeat() {
+        return await Api.queryEndpoint('/');
+    }
+
     static async queryUserNetworks() {
-        return await Api.queryEndpoint('/networks');
+        return await Api.queryEndpoint(`/${Api.prefix}/networks`);
     }
 
     static async queryUserEvents() {
-        return await Api.queryEndpoint('/events');
+        return await Api.queryEndpoint(`/${Api.prefix}/events`);
     }
 
     static async queryUserProfile() {
-        return await Api.queryEndpoint('/users');
+        return await Api.queryEndpoint(`/${Api.prefix}/users`);
     }
 
     static async createUserEvent(event: any) {
-        return await Api.postBody('/events', event);
+        return await Api.postBody(`/${Api.prefix}/events`, event);
     }
 
     static async createUserNetwork(network: any) {
-        return await Api.postBody('/networks', network);
+        return await Api.postBody(`/${Api.prefix}/networks`, network);
     }
 
     static async createUser(user: any) {
-        return await Api.postBody('/signup', user);
+        return await Api.postBody(`/${Api.prefix}/signup`, user);
     }
 
     static async checkUserStatus(username: string, email: string) {
-        return await Api.postBody('/status/user', {Username: username, Email: email});
+        return await Api.postBody(`/${Api.prefix}/status/user`, {Username: username, Email: email});
     }
 
     private static async postBody(endpoint: string, body: any) {
@@ -67,7 +69,7 @@ export class Api {
         let response = await axiosInstance.get(endpoint).catch((error: any) => {
             return error.response;
         });
-        if (response.status === 401 && Api.firebaseId !== '') {
+        if (response?.status === 401 && Api.firebaseId !== '') {
             await Api.refreshSession();
             response = await axiosInstance.get(endpoint);
         }

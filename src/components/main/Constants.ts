@@ -33,3 +33,8 @@ export const ColumnPos: {[position: string]: string} = {
     MIDDLE: 'calendar-column-middle', // Indicates a center column of a calendar
     RIGHT: 'calendar-column-right'  // Indicates the right column of a calendar
 };
+
+export const CalendarTab: {[name: string]: string} = {
+    SHARED_CALENDAR: 'cal-tab-shared',
+    MY_CALENDAR: 'cal-tab-personal'
+};

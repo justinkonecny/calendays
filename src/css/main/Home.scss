@@ -1,235 +1,223 @@
 @import 'Constants.scss';
 
 h1 {
-    margin: 0;
-    font-family: "Avenir Next", sans-serif;
-    font-weight: 600;
-    font-size: 36px;
-    color: $colorPrimary;
+  margin: 0;
+  font-family: "Avenir Next", sans-serif;
+  font-weight: 600;
+  font-size: 24pt;
+  color: $colorPrimary;
 }
 
 h2 { /* Title (Calendar Month) */
-    color: var(--dull-blue);
-    font-size: 30px;
-    font-weight: 500;
-    text-align: left;
+  color: $colorTextNeutral;
+  font-size: 22pt;
+  font-weight: 500;
+  text-align: left;
 }
 
 h3 { /* Heading (date + time) */
-    color: var(--dull-blue);
-    text-align: left;
-    margin-top: 30px;
-    margin-bottom: 18px;
+  color: var(--dull-blue);
+  text-align: left;
+  margin-top: 22pt;
+  margin-bottom: 18pt;
 }
 
 h4 { /* Sub-heading (start time) */
-    color: var(--dull-blue);
-    text-align: left;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    padding-left: 15px;
+  color: var(--dull-blue);
+  text-align: left;
+  margin-top: 20pt;
+  margin-bottom: 10pt;
+  padding-left: 15pt;
 }
 
 h5 { /* Calendar NetworkEvent Titles */
-    font-weight: 600;
-    color: white;
-    margin: 5px 0;
-    padding: 0;
+  font-weight: 600;
+  color: white;
+  margin: 5pt 0;
+  padding: 0;
 }
 
 input {
-    width: 100%;
-    background: none;
-    border: none;
-    color: $colorTertiary;
-    border-bottom: 1px solid;
-    font-size: 15px;
-    padding: 8px 0;
-    margin: 0;
+  width: 100%;
+  background: none;
+  border: none;
+  color: $colorTextNeutral;
+  border-bottom: 1pt solid;
+  font-size: 15pt;
+  padding: 0;
+  margin: 0;
 }
 
 input::placeholder {
-    color: $colorTertiary;
+  color: $colorTertiary;
 }
 
 input:focus {
-    outline: none;
-    color: var(--light-blue);
-    border-color: $colorTertiary;
+  outline: none;
+  color: var(--light-blue);
+  border-color: $colorTertiary;
 }
 
 input:focus::placeholder {
-    color: var(--light-blue);
+  color: var(--light-blue);
+  border-radius: 0;
 }
 
 button {
-    border-radius: 20px;
-    font-size: 16px;
-    font-weight: 500;
-    padding: 9px 52px;
-    border: none;
-    box-shadow: none;
+  border-radius: 20pt;
+  font-size: 12pt;
+  font-weight: 500;
+  padding: 9pt 52pt;
+  border: none;
+  box-shadow: none;
 }
 
 button:hover {
-    filter: brightness(95%);
-    cursor: pointer;
+  filter: brightness(95%);
+  cursor: pointer;
 }
 
 button:active {
-    filter: brightness(90%);
+  filter: brightness(90%);
 }
 
 button:focus {
-    filter: brightness(95%);
-    outline: none;
+  filter: brightness(95%);
+  outline: none;
 }
 
 textarea {
-    border-radius: 3px;
-    border-color: var(--dull-blue);
-    background-color: var(--pale-gray);
-    color: var(--dull-blue);
-    font-weight: 500;
-    font-size: 13px;
-    padding: 10px;
-    resize: none;
-    outline: none;
+  font-family: "Avenir Next", sans-serif;
+  border-radius: 3pt;
+  border-color: var(--dull-blue);
+  background-color: var(--pale-gray);
+  color: var(--dull-blue);
+  font-weight: 500;
+  font-size: 13pt;
+  padding: 10pt;
+  resize: none;
+  outline: none;
 }
 
 textarea:focus {
-    border-color: var(--light-blue);
+  border-color: var(--light-blue);
 }
 
 p {
-    text-align: left;
-    font-weight: 500;
-    font-size: 15px;
-    padding: 0;
-    margin: 0;
+  text-align: left;
+  font-weight: 500;
+  font-size: 15pt;
+  padding: 0;
+  margin: 0;
 }
 
 .body-1 {
-    font-weight: 300;
-    font-size: 16px;
-    color: $colorNeutral;
+  font-weight: 300;
+  font-size: 16pt;
+  color: $colorTextNeutral;
 }
 
 a {
-    color: $colorNeutral;
-    font-weight: 600;
-    font-size: 16px;
+  color: $colorTextNeutral;
+  font-weight: 600;
+  font-size: 16pt;
 }
 
 a:hover {
-    filter: brightness(120%);
+  filter: brightness(120%);
 }
 
 .btn-primary {
-    margin: auto;
-    color: white;
-    background-color: $colorSecondary;
-    text-transform: uppercase;
+  margin: auto;
+  color: white;
+  background-color: $colorSecondary;
+  text-transform: uppercase;
 }
 
 .btn-secondary {
-    margin: auto;
-    color: white;
-    padding: 6px 20px;
-    background-color: var(--light-blue);
+  margin: auto;
+  color: white;
+  padding: 6pt 20pt;
+  background-color: var(--light-blue);
+  text-transform: uppercase;
 }
 
 .btn-open {
-    border-radius: 0;
+  border-radius: 0;
 }
 
 .btn-home {
-    background: none;
-    border: none;
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--dull-blue);
-    border-bottom: 2px solid;
-    padding: 10px 20px 2px 20px;
+  background: none;
+  border: none;
+  font-size: 17pt;
+  font-weight: 600;
+  color: var(--dull-blue);
+  border-bottom: 2pt solid;
+  padding: 10pt 20pt 2pt 20pt;
 }
 
 .btn-active-tab {
-    color: var(--blush);
+  color: var(--blush);
 }
 
-.header {
-    display: flex;
-    background-color: var(--dull-blue);
-    color: white;
-    text-align: left;
-    height: 50px;
-}
-
-#title {
-    padding: 5px;
-    margin-left: 20px;
-}
-
-.container-logo {
-    background-color: var(--light-blue);
-    display: flex;
-    width: 75px;
+.btn-link-small {
+  color: $colorNeutral3;
+  text-decoration: underline;
+  font-size: 13pt;
+  font-weight: 400;
 }
 
 .page {
-    display: flex;
+  display: flex;
+  height: calc(100vh - #{$navBarHeight});
+
+  .contents {
+    width: 100vw;
+
+    .loading {
+      margin-top: 50pt;
+      text-align: center;
+    }
+  }
 }
 
-.contents {
-    width: 95vw;
-    height: calc(100vh - 50px);
+.line {
+  border-bottom: 2pt solid $colorNeutral3;
+  border-radius: 0;
+  flex: 1;
 }
 
-.nav-btn-container {
-    height: 80%;
-}
-
-.nav-today-container {
-    background-color: var(--light-blue);
-    height: 20%;
-}
-
-.nav-today-header {
-    background-color: var(--dull-blue);
-    height: 30px;
-    color: white;
-    display: flex;
-}
-
-.nav-month {
-    color: white;
-    font-size: 25px;
-    text-align: center;
-}
-
-.nav-day {
-    color: white;
-    font-size: 40px;
-    text-align: center;
-}
-
-.nav-date-container {
-    display: flex;
-    height: calc(100% - 30px);
-}
 
 .flex-container {
-    display: flex;
+  display: flex;
 }
 
 .flex-centered {
-    margin: auto;
+  margin: auto;
 }
 
 .scrollable {
-    overflow: scroll;
+  overflow: scroll;
 }
 
 .btn-invisible {
-    background-color: transparent;
+  background-color: transparent;
+}
+
+.btn-flat {
+  color: $colorNeutral3;
+  background-color: transparent;
+  font-size: 14pt;
+  font-weight: 500;
+  border-bottom: 2pt solid $colorNeutral3;
+  border-radius: 0;
+  padding: 4pt 12pt;
+  text-transform: uppercase;
+  font-family: "Avenir Next", sans-serif;
+}
+
+.btn-flat-active {
+  color: $colorPrimary;
+  font-weight: 600;
+  border-bottom: 2pt solid $colorPrimary;
 }

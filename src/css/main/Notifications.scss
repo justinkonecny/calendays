@@ -5,59 +5,59 @@
   display: flex;
 
   h2 {
-    color: var(--blush);
-    padding: 35px 0 0 35px;
+    color: $colorPrimary;
+    padding: 35pt 0 0 35pt;
     margin: 0;
   }
 
   p {
-    color: var(--slate);
-    font-size: 14px;
+    color: $colorTextNeutral;
+    font-size: 14pt;
     font-weight: 400;
   }
 
   .no-events {
-    padding: 35px;
+    padding: 35pt;
   }
 
   .left {
-    border-right: 1px solid var(--very-light-pink);
+    border-right: 1pt solid var(--very-light-pink);
   }
 
   .right {
-    padding: 50px;
+    padding: 50pt;
 
     .event-title {
       margin: 0;
       padding: 0;
-      color: var(--light-blue);
+      color: $colorPrimary;
     }
   }
 
   .event-notification {
-    padding: 16px;
+    padding: 16pt;
     border-style: solid;
-    border-width: 3px;
-    border-radius: 5px;
+    border-width: 3pt;
+    border-radius: 5pt;
     background-color: #fbfbfb;
-    margin: 20px 35px;
-    min-width: 300px;
+    margin: 20pt 35pt;
+    min-width: 300pt;
     cursor: pointer;
 
     .title {
-      font-size: 15px;
+      font-size: 15pt;
       font-weight: bold;
-      color: var(--light-blue);
-      margin-bottom: 10px;
+      color: $colorTextNeutral;
+      margin-bottom: 10pt;
     }
 
     .notification {
-      border-right: 1px solid var(--very-light-pink);
-      padding-right: 10px;
+      border-right: 1pt solid $colorTextNeutral;
+      padding-right: 10pt;
     }
 
     .network {
-      padding-left: 10px;
+      padding-left: 10pt;
     }
   }
 

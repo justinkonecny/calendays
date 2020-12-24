@@ -4,15 +4,13 @@ export class UserProfile {
     private readonly lastName: string;
     private readonly email: string;
     private readonly username: string;
-    private readonly subscriptionStatusId: number;
 
-    constructor(id: number, firstName: string, lastName: string, email: string, username: string, subscriptionStatusId: number) {
+    constructor(id: number, firstName: string, lastName: string, email: string, username: string) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.username = username;
-        this.subscriptionStatusId = subscriptionStatusId;
     }
 
     getId() {
@@ -37,21 +35,5 @@ export class UserProfile {
 
     getUsername() {
         return this.username;
-    }
-
-    getSubscriptionStatusId() {
-        return this.subscriptionStatusId;
-    }
-
-    getSubscriptionStatus(): string {
-        if (this.subscriptionStatusId === 1) {
-            return 'never subscribed';
-        } else if (this.subscriptionStatusId === 2) {
-            return 'subscribed';
-        } else if (this.subscriptionStatusId === 3) {
-            return 'unsubscribed';
-        } else {
-            return 'unknown';
-        }
     }
 }

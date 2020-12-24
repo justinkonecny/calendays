@@ -2,10 +2,11 @@ import React, {Component} from 'react';
 import {NewEvent} from './NewEvent';
 import '../../css/calendar/Calendar.scss'
 import {CalendarDay} from './CalendarDay';
-import {ColumnPos, MonthNames} from '../main/Constants';
+import {CalendarTab, ColumnPos, MonthNames} from '../main/Constants';
 import {UserProfile} from '../../data/UserProfile';
 import {NetworkGroup} from '../../data/NetworkGroup';
 import {NetworkEvent} from '../../data/NetworkEvent';
+import {DropdownNetwork} from '../common/DropdownNetwork';
 
 
 interface CalendarProps {
@@ -24,6 +25,10 @@ interface CalendarState {
     showNewEvent: boolean;
     displayedWeek: number;
     displayedDate: Date;
+    currentNetwork: null | NetworkGroup;
+    displayedNetworkId: null | number;
+    currentTab: string;
+    timesCount: number;
 }
 
 export class Calendar extends Component<CalendarProps, CalendarState> {
@@ -41,6 +46,8 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         this.handleFailure = this.handleFailure.bind(this);
         this.showNextWeek = this.showNextWeek.bind(this);
         this.showPrevWeek = this.showPrevWeek.bind(this);
+        this.setNetworkGroup = this.setNetworkGroup.bind(this);
+        this.setTab = this.setTab.bind(this);
 
         this.date = new Date();  // Today's dateDay
 
@@ -66,12 +73,19 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         const weekIndex = this.date.getDay();
         firstWeek[weekIndex].setDayMonth(dayDate).setToday(true);  // Sets this dateDay as 'today'
 
+        // const timesCount = window.innerHeight > 1800 ? 20 : 11;
+        const timesCount = Math.max(Math.round(window.innerHeight / 90), 10);
+
         this.state = {
             events: null,
             dayClasses: firstWeek,  // The list of Calendar days
             showNewEvent: false,  // Don't show the new event creator after load
             displayedWeek: 0,  // Index of first day of the week being displayed
-            displayedDate: this.date  // Date of first day of the week being displayed
+            displayedDate: this.date,  // Date of first day of the week being displayed
+            currentNetwork: null,
+            displayedNetworkId: null,
+            currentTab: CalendarTab.SHARED_CALENDAR,
+            timesCount: timesCount
         };
 
         this.state = {
@@ -93,7 +107,7 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
             }
         }
 
-        const rowHeight = {height: 'calc(' + (100 / 12) + '% - 2px)'};  // Height of each row in the calendar
+        const rowHeight = {height: 'calc(' + (100 / this.state.timesCount) + '% - 2pt)'};  // Height of each row in the calendar
         this.times = timesTemp.map(time => {
             const idArr = time.split(' ');
             const id = idArr[0] + idArr[1];
@@ -107,9 +121,11 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
 
     componentDidUpdate(prevProps: CalendarProps, prevState: CalendarState, snapshot: any) {
         if (prevProps.events == null && this.props.events != null) {
+            // If the query returns and we now have an event list
             this.setState({events: this.props.events.slice()});
         } else if (prevState.events == null && this.state.events != null) {
-            this.renderEventsForWeek(0);  // The 'events' prop is null until the query returns
+            // If we're rendering events for the first time
+            this.renderEventsForWeek(0);
         }
     }
 
@@ -256,42 +272,114 @@ export class Calendar extends Component<CalendarProps, CalendarState> {
         this.renderEventsForWeek(newDisplayedWeek);
     }
 
+    setNetworkGroup(network: NetworkGroup) {
+        console.log('(CM01) Setting NetworkGroup (', network.getId(), '):', network.getName());
+        this.setState({displayedNetworkId: network.getId()});
+    }
+
+    setTab(event: React.MouseEvent) {
+        const target = event.currentTarget.id;
+        if (target === this.state.currentTab) {
+            return;
+        }
+
+        if (target === CalendarTab.SHARED_CALENDAR) {
+            this.setState({
+                currentTab: CalendarTab.SHARED_CALENDAR,
+                displayedNetworkId: null
+            });
+        } else if (target === CalendarTab.MY_CALENDAR) {
+            this.setState({
+                currentTab: CalendarTab.MY_CALENDAR,
+                displayedNetworkId: this.props.personalNetworkId
+            });
+        }
+    }
+
     render() {
         const columnBodies: JSX.Element[] = [];
         const columnHeaders = this.state.dayClasses.slice(this.state.displayedWeek, this.state.displayedWeek + 7).map(day => {
-            day.setTimesCount(12);
-            columnBodies.push(day.getDayComponent(this.props.personalNetworkId, this.props.showSharedEvents));
+            day.setTimesCount(this.state.timesCount);
+            columnBodies.push(day.getDayComponent(this.state.displayedNetworkId));
             return day.getHeaderComponent(this.state.showNewEvent);
         });
 
+        let tabSharedClass = 'btn-flat';
+        let tabPersonalClass = 'btn-flat';
+
+        if (this.state.currentTab === CalendarTab.SHARED_CALENDAR) {
+            tabSharedClass += ' btn-flat-active';
+        } else if (this.state.currentTab === CalendarTab.MY_CALENDAR) {
+            tabPersonalClass += ' btn-flat-active';
+        }
+
         return (
-            <div className={'calendar-container-outer'}>
-                {this.state.showNewEvent && <NewEvent userProfile={this.props.userProfile}
-                                                      handleSuccess={this.handleSuccess}
-                                                      handleFailure={this.handleFailure}
-                                                      monthLengths={this.monthLengths}
-                                                      networkGroups={this.props.networkGroups}/>}
-                <div className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
-                    <div className={'calendar-header'}>
-                        <button className={'left-arrow'} onClick={this.showPrevWeek}/>
-                        <h2 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
-                            {MonthNames[this.state.displayedDate.getMonth()]} {this.state.displayedDate.getFullYear()}
-                        </h2>
-                        <div className={'calendar-header-right'}>
-                            <button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>new event</button>
-                        </div>
-                        <button className={'right-arrow'} onClick={this.showNextWeek}/>
+            <div className={'cal-container-outer'}>
+                <div className={'actions-container'}>
+                    <div className={'cal-view-btns'}>
+                        <button id={'cal-tab-shared'} className={tabSharedClass} onClick={this.setTab}>
+                            shared calendar
+                        </button>
+                        <button id={'cal-tab-personal'} className={tabPersonalClass} onClick={this.setTab}>
+                            my calendar
+                        </button>
+                        <div className={'line'}/>
                     </div>
-                    <div className={'calendar'} id={'calendar'}>
-                        <div style={{width: '100%', display: 'flex'}}>
-                            <div className={'column-header column-time-header'}/>
-                            {columnHeaders}
+
+                    <div className={'actions-inner'}>
+                        <div className={'actions-right'}>
+
+                            {this.state.currentTab === CalendarTab.SHARED_CALENDAR
+                            && <DropdownNetwork networkList={this.props.networkGroups}
+                                                setEventNetwork={this.setNetworkGroup}
+                                                direction={'bottom'}
+                                                type={'ghost'}
+                                                width={'250pt'}/>}
                         </div>
-                        <div style={{width: '100%', display: 'flex', height: 'calc(100% - 100px)', overflow: 'scroll'}}>
-                            <div className={'container-times'}>
-                                {this.times}
+                        <div className={'actions-right'}>
+                            <button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>
+                                create event
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div className={'cal-container-inner'}>
+                    {this.state.showNewEvent && <NewEvent userProfile={this.props.userProfile}
+                                                          handleSuccess={this.handleSuccess}
+                                                          handleFailure={this.handleFailure}
+                                                          monthLengths={this.monthLengths}
+                                                          networkGroups={this.props.networkGroups}/>}
+                    <div
+                        className={this.state.showNewEvent ? 'calendar-container calendar-container-half' : 'calendar-container'}>
+                        <div className={'calendar-header'}>
+                            <button className={'left-arrow'} onClick={this.showPrevWeek}/>
+                            <h1 className={this.state.showNewEvent ? 'calendar-header-left calendar-header-left-half' : 'calendar-header-left'}>
+                                {MonthNames[this.state.displayedDate.getMonth()]} {this.state.displayedDate.getFullYear()}
+                            </h1>
+                            <div className={'calendar-header-right'}>
+                                {/*<button className={'btn-primary btn-new-event'} onClick={this.toggleNewEvent}>create event</button>*/}
                             </div>
-                            {columnBodies}
+                            <button className={this.state.showNewEvent ? 'right-arrow right-arrow-half' : 'right-arrow'}
+                                    onClick={this.showNextWeek}/>
+                        </div>
+                        <div className={'calendar'} id={'calendar'}>
+                            <div style={{width: '100%', display: 'flex'}}>
+                                <div className={'column-header column-time-header'}/>
+                                {columnHeaders}
+                            </div>
+                            <div style={{
+                                width: '100%',
+                                display: 'flex',
+                                height: 'calc(100% - 100pt)',
+                                overflow: 'scroll'
+                            }}>
+                                <div className={'container-times'}>
+                                    {this.times}
+                                </div>
+                                {columnBodies}
+                            </div>
                         </div>
                     </div>
                 </div>

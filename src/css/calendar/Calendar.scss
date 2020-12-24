@@ -1,9 +1,40 @@
 @import '../main/Constants';
 
-.calendar-container-outer {
+.cal-container-outer {
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
+
+  .cal-container-inner {
+    display: flex;
+    flex: 1;
+  }
+
+  .actions-container {
+    margin: $actionsMarginT $calendarMarginRight $actionsMarginB $containerMarginLeft;
+
+    .cal-view-btns {
+      text-align: left;
+      display: flex;
+    }
+
+    .actions-inner {
+      display: flex;
+      margin-top: 20pt;
+      justify-content: space-between;
+
+      .actions-left {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+
+      .actions-right {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+    }
+  }
 }
 
 .calendar-container {
@@ -12,13 +43,13 @@
 }
 
 .calendar-container-half {
-  width: 70%;
+  width: calc(100% - #{$sideMenuWidth} - 50pt);
 }
 
 .calendar {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 90px);
+  height: calc(100% - 50pt);
 }
 
 .calendar-header {
@@ -26,25 +57,25 @@
 }
 
 .column-header {
-  height: 100px;
+  height: 80pt;
   width: $calendarColumnWidth;
-  border-top: 2px var(--light-gray) solid;
-  border-right: 2px var(--light-gray) solid;
-  border-bottom: 2px var(--light-gray) solid;
+  border-top: 2pt $colorNeutral3 solid;
+  border-right: 2pt $colorNeutral3 solid;
+  border-bottom: 2pt $colorNeutral3 solid;
 }
 
 .calendar-column {
-  border-right: 2px var(--light-gray) solid;
+  border-right: 2pt $colorNeutral3 solid;
 }
 
 .calendar-column-left {
-  border-left: 2px var(--light-gray) solid;
-  border-radius: 5px 0 0 0;
-  width: calc(#{$calendarColumnWidth} - 2px);
+  border-left: 2pt $colorNeutral3 solid;
+  border-radius: 5pt 0 0 0;
+  width: calc(#{$calendarColumnWidth} - 2pt);
 }
 
 .calendar-column-right {
-  border-radius: 0 5px 0 0;
+  border-radius: 0 5pt 0 0;
 }
 
 .column-header-half {
@@ -53,35 +84,36 @@
 }
 
 .column-header-today {
-  background-color: var(--dull-blue);
-  color: white;
+  color: $colorPrimary;
 }
 
 .column-time {
   width: $containerMarginLeft;
   border: none;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 2pt;
+  padding-bottom: 2pt;
 }
 
 .column-time-half {
-  width: 75px;
+  width: 75pt;
 }
 
 .column-time-header {
   border: none;
-  padding-bottom: 2px;
+  padding-bottom: 2pt;
   width: $containerMarginLeft;
 }
 
 .calendar-header-left {
   text-align: left;
+  margin-bottom: 16pt;
   margin-left: calc(#{$containerMarginLeft} - #{$arrowWidth});
   width: 50%;
+  text-transform: lowercase;
 }
 
 .calendar-header-left-half {
-  margin-left: 75px;
+  margin-left: 75pt;
 }
 
 .calendar-header-right {
@@ -90,58 +122,55 @@
 }
 
 .weekday {
-  font-size: 28px;
-  color: var(--light-blue);
+  font-size: 18pt;
+  color: $colorTextNeutral;
   text-align: left;
-  margin-left: 30px;
-  padding-top: 5px;
+  margin-left: 20pt;
+  margin-top: 8pt;
 }
 
 .weekday-half {
-  font-size: 25px;
-  margin: auto;
+  font-size: 16pt;
 }
 
 .day {
-  font-size: 40px;
-  color: var(--dull-blue);
+  font-size: 28pt;
+  font-weight: bold;
+  color: $colorTextNeutral;
   text-align: left;
-  margin-left: 30px;
+  margin-left: 20pt;
 }
 
 .day-half {
-  font-size: 37px;
-  margin: auto;
+  font-size: 24pt;
 }
 
 .column-header-today {
-  background-color: var(--dull-blue);
-  color: white;
+  color: $colorPrimary;
 }
 
 .container-times {
-  width: 8%;
+  width: $containerMarginLeft;
   height: 100%;
-  color: var(--dull-blue);
-  font-weight: 400;
+  color: $colorNeutral5;
+  font-weight: 600;
 }
 
 .container-events {
   height: 100%;
-  color: var(--dull-blue);
   font-weight: 400;
   position: relative;
-  width: calc(#{$calendarColumnWidth} + 2px);
+  width: calc(#{$calendarColumnWidth} + 2pt);
 }
 
 .calendar-event {
   background-color: var(--blush);
-  border-radius: 5px;
-  width: calc(85% - 18px);
+  border-radius: 5pt;
+  width: calc(85% - 18pt);
   position: absolute;
   color: white;
   overflow: hidden;
-  padding: 8px;
+  padding: 8pt;
   text-align: left;
 
   .event-description {
@@ -150,33 +179,34 @@
 
   p {
     margin: 0.5em;
-    font-size: 13px;
+    font-size: 13pt;
   }
 }
 
 .row-grid {
-  border-top: 2px var(--light-gray) solid;
+  border-top: 2pt $colorNeutral3 solid;
+  background-color: $colorNeutral1;
 }
 
 .row-time {
-  padding-top: 2px;
+  padding-top: 2pt;
   text-align: right;
 }
 
 .row-left {
-  border-left: 2px var(--light-gray) solid;
+  border-left: 2pt $colorNeutral3 solid;
 }
 
 .row-bottom {
-  border-bottom: 2px var(--light-gray) solid;
+  border-bottom: 2pt $colorNeutral3 solid;
 }
 
 .row-bottom-right {
-  border-radius: 0 0 5px 0;
+  border-radius: 0 0 5pt 0;
 }
 
 .row-bottom-left {
-  border-radius: 0 0 0 5px;
+  border-radius: 0 0 0 5pt;
 }
 
 .time {
@@ -193,26 +223,30 @@
   width: $arrowWidth;
   height: $arrowWidth;
   background-color: transparent;
-  border-left: 3px var(--dull-blue) solid;
-  border-bottom: 3px var(--dull-blue) solid;
+  border-left: 3pt $colorTertiary solid;
+  border-bottom: 3pt $colorTertiary solid;
   border-radius: 0;
   transform: rotate(45deg);
   padding: 0;
   position: relative;
   left: calc(#{$containerMarginLeft} / 2);
-  top: 100px;
+  top: 100pt;
 }
 
 .right-arrow {
   width: $arrowWidth;
   height: $arrowWidth;
   background-color: transparent;
-  border-right: 3px var(--dull-blue) solid;
-  border-bottom: 3px var(--dull-blue) solid;
+  border-right: 3pt $colorTertiary solid;
+  border-bottom: 3pt $colorTertiary solid;
   border-radius: 0;
   transform: rotate(-45deg);
   padding: 0;
   position: relative;
   right: 2%;
-  top: 100px;
+  top: 100pt;
+}
+
+.right-arrow-half {
+  right: 1%;
 }

@@ -1,16 +1,27 @@
 $calendarColumnWidth: 12.3%;
-$containerMarginLeft: 8%;
-$arrowWidth: 20px;
+$containerMarginLeft: 100pt;
+$arrowWidth: 20pt;
 $containerPaddingRight: 3%;
-$containerHeightFull: calc(100% - 100px);
+$containerHeightFull: calc(100% - 100pt);
 
-$sideMenuWidth: 24%;
+$calendarMarginRight: calc(100% - #{$containerMarginLeft} - (7 * #{$calendarColumnWidth}));
+
+$sideMenuWidth: 22%;
 $sideMenuHeight: 94%;
 $sideMenuMargin: 2% 2% 2% 0;
 $sideMenuPadding: 0 2%;
 
+$colorError: #E64847;
+
 $colorPrimary: #4DBFCF;
 $colorSecondary: #67CF78;
 $colorTertiary: #536B80;
-$colorNeutral: #536B80;
-$colorNeutral3: #888F96;
+$colorTextNeutral: #536B80;
+$colorNeutral1: #F7F7F8;
+$colorNeutral3: #ACB1B6;
+$colorNeutral5: #2D3B49;
+
+$navBarHeight: 46pt;
+
+$actionsMarginT: 16pt;
+$actionsMarginB: 8pt;

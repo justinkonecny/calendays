@@ -6,6 +6,9 @@ interface DropdownNetworkProps {
     networkList: NetworkGroup[];
     direction: string;
     setEventNetwork: (network: NetworkGroup) => void;
+    type?: string;
+    width?: string;
+    style?: object;
 }
 
 interface DropdownNetworkState {
@@ -28,8 +31,15 @@ export class DropdownNetwork extends Component<DropdownNetworkProps, DropdownNet
     }
 
     componentDidMount() {
-        if (this.props.networkList.length > 0) {
+        if (this.props.networkList?.length > 0) {
             this.props.setEventNetwork(this.props.networkList[0]);
+        }
+    }
+
+    componentDidUpdate(prevProps: Readonly<DropdownNetworkProps>, prevState: Readonly<DropdownNetworkState>, snapshot?: any): void {
+        if (this.props.networkList?.length > 0 && this.state.selection == null) {
+            this.props.setEventNetwork(this.props.networkList[0]);
+            this.setState({selection: this.props.networkList[0]});
         }
     }
 
@@ -55,23 +65,46 @@ export class DropdownNetwork extends Component<DropdownNetworkProps, DropdownNet
             );
         }
 
+        let btnDropdownClass = 'btn-dropdown';
+        let pickerClass = this.props.direction === 'top' ? 'picker picker-top' : 'picker';
+        const nameStyle: { [key: string]: string } = {fontSize: '14pt'};
+
+        if (this.props.type === 'ghost') {
+            btnDropdownClass += ' btn-ghost';
+            nameStyle.fontWeight = '600';
+        } else {
+            pickerClass += ' shadow';
+        }
+
+        const pickerWidth = this.props.width || '210pt';
+        const arrowClass = this.state.showPicker ? 'arrow arrow-open' : 'arrow';
 
         return (
-            <div className={this.props.direction === 'top' ? 'dropdown-container container-top' : 'dropdown-container'}>
-                <button className={'btn-date-time'} onClick={this.clickDropdown}>
-                    <div className={'flex'}>
-                        <p className={'net-name'}>{this.state.selection?.getName()}</p>
-                        <div className={'picker-color my-auto'} style={{backgroundColor: this.state.selection?.getColorHex()}}/>
+            <div className={this.props.direction === 'top' ? 'dropdown-container container-top' : 'dropdown-container'}
+                 style={this.props.style}>
+                <button className={btnDropdownClass} onClick={this.clickDropdown} style={{width: pickerWidth}}>
+                    <div className={'flex-container'}>
+                        <p className={'net-name'} style={nameStyle}>
+                            {this.state.selection?.getName()}
+                        </p>
+                        <div className={'picker-color my-auto'}
+                             style={{backgroundColor: this.state.selection?.getColorHex()}}/>
+                        <div className={arrowClass}/>
                     </div>
 
                 </button>
-                {this.state.showPicker && <div className={this.props.direction === 'top' ? 'picker picker-top shadow' : 'picker shadow'}>
+                {this.state.showPicker && <div className={pickerClass}
+                                               style={{width: pickerWidth}}>
                     {this.props.networkList.map((network: NetworkGroup, index: number) => {
                         return (
-                            <button id={'ng-' + index} className={'picker-inner'} onClick={this.clickNetwork} key={index} >
+                            <button id={'ng-' + index} className={'picker-inner'} onClick={this.clickNetwork}
+                                    key={index}>
                                 <div className={'flex'}>
-                                    <p className={'net-name'}>{network.getName()}</p>
-                                    <div className={'picker-color my-auto'} style={{backgroundColor: network.getColorHex()}}/>
+                                    <p className={'net-name'}>
+                                        {network.getName()}
+                                    </p>
+                                    <div className={'picker-color my-auto'}
+                                         style={{backgroundColor: network.getColorHex()}}/>
                                 </div>
                             </button>
                         );
