@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   overflow: scroll;
-  color: var(--dull-blue);
+  color: $colorPrimary;
 
   .member-add {
     display: flex;
@@ -20,5 +20,9 @@
 
   .member-list {
     padding-left: 15pt;
+  }
+
+  .btn-create-container {
+    margin: 20pt 0;
   }
 }

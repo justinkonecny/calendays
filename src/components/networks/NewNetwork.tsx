@@ -192,7 +192,9 @@ export class NewNetwork extends Component<NewNetworkProps, NewNetworkState> {
                         : (<p>no other members yet!</p>)}
                 </div>
 
-                <button className={'btn-primary'} onClick={this.submitNetwork}>create network</button>
+                <div className={'btn-create-container'}>
+                    <button className={'btn-primary'} onClick={this.submitNetwork}>create network</button>
+                </div>
             </div>
         );
     }
