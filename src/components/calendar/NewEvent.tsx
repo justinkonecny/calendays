@@ -248,17 +248,19 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
                                   monthLengths={this.props.monthLengths}
                                   length={200}/>
                 </div>
-                <div className={'display-flex space-between-wrap'}>
-                    <div>
-                        <h4>start time</h4>
-                        <DropdownTime startTime={this.state.eventStartTime}
-                                      setTime={this.setEventStartTime}/>
-                    </div>
+                <div>
+                    <div className={'display-flex space-between-wrap'}>
+                        <div>
+                            <h4>start time</h4>
+                            <DropdownTime startTime={this.state.eventStartTime}
+                                          setTime={this.setEventStartTime}/>
+                        </div>
 
-                    <div>
-                        <h4>end time</h4>
-                        <DropdownTime startTime={this.state.eventEndTime}
-                                      setTime={this.setEventEndTime}/>
+                        <div>
+                            <h4>end time</h4>
+                            <DropdownTime startTime={this.state.eventEndTime}
+                                          setTime={this.setEventEndTime}/>
+                        </div>
                     </div>
                 </div>
 
@@ -277,7 +279,9 @@ export class NewEvent extends Component<NewEventProps, NewEventState> {
                 <DropdownNetwork networkList={this.props.networkGroups} setEventNetwork={this.setEventNetwork}
                                  direction={'top'}/>
 
-                <button className={'btn-primary btn-create-event'} onClick={this.submitEvent}>create event</button>
+                <div className={'btn-container-create'}>
+                    <button className={'btn-primary btn-create-event'} onClick={this.submitEvent}>create event</button>
+                </div>
             </div>
         );
     }

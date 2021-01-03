@@ -44,6 +44,11 @@
   min-height: 50px;
 }
 
-.btn-create-event {
+.btn-container-create {
   margin: 25px auto;
+  padding-bottom: 10px;
+
+  .btn-create-event {
+    //padding: 50pt;
+  }
 }

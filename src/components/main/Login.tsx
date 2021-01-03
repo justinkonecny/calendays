@@ -326,7 +326,7 @@ class LoginForm extends Component<LoginFormProps, LoginFormState> {
                                     onChange={this.handleInputChange}
                                     onKeyDown={this.handleKeyPress}/>
                     </form>
-                    <NavLink className={'btn-link-small'} to={'/reset'}>forgot password?</NavLink>
+                    <NavLink className={'btn-link-small forgot-pass'} to={'/reset'}>forgot password?</NavLink>
                     <div className={'login-btn-container'}>
                         <button id={'submit-login'} className={'btn-primary login-submit'}
                                 onClick={this.handleSubmitClick}>login
